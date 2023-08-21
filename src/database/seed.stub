@@ -1,0 +1,10 @@
+import { Knex } from "knex"
+
+export async function seed(knex: Knex): Promise<any> {
+    await Model.query(knex).insert([
+        {
+            id: 1,
+            created_at: new Date(),
+        },
+    ]);
+}
