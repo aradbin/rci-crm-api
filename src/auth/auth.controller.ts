@@ -20,18 +20,6 @@ export class AuthController {
     return this.authService.login(loginDto)
   }
 
-  @Public()
-  @Get('google')
-  async googleLogin() {
-    // This route will trigger the Google Oidc authentication process.
-  }
-
-  @Public()
-  @Get('google/callback')
-  async googleLoginCallback() {
-    // This route will handle the callback after successful authentication.
-  }
-
   @Get('profile')
   getProfile(@Request() req: any) {
     return 'ok';
