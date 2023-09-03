@@ -58,15 +58,22 @@ export class EmailService {
     
           // Fetch email bodies and headers
           const fetch = imap.fetch(results, {
-            bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)', 'TEXT']
+            bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)', 'TEXT'],
+            struct: true
           });
     
           fetch.on('message', (msg, seqno) => {
             const emailData = {
+              attr: '',
               header: '',
               text: '',
               html: ''
             };
+
+            msg.on('attributes', (attrs) => {
+              // The UID can be accessed as attrs.uid
+              emailData.attr = attrs;
+            });
     
             msg.on('body', (stream, info) => {
               let buffer = '';
@@ -78,9 +85,9 @@ export class EmailService {
                 if (info.which === 'HEADER.FIELDS (FROM TO SUBJECT DATE)') {
                   emailData.header = Imap.parseHeader(buffer);
                 } else if (info.which === 'TEXT') {
-                  emailData.text = buffer;
+                  // emailData.text = buffer;
                 } else if (info.which === 'HTML') {
-                  emailData.html = buffer;
+                  // emailData.html = buffer;
                 } else {
                   console.error('Invalid or unsupported section:', info.which);
                 }
