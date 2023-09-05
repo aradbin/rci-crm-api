@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import * as nodemailer from 'nodemailer';
+import { inspect } from 'util';
 const Imap = require('node-imap');
+const { simpleParser } = require('mailparser');
 
 @Injectable()
 export class EmailService {
@@ -47,71 +49,111 @@ export class EmailService {
       tls: true,
     });
 
-    imap.once('ready', () => {
-      imap.openBox('INBOX', false, (err, box) => {
-        if (err) throw err;
-    
-        // Search for unseen emails
-        const searchCriteria = ['UNSEEN'];
-        imap.search(searchCriteria, (searchError, results) => {
-          if (searchError) throw searchError;
-    
-          // Fetch email bodies and headers
-          const fetch = imap.fetch(results, {
-            bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)', 'TEXT'],
-            struct: true
-          });
-    
-          fetch.on('message', (msg, seqno) => {
-            const emailData = {
-              attr: '',
-              header: '',
-              text: '',
-              html: ''
-            };
+    let email_array = [];
 
-            msg.on('attributes', (attrs) => {
-              // The UID can be accessed as attrs.uid
-              emailData.attr = attrs;
-            });
+    imap.once('ready', () => {
+      try {
+        imap.openBox('INBOX', false, function (err, box) {
+          imap.search([ 'ALL' ], function(err, results) {
+            if(!results || !results.length){
+              console.log("The server didn't find any emails matching the specified criteria")
+              imap.end();
+              return;   
+            }    
     
-            msg.on('body', (stream, info) => {
-              let buffer = '';
-              stream.on('data', (chunk) => {
-                buffer += chunk.toString('utf8');
+            var fetch = imap.fetch(results, {
+              bodies: '',
+              struct: true
+            })
+        
+            fetch.on('message', function(msg, seqno) {
+              console.log('Message #%d', seqno);
+              var prefix = '(#' + seqno + ') ';
+              msg.on('body', function(stream, info) {
+                //Retrieve the 'from' header and buffer the entire body of the newest message:
+                if (info.which === 'TEXT')
+              
+                var buffer = '', count = 0;
+        
+                stream.on('data', async function(chunk) {
+                  count += chunk.length;
+                  buffer += chunk.toString('utf8');
+                });
+    
+                stream.once('end', async function() {
+                  let attach = null
+                  //console.log((await simpleParser(buffer))) -> to see entire data of email
+                  
+                  if(((await simpleParser(buffer)).attachments).length != 0) {
+                    attach = (await simpleParser(buffer)).attachments[0].content //to get attachments
+                  }
+                  
+                  if (info.which !== 'TEXT'){
+                    let dataheader = Imap.parseHeader(buffer)
+
+                    let emails_data = {
+                      "date": dataheader.date[0],
+                      "subject": dataheader.subject[0],
+                      "from": dataheader.from[0],
+                      "to": dataheader.to[0],
+                      "content": (await simpleParser(buffer)).text, 
+                      "attachment": attach
+                    }
+                    
+                    email_array.push(emails_data)
+                  }
+                  else{
+                    console.log(prefix + 'Body [%s] Finished', inspect(info.which));
+                  }
+                });
               });
     
-              stream.on('end', () => {
-                if (info.which === 'HEADER.FIELDS (FROM TO SUBJECT DATE)') {
-                  emailData.header = Imap.parseHeader(buffer);
-                } else if (info.which === 'TEXT') {
-                  // emailData.text = buffer;
-                } else if (info.which === 'HTML') {
-                  // emailData.html = buffer;
-                } else {
-                  console.error('Invalid or unsupported section:', info.which);
-                }
+              //mark attributes email as read
+              // msg.once('attributes', function(attrs) {
+              //   let uid = attrs.uid;
+              //   imap.addFlags(uid, ['\\Seen'], function (err) {
+              //       if (err) {
+              //           console.log(err);
+              //       } else {
+              //           console.log("Done, marked email as read!")
+              //       }
+              //   });
+              // });
+
+              msg.once('end', function() {
+                console.log(prefix + 'Finished');
               });
             });
     
-            msg.on('end', () => {
-              console.log('Email Data:', emailData);
+            fetch.once('error', function(err) {
+              console.log('Fetch error: ' + err);
             });
-          });
-    
-          fetch.once('end', () => {
-            imap.end();
-          });
+        
+            fetch.once('end', function() {
+              console.log('Done fetching all messages!');
+              imap.end();
+            });
+          })
         });
-      });
+      } catch (error) {
+        console.log("Error when request open inbox mail",error)
+      }
     });
     
-    imap.once('error', (err) => {
-      console.error('IMAP error:', err);
+    imap.once('error', function(err) {
+      console.log("Error when connection to IMAP", err);
+    });
+    
+    imap.once('close', function() {
+      console.log('Connection ended');
     });
     
     imap.connect();
 
-    return `This action returns all email`;
+    return new Promise((resolve, reject) => {
+      imap.once('close', async function () { //maybe, someone asking whether to use end or close and the author of the module says that close is always emitted so you should use that.
+        resolve(email_array);
+      });
+    })
   }
 }
