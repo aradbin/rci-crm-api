@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEmailDto } from './dto/create-email.dto';
-import * as nodemailer from 'nodemailer';
-const Imap = require('node-imap');
+import { Injectable } from "@nestjs/common";
+import { CreateEmailDto } from "./dto/create-email.dto";
+import * as nodemailer from "nodemailer";
+const Imap = require("node-imap");
 
 @Injectable()
 export class EmailService {
@@ -13,103 +13,103 @@ export class EmailService {
       port: 465,
       secure: true,
       auth: {
-        user: 'aradbin@asrexpress.com',
-        pass: '5Z41FqeddeA$',
+        user: "aradbin@asrexpress.com",
+        pass: "5Z41FqeddeA$",
       },
     });
 
     // Define email options
     const mailOptions = {
-      from: 'aradbin@asrexpress.com',
+      from: "aradbin@asrexpress.com",
       to: createEmailDto.toEmail,
       subject: createEmailDto.subject,
       text: createEmailDto.text,
-      html: createEmailDto.html
+      html: createEmailDto.html,
     };
 
     // Send the email
     try {
       const info = await transporter.sendMail(mailOptions);
-      console.log('Email sent:', info.response);
+      console.log("Email sent:", info.response);
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
     }
-    
-    return 'This action adds a new email';
+
+    return "This action adds a new email";
   }
 
   async find() {
     const imap = new Imap({
-      user: 'aradbin@asrexpress.com',
-      password: '5Z41FqeddeA$',
-      host: 'asrexpress.com',
+      user: "aradbin@asrexpress.com",
+      password: "5Z41FqeddeA$",
+      host: "asrexpress.com",
       port: 993,
       tls: true,
     });
 
-    imap.once('ready', () => {
-      imap.openBox('INBOX', false, (err, box) => {
+    imap.once("ready", () => {
+      imap.openBox("INBOX", false, (err, box) => {
         if (err) throw err;
-    
+
         // Search for unseen emails
-        const searchCriteria = ['UNSEEN'];
+        const searchCriteria = ["UNSEEN"];
         imap.search(searchCriteria, (searchError, results) => {
           if (searchError) throw searchError;
-    
+
           // Fetch email bodies and headers
           const fetch = imap.fetch(results, {
-            bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)', 'TEXT'],
-            struct: true
+            bodies: ["HEADER.FIELDS (FROM TO SUBJECT DATE)", "TEXT"],
+            struct: true,
           });
-    
-          fetch.on('message', (msg, seqno) => {
+
+          fetch.on("message", (msg, seqno) => {
             const emailData = {
-              attr: '',
-              header: '',
-              text: '',
-              html: ''
+              attr: "",
+              header: "",
+              text: "",
+              html: "",
             };
 
-            msg.on('attributes', (attrs) => {
+            msg.on("attributes", (attrs) => {
               // The UID can be accessed as attrs.uid
               emailData.attr = attrs;
             });
-    
-            msg.on('body', (stream, info) => {
-              let buffer = '';
-              stream.on('data', (chunk) => {
-                buffer += chunk.toString('utf8');
+
+            msg.on("body", (stream, info) => {
+              let buffer = "";
+              stream.on("data", (chunk) => {
+                buffer += chunk.toString("utf8");
               });
-    
-              stream.on('end', () => {
-                if (info.which === 'HEADER.FIELDS (FROM TO SUBJECT DATE)') {
+
+              stream.on("end", () => {
+                if (info.which === "HEADER.FIELDS (FROM TO SUBJECT DATE)") {
                   emailData.header = Imap.parseHeader(buffer);
-                } else if (info.which === 'TEXT') {
+                } else if (info.which === "TEXT") {
                   // emailData.text = buffer;
-                } else if (info.which === 'HTML') {
+                } else if (info.which === "HTML") {
                   // emailData.html = buffer;
                 } else {
-                  console.error('Invalid or unsupported section:', info.which);
+                  console.error("Invalid or unsupported section:", info.which);
                 }
               });
             });
-    
-            msg.on('end', () => {
-              console.log('Email Data:', emailData);
+
+            msg.on("end", () => {
+              console.log("Email Data:", emailData);
             });
           });
-    
-          fetch.once('end', () => {
+
+          fetch.once("end", () => {
             imap.end();
           });
         });
       });
     });
-    
-    imap.once('error', (err) => {
-      console.error('IMAP error:', err);
+
+    imap.once("error", (err) => {
+      console.error("IMAP error:", err);
     });
-    
+
     imap.connect();
 
     return `This action returns all email`;

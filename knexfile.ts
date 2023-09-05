@@ -4,7 +4,8 @@ import { knexSnakeCaseMappers } from 'objection';
 
 module.exports = {
   client: 'pg',
-  connection: process.env.DB_URL,
+  connection: 'postgres://db:db@localhost:5432/db',
+  // connection: process.env.DB_URL,
   migrations: {
     directory: './src/database/migrations',
     stub: './src/database/migration.stub',

@@ -1,14 +1,16 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { RequestContextMiddleware } from './middlewares/RequestContextMiddleware';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { ValidationPipe } from "@nestjs/common";
+import { RequestContextMiddleware } from "./middlewares/RequestContextMiddleware";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-  }));
-  app.use(RequestContextMiddleware)
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
+  app.use(RequestContextMiddleware);
   await app.listen(8080);
 }
 bootstrap();
