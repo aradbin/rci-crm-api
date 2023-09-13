@@ -12,6 +12,20 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<M
         return this.where('deleted_at', null).orderBy('id','desc')
     }
 
+    filter(params: any) {
+        const query = this
+
+        delete params.page;
+        delete params.pageSize;
+
+        Object.keys(params).forEach((key, index) => {
+            // Only for string
+            index === 0 ? query.whereILike(key, `%${params[key]}%`) : query.andWhereILike(key, `%${params[key]}%`);
+        });
+
+        return query
+    }
+
     softDelete(id: number) {
         const patch = {};
         patch['deleted_at'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
