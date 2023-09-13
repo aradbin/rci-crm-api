@@ -19,8 +19,12 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<M
         delete params.pageSize;
 
         Object.keys(params).forEach((key, index) => {
-            // Only for string
-            index === 0 ? query.whereILike(key, `%${params[key]}%`) : query.andWhereILike(key, `%${params[key]}%`);
+            if(typeof params[key] === 'string'){
+                index === 0 ? query.whereILike(key, `%${params[key]}%`) : query.andWhereILike(key, `%${params[key]}%`);
+            }
+            if(typeof params[key] === 'number'){
+                index === 0 ? query.where(key, `%${params[key]}%`) : query.andWhere(key, `%${params[key]}%`);
+            }
         });
 
         return query

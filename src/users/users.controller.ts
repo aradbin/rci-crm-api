@@ -29,13 +29,14 @@ export class UsersController {
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
     const data = await this.usersService.findOne(id);
+    
     if(data){
       return response.status(HttpStatus.OK).send(data)
-    }else{
-      return response.status(HttpStatus.NOT_FOUND).send({
-        message: 'No User Found'
-      })
     }
+
+    return response.status(HttpStatus.NOT_FOUND).send({
+      message: 'No User Found'
+    })
   }
 
   @Patch(':id')
