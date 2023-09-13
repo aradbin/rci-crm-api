@@ -9,7 +9,7 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<M
     PageQueryBuilderType!: CustomQueryBuilder<M, Page<M>>;
 
     find() {
-        return this.where('deleted_at', null)
+        return this.where('deleted_at', null).orderBy('id','desc')
     }
 
     softDelete(id: number) {
