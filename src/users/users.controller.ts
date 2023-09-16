@@ -45,13 +45,14 @@ export class UsersController {
     @Res() response: Response,
   ) {
     const data = await this.usersService.findOne(id);
-    if (data) {
-      return response.status(HttpStatus.OK).send(data);
-    } else {
-      return response.status(HttpStatus.NOT_FOUND).send({
-        message: "No User Found",
-      });
+
+    if(data){
+      return response.status(HttpStatus.OK).send(data)
     }
+
+    return response.status(HttpStatus.NOT_FOUND).send({
+      message: 'No User Found'
+    })
   }
 
   @Patch(":id")

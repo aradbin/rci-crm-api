@@ -11,9 +11,27 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   NumberQueryBuilderType!: CustomQueryBuilder<M, number>;
   PageQueryBuilderType!: CustomQueryBuilder<M, Page<M>>;
 
-  find() {
-    return this.where("deleted_at", null);
-  }
+    find() {
+        return this.where('deleted_at', null).orderBy('id','desc')
+    }
+
+    filter(params: any) {
+        const query = this
+
+        delete params.page;
+        delete params.pageSize;
+
+        Object.keys(params).forEach((key, index) => {
+            if(typeof params[key] === 'string'){
+                index === 0 ? query.whereILike(key, `%${params[key]}%`) : query.andWhereILike(key, `%${params[key]}%`);
+            }
+            if(typeof params[key] === 'number'){
+                index === 0 ? query.where(key, `%${params[key]}%`) : query.andWhere(key, `%${params[key]}%`);
+            }
+        });
+
+        return query
+    }
 
   softDelete(id: number) {
     const patch = {};
