@@ -9,7 +9,7 @@ export class CreateSettingDto {
     @IsString()
     type: string;
 
-    @IsNotEmpty({ message: 'Parent is required' })
+    @IsOptional()
     @IsInt()
     parent_id: number;
 
