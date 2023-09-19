@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateSettingDto {
     @IsNotEmpty({ message: 'Name is required' })
@@ -9,7 +9,7 @@ export class CreateSettingDto {
     @IsString()
     type: string;
 
-    @IsNotEmpty({ message: 'Parent is required' })
+    @IsOptional()
     @IsInt()
     parent_id: number;
 

@@ -1,0 +1,36 @@
+import { Model } from "objection";
+import { BaseModel } from "src/database/base.model";
+import { UserSettingsModel } from "src/user-settings/user-settings.model";
+
+export class SettingsModel extends BaseModel {
+  static tableName = 'settings';
+
+  static relationMappings = {
+    parent: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: SettingsModel,
+      join: {
+        from: 'settings.parent_id',
+        to: 'settings.id'
+      }
+    },
+
+    children: {
+      relation: Model.HasManyRelation,
+      modelClass: SettingsModel,
+      join: {
+        from: 'settings.id',
+        to: 'settings.parent_id'
+      }
+    },
+
+    userSettings: {
+      relation: this.HasManyRelation,
+      modelClass: UserSettingsModel,
+      join: {
+        from: 'settings.id',
+        to: 'user_settings.settings_id'
+      }
+    }
+  };
+}

@@ -22,7 +22,7 @@ export class UsersService {
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().find().paginate(params).filter(params)
+    return await this.modelClass.query().find().paginate(params).filter(params).withGraphFetched('userSettings.settings')
   }
 
   async findOne(id: number) {

@@ -2,12 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ModelClass } from 'objection';
 import { CreateSettingDto } from './dto/create-setting.dto';
 import { UpdateSettingDto } from './dto/update-setting.dto';
-import { SettingModel } from './setting.model';
+import { SettingsModel } from './settings.model';
 
 @Injectable()
 export class SettingsService {
   constructor(
-    @Inject('SettingModel') private modelClass: ModelClass<SettingModel>
+    @Inject('SettingsModel') private modelClass: ModelClass<SettingsModel>
   ) {}
 
   async create(createSettingDto: CreateSettingDto) {
@@ -15,11 +15,11 @@ export class SettingsService {
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().find().paginate(params)
+    return await this.modelClass.query().find().paginate(params).filter(params).withGraphFetched('parent').withGraphFetched('children')
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().find().findById(id)
+    return await this.modelClass.query().find().findById(id).withGraphFetched('parent').withGraphFetched('children')
   }
 
   async update(id: number, updateSettingDto: UpdateSettingDto) {
