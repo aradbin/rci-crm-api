@@ -1,17 +1,17 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UnprocessableEntityException, Query, ParseIntPipe, Res, HttpStatus } from '@nestjs/common';
-import { UserSettingsService } from './user-settings.service';
-import { CreateUserSettingsDto } from './dto/create-user-settings.dto';
-import { UpdateUserSettingsDto } from './dto/update-user-settings.dto';
+import { UserEmailsService } from './user-emails.service';
+import { CreateUserEmailDto } from './dto/create-user-email.dto';
+import { UpdateUserEmailDto } from './dto/update-user-email.dto';
 import { Response } from 'express';
 
-@Controller('user-settings')
-export class UserSettingsController {
-  constructor(private readonly userSettingsService: UserSettingsService) {}
+@Controller('user-emails')
+export class UserEmailsController {
+  constructor(private readonly userEmailsService: UserEmailsService) {}
 
   @Post()
-  async create(@Body() createUserSettingsDto: CreateUserSettingsDto) {
+  async create(@Body() createUserEmailDto: CreateUserEmailDto) {
     try {
-      const data = await this.userSettingsService.create(createUserSettingsDto);
+      const data = await this.userEmailsService.create(createUserEmailDto);
       return {
         message: 'New Setting Created Successfully',
         data: data
@@ -23,12 +23,12 @@ export class UserSettingsController {
 
   @Get()
   async findAll(@Query() query: any) {
-    return await this.userSettingsService.findAll(query);
+    return await this.userEmailsService.findAll(query);
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
-    const data = await this.userSettingsService.findOne(id);
+    const data = await this.userEmailsService.findOne(id);
     if(data){
       return response.status(HttpStatus.OK).send(data)
     }else{
@@ -39,9 +39,9 @@ export class UserSettingsController {
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserSettingsDto: UpdateUserSettingsDto) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserEmailDto: UpdateUserEmailDto) {
     try {
-      await this.userSettingsService.update(id, updateUserSettingsDto);
+      await this.userEmailsService.update(id, updateUserEmailDto);
       return {
         message: 'User Setting Updated Successfully',
         data: id
@@ -54,7 +54,7 @@ export class UserSettingsController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     try {
-      await this.userSettingsService.remove(id);
+      await this.userEmailsService.remove(id);
       return {
         message: 'Setting Deleted Successfully',
         data: id

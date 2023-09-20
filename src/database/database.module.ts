@@ -5,7 +5,8 @@ import { Model, knexSnakeCaseMappers } from "objection";
 import Knex from 'knex';
 import { SettingsModel } from 'src/settings/settings.model';
 import { UserSettingsModel } from 'src/user-settings/user-settings.model';
-const models = [UserModel, SettingsModel, UserSettingsModel];
+import { UserEmailModel } from 'src/user-emails/user-email.model';
+const models = [UserModel, SettingsModel, UserSettingsModel, UserEmailModel];
 
 const modelProviders = models.map(model => {
     return {

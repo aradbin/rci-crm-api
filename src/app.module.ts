@@ -7,9 +7,10 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { EmailModule } from './email/email.module';
 import { SettingsModule } from './settings/settings.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
+import { UserEmailsModule } from './user-emails/user-emails.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, EmailModule, SettingsModule, UserSettingsModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, EmailModule, SettingsModule, UserSettingsModule, UserEmailsModule],
   // providers: [
   //   {
   //     provide: APP_GUARD,
