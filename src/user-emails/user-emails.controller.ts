@@ -1,17 +1,17 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UnprocessableEntityException, Query, ParseIntPipe, Res, HttpStatus } from '@nestjs/common';
-import { UserSettingsService } from './user-settings.service';
-import { CreateUserSettingsDto } from './dto/create-user-settings.dto';
-import { UpdateUserSettingsDto } from './dto/update-user-settings.dto';
+import { UserEmailsService } from './user-emails.service';
+import { CreateUserEmailDto } from './dto/create-user-email.dto';
+import { UpdateUserEmailDto } from './dto/update-user-email.dto';
 import { Response } from 'express';
 
-@Controller('user-settings')
-export class UserSettingsController {
-  constructor(private readonly userSettingsService: UserSettingsService) {}
+@Controller('user-emails')
+export class UserEmailsController {
+  constructor(private readonly userEmailsService: UserEmailsService) {}
 
   @Post()
-  async create(@Body() createUserSettingsDto: CreateUserSettingsDto) {
+  async create(@Body() createUserEmailDto: CreateUserEmailDto) {
     try {
-      return await this.userSettingsService.create(createUserSettingsDto);
+      return await this.userEmailsService.create(createUserEmailDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message)
     }
@@ -19,12 +19,12 @@ export class UserSettingsController {
 
   @Get()
   async findAll(@Query() query: any) {
-    return await this.userSettingsService.findAll(query);
+    return await this.userEmailsService.findAll(query);
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
-    const data = await this.userSettingsService.findOne(id);
+    const data = await this.userEmailsService.findOne(id);
     if(data){
       return response.status(HttpStatus.OK).send(data)
     }
@@ -34,9 +34,9 @@ export class UserSettingsController {
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserSettingsDto: UpdateUserSettingsDto) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserEmailDto: UpdateUserEmailDto) {
     try {
-      return await this.userSettingsService.update(id, updateUserSettingsDto);
+      return await this.userEmailsService.update(id, updateUserEmailDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message)
     }
@@ -45,7 +45,7 @@ export class UserSettingsController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     try {
-      return await this.userSettingsService.remove(id);
+      return await this.userEmailsService.remove(id);
     } catch (error) {
       throw new UnprocessableEntityException(error.message)
     }

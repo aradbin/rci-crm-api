@@ -19,11 +19,7 @@ export class EmailController {
   @Post()
   async create(@Body() createEmailDto: CreateEmailDto) {
     try {
-      const data = await this.emailService.create(createEmailDto);
-      return {
-        message: "",
-        data: data,
-      };
+      return await this.emailService.create(createEmailDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message);
     }

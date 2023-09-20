@@ -24,11 +24,7 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
-      const data = await this.usersService.create(createUserDto);
-      return {
-        message: "New User Created Successfully",
-        data: data,
-      };
+      return await this.usersService.create(createUserDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message);
     }
@@ -49,7 +45,6 @@ export class UsersController {
     if(data){
       return response.status(HttpStatus.OK).send(data)
     }
-
     return response.status(HttpStatus.NOT_FOUND).send({
       message: 'No User Found'
     })
@@ -61,6 +56,7 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     try {
+      return await this.usersService.update(id, updateUserDto);
       await this.usersService.update(id, updateUserDto);
       return {
         message: "User Updated Successfully",
@@ -74,11 +70,7 @@ export class UsersController {
   @Delete(":id")
   async remove(@Param("id", ParseIntPipe) id: number) {
     try {
-      await this.usersService.remove(id);
-      return {
-        message: "User Deleted Successfully",
-        data: id,
-      };
+      return await this.usersService.remove(id);
     } catch (error) {
       throw new UnprocessableEntityException(error.message);
     }

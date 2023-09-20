@@ -9,9 +9,10 @@ import { SettingsModule } from './settings/settings.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
 import { TasksModule } from './tasks/tasks.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
+import { UserEmailsModule } from './user-emails/user-emails.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, EmailModule, SettingsModule, UserSettingsModule, TasksModule, WhatsappModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, EmailModule, SettingsModule, UserSettingsModule, TasksModule, WhatsappModule, UserEmailsModule],
   // providers: [
   //   {
   //     provide: APP_GUARD,
