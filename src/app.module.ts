@@ -12,7 +12,17 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { UserEmailsModule } from './user-emails/user-emails.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, EmailModule, SettingsModule, UserSettingsModule, TasksModule, WhatsappModule, UserEmailsModule],
+  imports: [
+    DatabaseModule,
+    UsersModule,
+    AuthModule,
+    EmailModule,
+    SettingsModule,
+    UserSettingsModule,
+    TasksModule,
+    WhatsappModule,
+    UserEmailsModule,
+  ],
   // providers: [
   //   {
   //     provide: APP_GUARD,
