@@ -1,12 +1,12 @@
 {
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "editor.formatOnSave": true,
-    "cSpell.words": [
-        "asrexpress",
-        "Fqedde",
-        "Knex",
-        "knexfile",
-        "middlewares",
-        "nestjs"
-    ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.formatOnSave": true,
+  "cSpell.words": [
+    "asrexpress",
+    "Fqedde",
+    "Knex",
+    "knexfile",
+    "middlewares",
+    "nestjs"
+  ]
 }
