@@ -11,11 +11,7 @@ export class SettingsController {
   @Post()
   async create(@Body() createSettingDto: CreateSettingDto) {
     try {
-      const data = await this.settingsService.create(createSettingDto);
-      return {
-        message: 'New Setting Created Successfully',
-        data: data
-      }
+      return await this.settingsService.create(createSettingDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message)
     }
@@ -31,21 +27,16 @@ export class SettingsController {
     const data = await this.settingsService.findOne(id);
     if(data){
       return response.status(HttpStatus.OK).send(data)
-    }else{
-      return response.status(HttpStatus.NOT_FOUND).send({
-        message: 'No Setting Found'
-      })
     }
+    return response.status(HttpStatus.NOT_FOUND).send({
+      message: 'No Setting Found'
+    })
   }
 
   @Patch(':id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateSettingDto: UpdateSettingDto) {
     try {
-      await this.settingsService.update(id, updateSettingDto);
-      return {
-        message: 'Setting Updated Successfully',
-        data: id
-      }
+      return await this.settingsService.update(id, updateSettingDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message)
     }
@@ -54,11 +45,7 @@ export class SettingsController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     try {
-      await this.settingsService.remove(id);
-      return {
-        message: 'Setting Deleted Successfully',
-        data: id
-      }
+      return await this.settingsService.remove(id);
     } catch (error) {
       throw new UnprocessableEntityException(error.message)
     }

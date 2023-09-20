@@ -11,11 +11,7 @@ export class UserEmailsController {
   @Post()
   async create(@Body() createUserEmailDto: CreateUserEmailDto) {
     try {
-      const data = await this.userEmailsService.create(createUserEmailDto);
-      return {
-        message: 'New Setting Created Successfully',
-        data: data
-      }
+      return await this.userEmailsService.create(createUserEmailDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message)
     }
@@ -31,21 +27,16 @@ export class UserEmailsController {
     const data = await this.userEmailsService.findOne(id);
     if(data){
       return response.status(HttpStatus.OK).send(data)
-    }else{
-      return response.status(HttpStatus.NOT_FOUND).send({
-        message: 'No User Setting Found'
-      })
     }
+    return response.status(HttpStatus.NOT_FOUND).send({
+      message: 'No User Setting Found'
+    })
   }
 
   @Patch(':id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserEmailDto: UpdateUserEmailDto) {
     try {
-      await this.userEmailsService.update(id, updateUserEmailDto);
-      return {
-        message: 'User Setting Updated Successfully',
-        data: id
-      }
+      return await this.userEmailsService.update(id, updateUserEmailDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message)
     }
@@ -54,11 +45,7 @@ export class UserEmailsController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     try {
-      await this.userEmailsService.remove(id);
-      return {
-        message: 'Setting Deleted Successfully',
-        data: id
-      }
+      return await this.userEmailsService.remove(id);
     } catch (error) {
       throw new UnprocessableEntityException(error.message)
     }
