@@ -1,3 +1,5 @@
+DROP TYPE IF EXISTS activity_log_row ON tasks;
+
 CREATE TYPE activity_log_row AS (
   status_type int, -- 1 means the status was updated, 2 means the progress status was updated
   old_status text,
@@ -15,16 +17,19 @@ BEGIN
       ARRAY[jsonb_array_length(COALESCE(NEW.activity_log, '{}'::jsonb))::text],
       to_jsonb(ROW(
         1,
-        NEW.status,
         OLD.status,
+        NEW.status,
         NEW.updated_by,
         now()
       )::activity_log_row)
     );
+    UPDATE tasks SET activity_log = NEW.activity_log WHERE id = NEW.id;
   END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS update_activity_log_on_status_trigger ON tasks;
 
 CREATE TRIGGER update_activity_log_on_status_trigger
 AFTER UPDATE OF status ON tasks
@@ -41,16 +46,19 @@ BEGIN
       ARRAY[jsonb_array_length(COALESCE(NEW.activity_log, '{}'::jsonb))::text],
       to_jsonb(ROW(
         2,
-        NEW.progress_status,
         OLD.progress_status,
+        NEW.progress_status,
         NEW.updated_by,
         now()
       )::activity_log_row)
     );
+    UPDATE tasks SET activity_log = NEW.activity_log WHERE id = NEW.id;
   END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS update_activity_log_on_progress_status_trigger ON tasks;
 
 CREATE TRIGGER update_activity_log_on_progress_status_trigger
 AFTER UPDATE OF progress_status ON tasks

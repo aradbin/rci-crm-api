@@ -10,6 +10,7 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
 import { TasksModule } from './tasks/tasks.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { UserEmailsModule } from './user-emails/user-emails.module';
+import { CustomerModule } from './customer/customer.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserEmailsModule } from './user-emails/user-emails.module';
     TasksModule,
     WhatsappModule,
     UserEmailsModule,
+    CustomerModule,
   ],
   // providers: [
   //   {

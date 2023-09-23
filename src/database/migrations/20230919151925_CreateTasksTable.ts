@@ -1,51 +1,148 @@
 import { Knex } from 'knex';
+import { TaskProgressStatus, TaskStatus } from '../enums/tasks';
 
 const tableName = 'tasks';
 
+const CREATE_LOG_TYPE = () => `
+CREATE TYPE activity_log_row AS (
+  status_type int, -- 1 means the status was updated, 2 means the progress status was updated
+  old_status text,
+  new_status text,
+  updated_by text,
+  updated_at timestamp
+);
+`;
+
+const DROP_LOG_TYPE = () => `
+DROP TYPE activity_log_row;
+`;
+
+const UPDATE_ACTIVITY_LOG_FUNCTION = (column: string) => `
+CREATE OR REPLACE FUNCTION update_activity_log_${column}()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.${column} <> OLD.${column} THEN
+    NEW.activity_log = jsonb_set(
+      COALESCE(OLD.activity_log, '{}'::jsonb),
+      ARRAY[jsonb_array_length(COALESCE(NEW.activity_log, '{}'::jsonb))::text],
+      to_jsonb(ROW(
+        1,
+        OLD.${column},
+        NEW.${column},
+        NEW.updated_by,
+        now()
+      )::activity_log_row)
+    );
+    UPDATE tasks SET activity_log = NEW.activity_log WHERE id = NEW.id;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+`;
+
+const DROP_UPDATE_ACTIVITY_LOG_FUNCTION = (column: string) => `
+DROP FUNCTION update_activity_log_on_${column}();
+`;
+
+const UPDATE_ACTIVITY_LOG_TRIGGER = (column: string) => `
+CREATE TRIGGER update_activity_log_on_${column}_trigger
+AFTER UPDATE OF ${column} ON tasks
+FOR EACH ROW
+EXECUTE FUNCTION update_activity_log_${column}();
+`;
+
+const DROP_UPDATE_ACTIVITY_LOG_TRIGGER = (column: string) => `
+DROP TRIGGER update_activity_log_on_${column}_trigger;
+`;
+
 export async function up(knex: Knex) {
-  return knex.schema.createTable(tableName, (table) => {
-    table.increments();
+  return await knex.schema
+    .createTable(tableName, (table) => {
+      table.increments();
 
-    table
-      .integer('customer_id')
-      .unsigned()
-      .references('id')
-      .inTable('customers')
-      .onDelete('SET NULL')
-      .index();
+      table
+        .integer('customer_id')
+        .unsigned()
+        .references('id')
+        .inTable('customers')
+        .onDelete('SET NULL')
+        .index();
 
-    table
-      .integer('assignee_id')
-      .unsigned()
-      .references('id')
-      .inTable('users')
-      .onDelete('SET NULL')
-      .index();
+      table
+        .integer('assignee_id')
+        .unsigned()
+        .references('id')
+        .inTable('users')
+        .onDelete('SET NULL')
+        .index();
 
-    table.string('title').nullable();
-    table.string('description').nullable();
-    table.smallint('priority').nullable();
+      table.string('title').nullable();
+      table.string('description').nullable();
+      table.smallint('priority').nullable();
 
-    table
-      .enum('status', ['created', 'assigned', 'finished', 'delivered'])
-      .nullable();
+      table
+        .enum('status', Object.values(TaskStatus))
+        .defaultTo(TaskStatus.CREATED);
 
-    table.enum('progress_status', ['to_do', 'doing', 'done']).nullable();
+      table
+        .enum('progress_status', Object.values(TaskProgressStatus))
+        .defaultTo(TaskProgressStatus.NONE);
 
-    table.jsonb('metadata').nullable();
-    table.jsonb('activity_log').nullable();
-    table.jsonb('attachments').nullable();
+      table.jsonb('metadata').nullable();
+      table.jsonb('activity_log').defaultTo('[]');
+      table.jsonb('attachments').nullable();
 
-    table.timestamp('due_date').nullable();
-    table.timestamp('created_at').nullable();
-    table.integer('created_by').nullable();
-    table.timestamp('updated_at').nullable();
-    table.integer('updated_by').nullable();
-    table.timestamp('deleted_at').nullable();
-    table.integer('deleted_by').nullable();
-  });
+      table.timestamp('due_date').nullable();
+      table.timestamp('created_at').nullable();
+      table.integer('created_by').nullable();
+      table.timestamp('updated_at').nullable();
+      table.integer('updated_by').nullable();
+      table.timestamp('deleted_at').nullable();
+      table.integer('deleted_by').nullable();
+    })
+    .then(
+      () => knex.raw(CREATE_LOG_TYPE()),
+      (err) => console.log(err),
+    )
+    .then(
+      () => knex.raw(UPDATE_ACTIVITY_LOG_FUNCTION('status')),
+      (err) => console.log(err),
+    )
+    .then(
+      () => knex.raw(UPDATE_ACTIVITY_LOG_FUNCTION('progress_status')),
+      (err) => console.log(err),
+    )
+    .then(
+      () => knex.raw(UPDATE_ACTIVITY_LOG_TRIGGER('status')),
+      (err) => console.log(err),
+    )
+    .then(
+      () => knex.raw(UPDATE_ACTIVITY_LOG_TRIGGER('progress_status')),
+      (err) => console.log(err),
+    );
 }
 
 export async function down(knex: Knex) {
-  return knex.schema.dropTable(tableName);
+  return await knex.schema
+    .dropTable(tableName)
+    .then(
+      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_TRIGGER('status')),
+      (err) => console.log(err),
+    )
+    .then(
+      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_TRIGGER('progress_status')),
+      (err) => console.log(err),
+    )
+    .then(
+      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_FUNCTION('status')),
+      (err) => console.log(err),
+    )
+    .then(
+      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_FUNCTION('progress_status')),
+      (err) => console.log(err),
+    )
+    .then(
+      () => knex.raw(DROP_LOG_TYPE()),
+      (err) => console.log(err),
+    );
 }

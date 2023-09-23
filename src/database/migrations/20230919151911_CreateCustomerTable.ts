@@ -3,17 +3,15 @@ import { Knex } from 'knex';
 const tableName = 'customers';
 
 export async function up(knex: Knex) {
-  return knex.schema.createTable(tableName, (table) => {
+  return await knex.schema.createTable(tableName, (table) => {
     table.increments();
 
-    table.string('name').nullable();
+    table.string('name');
     table.string('email').nullable().unique();
-    table.string('password').nullable();
     table.string('address').nullable();
-    table.string('country').nullable();
+    table.string('country_code').nullable();
     table.boolean('verified').defaultTo(false);
     table.string('contact').nullable();
-    table.timestamp('last_login').nullable();
 
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
@@ -25,5 +23,5 @@ export async function up(knex: Knex) {
 }
 
 export async function down(knex: Knex) {
-  return knex.schema.dropTable(tableName);
+  return await knex.schema.dropTable(tableName);
 }

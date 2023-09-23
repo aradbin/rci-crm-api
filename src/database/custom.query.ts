@@ -1,4 +1,4 @@
-import { Model, Page, QueryBuilder } from "objection";
+import { Model, Page, QueryBuilder } from 'objection';
 
 export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   M,
@@ -11,37 +11,42 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   NumberQueryBuilderType!: CustomQueryBuilder<M, number>;
   PageQueryBuilderType!: CustomQueryBuilder<M, Page<M>>;
 
-    find() {
-        return this.where('deleted_at', null).orderBy('id','desc')
-    }
+  find() {
+    return this.where('deleted_at', null).orderBy('id', 'desc');
+  }
 
-    filter(params: any) {
-        const query = this
+  filter(params: any) {
+    const query = this;
 
-        delete params.page;
-        delete params.pageSize;
+    delete params.page;
+    delete params.pageSize;
 
-        Object.keys(params).forEach((key, index) => {
-            if(typeof params[key] === 'string'){
-                index === 0 ? query.whereILike(key, `%${params[key]}%`) : query.andWhereILike(key, `%${params[key]}%`);
-            }
-            if(typeof params[key] === 'number'){
-                index === 0 ? query.where(key, `%${params[key]}%`) : query.andWhere(key, `%${params[key]}%`);
-            }
-        });
+    Object.keys(params).forEach((key, index) => {
+      if ((key as string).endsWith('id')) {
+        query.where(key, params[key]);
+        return;
+      }
+      if (typeof params[key] === 'string') {
+        index === 0
+          ? query.whereILike(key, `%${params[key]}%`)
+          : query.andWhereILike(key, `%${params[key]}%`);
+      }
+    });
 
-        return query
-    }
-
+    return query;
+  }
+  // index === 0
+  // ?
+  // : query.andWhere(key, `%${params[key]}%`);
   softDelete(id: number) {
     const patch = {};
-    patch["deleted_at"] = new Date()
+    patch['deleted_at'] = new Date()
       .toISOString()
       .slice(0, 19)
-      .replace("T", " ");
+      .replace('T', ' ');
     const request = (global as any).requestContext;
     if (request?.user?.id) {
-      patch["deleted_by"] = request.user.id;
+      patch['deleted_by'] = request.user.id;
     }
 
     return this.findById(id).patch(patch);
