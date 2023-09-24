@@ -1,16 +1,24 @@
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class CreateCustomerDto {
+  @IsOptional()
   @IsString()
   name: string;
+
+  @IsOptional()
   @IsString()
+  @IsEmail({}, { message: "Please provide valid email address" })
   email: string;
-  @IsString()
-  address: string;
-  @IsString()
-  country_code: string;
+
+  @IsOptional()
   @IsString()
   contact: string;
-  @IsBoolean()
-  verified: boolean;
+
+  @IsOptional()
+  @IsString()
+  address: string;
+
+  @IsOptional()
+  @IsString()
+  country_code: string;
 }
