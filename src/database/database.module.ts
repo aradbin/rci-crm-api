@@ -1,11 +1,11 @@
-import "dotenv/config";
-import { Global, Module } from "@nestjs/common";
-import { UserModel } from "../users/user.model";
-import { Model, knexSnakeCaseMappers } from "objection";
+import { Global, Module } from '@nestjs/common';
+import { Model } from 'objection';
 import Knex from 'knex';
+import { UserModel } from '../users/user.model';
 import { SettingsModel } from 'src/settings/settings.model';
 import { UserSettingsModel } from 'src/user-settings/user-settings.model';
 import { UserEmailModel } from 'src/user-emails/user-email.model';
+
 const models = [UserModel, SettingsModel, UserSettingsModel, UserEmailModel];
 
 const modelProviders = models.map((model) => {
@@ -18,12 +18,12 @@ const modelProviders = models.map((model) => {
 const providers = [
   ...modelProviders,
   {
-    provide: "KnexConnection",
+    provide: 'KnexConnection',
     useFactory: async () => {
       const knex = Knex({
-        client: "pg",
-        connection: process.env.DB_URL,
-        // ...knexSnakeCaseMappers()
+        client: 'pg',
+        debug: true,
+        connection: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`,
       });
 
       Model.knex(knex);

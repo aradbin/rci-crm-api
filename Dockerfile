@@ -12,10 +12,3 @@ RUN npm install
 
 # Copy the rest of the application code to the container
 COPY . .
-
-
-# Expose the port that the application will listen on
-EXPOSE 8080
-
-# Start the application
-CMD ["npm", "run", "start:dev"]

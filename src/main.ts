@@ -1,9 +1,12 @@
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common";
-import { RequestContextMiddleware } from "./middlewares/RequestContextMiddleware";
+import { config } from 'dotenv';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { RequestContextMiddleware } from './middlewares/RequestContextMiddleware';
 
 async function bootstrap() {
+  // load .env file
+  config();
   const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalPipes(
     new ValidationPipe({
@@ -13,4 +16,5 @@ async function bootstrap() {
   app.use(RequestContextMiddleware);
   await app.listen(8080);
 }
+
 bootstrap();
