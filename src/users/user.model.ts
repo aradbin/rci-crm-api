@@ -8,4 +8,15 @@ export class UserModel extends BaseModel {
   email: string;
   username: string;
   password: string;
+
+  static relationMappings = {
+    userSettings: {
+      relation: this.HasManyRelation,
+      modelClass: UserSettingsModel,
+      join: {
+        from: 'users.id',
+        to: 'user_settings.user_id'
+      }
+    }
+  };
 }
