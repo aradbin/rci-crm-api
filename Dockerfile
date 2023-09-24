@@ -15,7 +15,7 @@ COPY . .
 
 
 # Expose the port that the application will listen on
-EXPOSE 3000
+EXPOSE 8080
 
 # Start the application
 CMD ["npm", "run", "start:dev"]

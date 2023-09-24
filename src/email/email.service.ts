@@ -52,61 +52,63 @@ export class EmailService {
     let email_array = [];
 
     imap.once('ready', () => {
-      imap.openBox('INBOX', false, (err, box) => {
-        if (err) throw err;
+      try{
+        imap.openBox('INBOX', false, (err, box) => {
+          if (err) throw err;
 
-        // Search for unseen emails
-        const searchCriteria = ['UNSEEN'];
-        imap.search(searchCriteria, (searchError, results) => {
-          if (searchError) throw searchError;
+          // Search for unseen emails
+          const searchCriteria = ['UNSEEN'];
+          imap.search(searchCriteria, (searchError, results) => {
+            if (searchError) throw searchError;
 
-          // Fetch email bodies and headers
-          const fetch = imap.fetch(results, {
-            bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)', 'TEXT'],
-            struct: true
-          });
-
-          fetch.on('message', (msg, seqno) => {
-            const emailData = {
-              attr: '',
-              header: '',
-              text: '',
-              html: ''
-            };
-
-            msg.on('attributes', (attrs) => {
-              // The UID can be accessed as attrs.uid
-              emailData.attr = attrs;
+            // Fetch email bodies and headers
+            const fetch = imap.fetch(results, {
+              bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)', 'TEXT'],
+              struct: true
             });
 
-            msg.on('body', (stream, info) => {
-              let buffer = '';
-              stream.on('data', (chunk) => {
-                buffer += chunk.toString('utf8');
+            fetch.on('message', (msg, seqno) => {
+              const emailData = {
+                attr: '',
+                header: '',
+                text: '',
+                html: ''
+              };
+
+              msg.on('attributes', (attrs) => {
+                // The UID can be accessed as attrs.uid
+                emailData.attr = attrs;
               });
 
-              stream.on('end', () => {
-                if (info.which === 'HEADER.FIELDS (FROM TO SUBJECT DATE)') {
-                  emailData.header = Imap.parseHeader(buffer);
-                } else if (info.which === 'TEXT') {
-                  // emailData.text = buffer;
-                } else if (info.which === 'HTML') {
-                  // emailData.html = buffer;
-                } else {
-                  console.error('Invalid or unsupported section:', info.which);
-                }
+              msg.on('body', (stream, info) => {
+                let buffer = '';
+                stream.on('data', (chunk) => {
+                  buffer += chunk.toString('utf8');
+                });
+
+                stream.on('end', () => {
+                  if (info.which === 'HEADER.FIELDS (FROM TO SUBJECT DATE)') {
+                    emailData.header = Imap.parseHeader(buffer);
+                  } else if (info.which === 'TEXT') {
+                    // emailData.text = buffer;
+                  } else if (info.which === 'HTML') {
+                    // emailData.html = buffer;
+                  } else {
+                    console.error('Invalid or unsupported section:', info.which);
+                  }
+                });
+              });
+
+              msg.on('end', () => {
+                console.log('Email Data:', emailData);
               });
             });
 
-            msg.on('end', () => {
-              console.log('Email Data:', emailData);
+            fetch.once('end', () => {
+              imap.end();
             });
           });
-
-          fetch.once('end', () => {
-            imap.end();
-          });
-        });
+        })
       } catch (error) {
         console.log("Error when request open inbox mail",error)
       }
