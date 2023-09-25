@@ -3,7 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
-import { UsersService } from "src/user/users.service";
+import { UserService } from "src/user/user.service";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { LoginDto } from "./dto/login.dto";
@@ -13,18 +13,18 @@ import { RegisterDto } from "./dto/register.dto";
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
   async register(registerDto: RegisterDto) {
     const createUserDto: CreateUserDto = { ...registerDto };
 
-    return await this.usersService.create(createUserDto);
+    return await this.userService.create(createUserDto);
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.usersService.findByEmail(loginDto.email);
+    const user = await this.userService.findByEmail(loginDto.email);
     if (!user) {
       throw new NotFoundException("User is not registered. Please Register");
     }
