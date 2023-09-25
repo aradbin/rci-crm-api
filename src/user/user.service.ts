@@ -6,7 +6,7 @@ import { UserModel } from "./user.model";
 import * as bcrypt from "bcrypt";
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(@Inject("UserModel") private modelClass: ModelClass<UserModel>) {}
 
   async create(createUserDto: CreateUserDto) {

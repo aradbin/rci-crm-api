@@ -7,9 +7,10 @@ import {
   IsString,
 } from 'class-validator';
 
-import { TaskProgressStatus, TaskStatus } from 'src/database/enums/tasks';
+import { TaskStatus } from 'src/database/enums/tasks';
 
 export class CreateTaskDto {
+  @IsOptional()
   @IsString()
   title: string;
 
@@ -24,10 +25,6 @@ export class CreateTaskDto {
   @IsOptional()
   @IsEnum(Object.values(TaskStatus))
   status: TaskStatus;
-
-  @IsOptional()
-  @IsEnum(Object.values(TaskProgressStatus))
-  progress_status: TaskProgressStatus;
 
   @IsOptional()
   @IsObject()
@@ -49,7 +46,3 @@ export class CreateTaskDto {
   @IsNumber()
   assignee_id: number;
 }
-
-// "due_date": "",
-// "status": "",
-// "progress_status": "",

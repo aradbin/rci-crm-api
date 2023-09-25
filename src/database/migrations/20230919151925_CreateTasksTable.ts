@@ -1,13 +1,13 @@
 import { Knex } from 'knex';
-import { TaskProgressStatus, TaskStatus } from '../enums/tasks';
+import { TaskStatus } from '../enums/tasks';
 
 const tableName = 'tasks';
 
 const CREATE_LOG_TYPE = () => `
 CREATE TYPE activity_log_row AS (
-  status_type int, -- 1 means the status was updated, 2 means the progress status was updated
-  old_status text,
-  new_status text,
+  type text, -- status / assignee_id
+  old_value text,
+  new_value text,
   updated_by text,
   updated_at timestamp
 );
@@ -26,7 +26,7 @@ BEGIN
       COALESCE(OLD.activity_log, '{}'::jsonb),
       ARRAY[jsonb_array_length(COALESCE(NEW.activity_log, '{}'::jsonb))::text],
       to_jsonb(ROW(
-        1,
+        ${column},
         OLD.${column},
         NEW.${column},
         NEW.updated_by,
@@ -82,17 +82,13 @@ export async function up(knex: Knex) {
 
       table
         .enum('status', Object.values(TaskStatus))
-        .defaultTo(TaskStatus.CREATED);
-
-      table
-        .enum('progress_status', Object.values(TaskProgressStatus))
-        .defaultTo(TaskProgressStatus.NONE);
+        .defaultTo(TaskStatus.TODO);
 
       table.jsonb('metadata').nullable();
       table.jsonb('activity_log').defaultTo('[]');
       table.jsonb('attachments').nullable();
-
       table.timestamp('due_date').nullable();
+
       table.timestamp('created_at').nullable();
       table.integer('created_by').nullable();
       table.timestamp('updated_at').nullable();
@@ -109,7 +105,7 @@ export async function up(knex: Knex) {
       (err) => console.log(err),
     )
     .then(
-      () => knex.raw(UPDATE_ACTIVITY_LOG_FUNCTION('progress_status')),
+      () => knex.raw(UPDATE_ACTIVITY_LOG_FUNCTION('assignee_id')),
       (err) => console.log(err),
     )
     .then(
@@ -117,7 +113,7 @@ export async function up(knex: Knex) {
       (err) => console.log(err),
     )
     .then(
-      () => knex.raw(UPDATE_ACTIVITY_LOG_TRIGGER('progress_status')),
+      () => knex.raw(UPDATE_ACTIVITY_LOG_TRIGGER('assignee_id')),
       (err) => console.log(err),
     );
 }
@@ -130,7 +126,7 @@ export async function down(knex: Knex) {
       (err) => console.log(err),
     )
     .then(
-      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_TRIGGER('progress_status')),
+      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_TRIGGER('assignee_id')),
       (err) => console.log(err),
     )
     .then(
@@ -138,7 +134,7 @@ export async function down(knex: Knex) {
       (err) => console.log(err),
     )
     .then(
-      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_FUNCTION('progress_status')),
+      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_FUNCTION('assignee_id')),
       (err) => console.log(err),
     )
     .then(

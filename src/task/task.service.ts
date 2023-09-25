@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { ModelClass } from 'objection';
-import { TaskModel } from './tasks.model';
+import { TaskModel } from './task.model';
 
 @Injectable()
-export class TasksService {
+export class TaskService {
   constructor(@Inject('TaskModel') private modelClass: ModelClass<TaskModel>) {}
 
   async create(createTaskDto: CreateTaskDto) {

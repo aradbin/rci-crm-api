@@ -1,11 +1,13 @@
 import { Knex } from 'knex';
 
-const tableName = 'user_emails';
+const tableName = 'emails';
 
 export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, (table) => {
     table.increments();
+
     table.string('email_id').nullable();
+    
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
     table.timestamp('updated_at').nullable();

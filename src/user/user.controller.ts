@@ -12,19 +12,19 @@ import {
   HttpStatus,
   ParseIntPipe,
 } from "@nestjs/common";
-import { UsersService } from "./users.service";
 import { Response } from "express";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { UserService } from "./user.service";
 
 @Controller("users")
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
-      return await this.usersService.create(createUserDto);
+      return await this.userService.create(createUserDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message);
     }
@@ -32,7 +32,7 @@ export class UsersController {
 
   @Get()
   async findAll(@Query() query: any) {
-    return await this.usersService.findAll(query);
+    return await this.userService.findAll(query);
   }
 
   @Get(":id")
@@ -40,7 +40,7 @@ export class UsersController {
     @Param("id", ParseIntPipe) id: number,
     @Res() response: Response,
   ) {
-    const data = await this.usersService.findOne(id);
+    const data = await this.userService.findOne(id);
 
     if(data){
       return response.status(HttpStatus.OK).send(data)
@@ -56,8 +56,8 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     try {
-      return await this.usersService.update(id, updateUserDto);
-      await this.usersService.update(id, updateUserDto);
+      return await this.userService.update(id, updateUserDto);
+      await this.userService.update(id, updateUserDto);
       return {
         message: "User Updated Successfully",
         data: id,
@@ -70,7 +70,7 @@ export class UsersController {
   @Delete(":id")
   async remove(@Param("id", ParseIntPipe) id: number) {
     try {
-      return await this.usersService.remove(id);
+      return await this.userService.remove(id);
     } catch (error) {
       throw new UnprocessableEntityException(error.message);
     }

@@ -1,6 +1,6 @@
 import { BaseModel } from "src/database/base.model";
 import { SettingsModel } from "src/settings/settings.model";
-import { UserModel } from "src/users/user.model";
+import { UserModel } from "src/user/user.model";
 
 export class UserSettingsModel extends BaseModel {
   static tableName = 'user_settings';

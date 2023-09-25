@@ -1,8 +1,8 @@
 import { Model } from 'objection';
 import { CustomerModel } from 'src/customer/customer.model';
 import { BaseModel } from 'src/database/base.model';
-import { TaskProgressStatus, TaskStatus } from 'src/database/enums/tasks';
-import { UserModel } from 'src/users/user.model';
+import { TaskStatus } from 'src/database/enums/tasks';
+import { UserModel } from 'src/user/user.model';
 
 export class TaskModel extends BaseModel {
   static tableName = 'tasks';
@@ -16,7 +16,6 @@ export class TaskModel extends BaseModel {
   attachments?: any;
 
   status?: TaskStatus;
-  progress_status?: TaskProgressStatus;
 
   customer_id?: number;
   assignee_id?: number;

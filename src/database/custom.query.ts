@@ -21,23 +21,19 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
     delete params.page;
     delete params.pageSize;
 
-    Object.keys(params).forEach((key, index) => {
+    Object.keys(params).forEach((key) => {
       if ((key as string).endsWith('id')) {
         query.where(key, params[key]);
         return;
       }
       if (typeof params[key] === 'string') {
-        index === 0
-          ? query.whereILike(key, `%${params[key]}%`)
-          : query.andWhereILike(key, `%${params[key]}%`);
+        query.whereILike(key, `%${params[key]}%`);
       }
     });
 
     return query;
   }
-  // index === 0
-  // ?
-  // : query.andWhere(key, `%${params[key]}%`);
+  
   softDelete(id: number) {
     const patch = {};
     patch['deleted_at'] = new Date()

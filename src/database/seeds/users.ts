@@ -1,5 +1,5 @@
 import { Knex } from "knex";
-import { UserModel } from "src/users/user.model";
+import { UserModel } from "src/user/user.model";
 
 export async function seed(knex: Knex): Promise<any> {
   // Deletes ALL existing entries

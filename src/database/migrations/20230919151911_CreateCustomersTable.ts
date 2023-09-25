@@ -1,22 +1,25 @@
-import { Knex } from "knex"
+import { Knex } from 'knex';
 
-const tableName = 'settings'
+const tableName = 'customers';
 
 export async function up(knex: Knex) {
-  return knex.schema.createTable(tableName, table => {
+  return await knex.schema.createTable(tableName, (table) => {
     table.increments();
-    table.string('name').nullable();
-    table.string('type').nullable();
-    table.integer('parent_id').nullable();
+
+    table.string('name');
+    table.string('email').nullable();
+    table.string('contact').nullable();
+    table.string('address').nullable();
+    
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
     table.timestamp('updated_at').nullable();
     table.integer('updated_by').nullable();
     table.timestamp('deleted_at').nullable();
     table.integer('deleted_by').nullable();
-  })
+  });
 }
 
 export async function down(knex: Knex) {
-  return knex.schema.dropTable(tableName)
+  return await knex.schema.dropTable(tableName);
 }

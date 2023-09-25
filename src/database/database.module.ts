@@ -1,12 +1,14 @@
 import { Global, Module } from '@nestjs/common';
 import { Model } from 'objection';
 import Knex from 'knex';
-import { UserModel } from '../users/user.model';
+import { UserModel } from '../user/user.model';
 import { SettingsModel } from 'src/settings/settings.model';
 import { UserSettingsModel } from 'src/user-settings/user-settings.model';
-import { UserEmailModel } from 'src/user-emails/user-email.model';
+import { CustomerModel } from 'src/customer/customer.model';
+import { EmailModel } from 'src/email/email.model';
+import { TaskModel } from 'src/task/task.model';
 
-const models = [UserModel, SettingsModel, UserSettingsModel, UserEmailModel];
+const models = [UserModel, CustomerModel, SettingsModel, UserSettingsModel, EmailModel, TaskModel];
 
 const modelProviders = models.map((model) => {
   return {
