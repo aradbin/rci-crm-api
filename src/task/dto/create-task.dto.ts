@@ -23,7 +23,7 @@ export class CreateTaskDto {
   priority: number;
 
   @IsOptional()
-  @IsEnum(Object.values(TaskStatus))
+  @IsEnum(TaskStatus)
   status: TaskStatus;
 
   @IsOptional()

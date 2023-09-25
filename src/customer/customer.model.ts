@@ -6,7 +6,6 @@ export class CustomerModel extends BaseModel {
   name: string;
   email?: string;
   address?: string;
-  country_code?: string;
   contact?: string;
-  verified: boolean;
+  avatar?: string;
 }

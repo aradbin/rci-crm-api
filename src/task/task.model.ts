@@ -7,13 +7,14 @@ import { UserModel } from 'src/user/user.model';
 export class TaskModel extends BaseModel {
   static tableName = 'tasks';
 
-  title: string;
+  title?: string;
   due_date?: Date;
   priority?: number;
   description?: string;
 
   metadata?: any;
   attachments?: any;
+  activity_log?: any;
 
   status?: TaskStatus;
 

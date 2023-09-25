@@ -23,10 +23,10 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF NEW.${column} <> OLD.${column} THEN
     NEW.activity_log = jsonb_set(
-      COALESCE(OLD.activity_log, '{}'::jsonb),
-      ARRAY[jsonb_array_length(COALESCE(NEW.activity_log, '{}'::jsonb))::text],
+      COALESCE(OLD.activity_log, '[]'::jsonb),
+      ARRAY[jsonb_array_length(COALESCE(NEW.activity_log, '[]'::jsonb))::text],
       to_jsonb(ROW(
-        ${column},
+        '${column}'::text,
         OLD.${column},
         NEW.${column},
         NEW.updated_by,
@@ -81,7 +81,11 @@ export async function up(knex: Knex) {
       table.smallint('priority').nullable();
 
       table
-        .enum('status', Object.values(TaskStatus))
+        .enum('status', [
+          TaskStatus.TODO,
+          TaskStatus.INPROGRESS,
+          TaskStatus.DONE,
+        ])
         .defaultTo(TaskStatus.TODO);
 
       table.jsonb('metadata').nullable();
