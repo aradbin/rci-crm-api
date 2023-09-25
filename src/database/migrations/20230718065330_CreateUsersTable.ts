@@ -11,6 +11,7 @@ export async function up(knex: Knex) {
     table.string("username").nullable();
     table.string("password").nullable();
     table.string("contact").nullable();
+    table.string("avatar").nullable();
     table.boolean("verified").defaultTo(false);
     table.boolean("status").defaultTo(true);
     

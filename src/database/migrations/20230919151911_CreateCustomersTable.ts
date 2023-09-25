@@ -10,6 +10,7 @@ export async function up(knex: Knex) {
     table.string('email').nullable();
     table.string('contact').nullable();
     table.string('address').nullable();
+    table.string("avatar").nullable();
     
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
