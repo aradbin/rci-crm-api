@@ -13,7 +13,7 @@ export class TaskService {
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().find().paginate(params).filter(params);
+    return await this.modelClass.query().find().paginate(params).filter(params).withGraphFetched('customer').withGraphFetched('assignee');
   }
 
   async findOne(id: number) {
