@@ -49,6 +49,9 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   }
 
   paginate(params: any) {
+    if(params?.pageSize==='all'){
+      return this
+    }
     if (params?.page && params?.pageSize) {
       return this.page(params.page - 1, params.pageSize);
     }
