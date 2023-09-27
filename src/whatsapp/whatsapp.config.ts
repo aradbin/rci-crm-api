@@ -50,11 +50,11 @@ interface WhatsappConfig {
 export const WhatsappConfig: WhatsappConfig = {
   ProductName: 'whatsapp',
   BaseUrl: 'https://graph.facebook.com/v17.0',
-  PhoneNumberID: '136917759493885',
+  PhoneNumberID: '131343013387719',
   WebhookVerifyKey: 'Happy',
   WebhookMode: 'subscribe',
   AccessToken:
-    'EAAVMh66ruJQBO2gO7fXtcrGbML0uaUEBIy16ZC3NkrA7ECpYbmgYDPZCoDVA9cIZCJ8kLO32Sjx60wRLbnY7mzCLZB2KpGzpuLQ5ueAoKwaPMB3PZB8QHhIhVqGDdKga3Fzh4UrleZCDgZCh6GAbiBm3XZAeFPDEIW9g7CAEJV8R2ChY890ZAlJmDrivrW9laggahoOnLLvnmYNHcTNZCRscQZD',
+    'EAAyZALRyQHK8BOZBQK6obKPy6f85KgVtWTZAprdSmnYBIYpmyKuw8I0uQL2abRcWiab2jXjjZAcPXABVLAVuLKdMnxky0lyygjL0m0fqi4d4Tfx7iArahLbeTOoM0GIvhLLeJf4n6SQgCmOFmpCDTCUza2MjDfDAmboj2mIjzZANk162ZAkSCTngHrVTD2ZBZAK57fSUitTkapCmenWzbDFSFs8yz3OF23JIlwZDZD',
 };
 
 export const WhatsAppClient = axios.create({
