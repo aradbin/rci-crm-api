@@ -13,11 +13,11 @@ export class TaskService {
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().find().paginate(params).filter(params).withGraphFetched('customer').withGraphFetched('assignee');
+    return await this.modelClass.query().filter(params).sort(params).paginate(params).withGraphFetched('customer').withGraphFetched('assignee').find();
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().find().findById(id);
+    return await this.modelClass.query().findById(id).find();
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {

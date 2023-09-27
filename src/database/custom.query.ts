@@ -15,11 +15,27 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
     return this.where('deleted_at', null).orderBy('id', 'desc');
   }
 
+  softDelete(id: number) {
+    const patch = {};
+    patch['deleted_at'] = new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
+    const request = (global as any).requestContext;
+    if (request?.user?.id) {
+      patch['deleted_by'] = request.user.id;
+    }
+
+    return this.findById(id).patch(patch);
+  }
+
   filter(params: any) {
     const query = this;
 
     delete params.page;
     delete params.pageSize;
+    delete params.sortBy;
+    delete params.orderBy;
 
     Object.keys(params).forEach((key) => {
       if ((key as string).endsWith('id')) {
@@ -33,19 +49,14 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
 
     return query;
   }
-  
-  softDelete(id: number) {
-    const patch = {};
-    patch['deleted_at'] = new Date()
-      .toISOString()
-      .slice(0, 19)
-      .replace('T', ' ');
-    const request = (global as any).requestContext;
-    if (request?.user?.id) {
-      patch['deleted_by'] = request.user.id;
-    }
 
-    return this.findById(id).patch(patch);
+  sort(params: any) {
+    const query = this;
+
+    if(params?.sortBy){
+      query.orderBy(params?.sortBy, params?.orderBy || 'asc');
+    }
+    return query;
   }
 
   paginate(params: any) {
