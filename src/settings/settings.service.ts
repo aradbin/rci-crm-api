@@ -15,11 +15,11 @@ export class SettingsService {
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().find().paginate(params).filter(params).withGraphFetched('parent').withGraphFetched('children')
+    return await this.modelClass.query().paginate(params).filter(params).withGraphFetched('parent').withGraphFetched('children').find()
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().find().findById(id).withGraphFetched('parent').withGraphFetched('children')
+    return await this.modelClass.query().findById(id).withGraphFetched('parent').withGraphFetched('children').find()
   }
 
   async update(id: number, updateSettingDto: UpdateSettingDto) {

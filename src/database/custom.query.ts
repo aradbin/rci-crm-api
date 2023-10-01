@@ -31,19 +31,20 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
 
   filter(params: any) {
     const query = this;
+    const filterParams = {...params}
 
-    delete params.page;
-    delete params.pageSize;
-    delete params.sortBy;
-    delete params.orderBy;
+    delete filterParams.page;
+    delete filterParams.pageSize;
+    delete filterParams.sortBy;
+    delete filterParams.orderBy;
 
-    Object.keys(params).forEach((key) => {
+    Object.keys(filterParams).forEach((key) => {
       if ((key as string).endsWith('id')) {
-        query.where(key, params[key]);
+        query.where(key, filterParams[key]);
         return;
       }
-      if (typeof params[key] === 'string') {
-        query.whereILike(key, `%${params[key]}%`);
+      if (typeof filterParams[key] === 'string') {
+        query.whereILike(key, `%${filterParams[key]}%`);
       }
     });
 

@@ -22,24 +22,19 @@ export class UserService {
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().find().paginate(params).filter(params).withGraphFetched('userSettings.settings')
+    return await this.modelClass.query().paginate(params).filter(params).withGraphFetched('userSettings.settings').find()
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().find().findById(id);
+    return await this.modelClass.query().findById(id).find();
   }
 
   async findByEmail(email: string) {
-    return await this.modelClass.query().find().where("email", email).first();
+    return await this.modelClass.query().where("email", email).find().first();
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const hasUser = await this.modelClass
-      .query()
-      .find()
-      .where("id", "!=", id)
-      .where("email", updateUserDto.email)
-      .first();
+    const hasUser = await this.modelClass.query().where("id", "!=", id).where("email", updateUserDto.email).find().first();
     if (hasUser) {
       throw new NotAcceptableException("Email already exists");
     }

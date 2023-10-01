@@ -11,11 +11,7 @@ export class CustomerService {
   ) {}
 
   async create(createCustomerDto: CreateCustomerDto) {
-    const customer = await this.modelClass
-      .query()
-      .find()
-      .where('email', createCustomerDto.email)
-      .first();
+    const customer = await this.modelClass.query().where('email', createCustomerDto.email).find().first();
     if (customer) {
       throw new NotAcceptableException('Email already exists');
     }
@@ -23,20 +19,15 @@ export class CustomerService {
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().find().paginate(params).filter(params);
+    return await this.modelClass.query().paginate(params).filter(params).find();
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().find().findById(id);
+    return await this.modelClass.query().findById(id).find();
   }
 
   async update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    const customer = await this.modelClass
-      .query()
-      .find()
-      .where('id', '!=', id)
-      .where('email', updateCustomerDto.email)
-      .first();
+    const customer = await this.modelClass.query().where('id', '!=', id).where('email', updateCustomerDto.email).find().first();
     if (customer) {
       throw new NotAcceptableException('Email already exists');
     }

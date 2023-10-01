@@ -15,11 +15,11 @@ export class UserSettingsService {
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().find().paginate(params).filter(params)
+    return await this.modelClass.query().paginate(params).filter(params).find()
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().find().findById(id)
+    return await this.modelClass.query().findById(id).find()
   }
 
   async update(id: number, updateUserSettingsDto: UpdateUserSettingsDto) {
