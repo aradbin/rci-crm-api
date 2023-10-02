@@ -10,7 +10,7 @@ export class UserService {
   constructor(@Inject("UserModel") private modelClass: ModelClass<UserModel>) {}
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.findByEmail(createUserDto.email);
+    const user = await this.modelClass.query().where("email", createUserDto.email).first();
     if (user) {
       throw new NotAcceptableException("Email already exists");
     }
@@ -26,15 +26,15 @@ export class UserService {
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().findById(id).find();
+    return await this.modelClass.query().findById(id).withGraphFetched('userSettings.settings').first().find();
   }
 
   async findByEmail(email: string) {
-    return await this.modelClass.query().where("email", email).find().first();
+    return await this.modelClass.query().where("email", email).withGraphFetched('userSettings.settings').withGraphFetched('emailSettings').first().find();
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const hasUser = await this.modelClass.query().where("id", "!=", id).where("email", updateUserDto.email).find().first();
+    const hasUser = await this.modelClass.query().where("id", "!=", id).where("email", updateUserDto.email).first().find();
     if (hasUser) {
       throw new NotAcceptableException("Email already exists");
     }

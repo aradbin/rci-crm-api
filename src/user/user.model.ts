@@ -1,4 +1,5 @@
 import { BaseModel } from "src/database/base.model";
+import { EmailSettingsModel } from "src/email-settings/email-settings.model";
 import { UserSettingsModel } from "src/user-settings/user-settings.model";
 
 export class UserModel extends BaseModel {
@@ -16,6 +17,15 @@ export class UserModel extends BaseModel {
       join: {
         from: 'users.id',
         to: 'user_settings.user_id'
+      }
+    },
+
+    emailSettings: {
+      relation: this.HasOneRelation,
+      modelClass: EmailSettingsModel,
+      join: {
+        from: 'users.id',
+        to: 'email_configs.user_id'
       }
     }
   };

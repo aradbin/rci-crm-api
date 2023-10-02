@@ -7,8 +7,9 @@ import { UserSettingsModel } from 'src/user-settings/user-settings.model';
 import { CustomerModel } from 'src/customer/customer.model';
 import { EmailModel } from 'src/email/email.model';
 import { TaskModel } from 'src/task/task.model';
+import { EmailSettingsModel } from 'src/email-settings/email-settings.model';
 
-const models = [UserModel, CustomerModel, SettingsModel, UserSettingsModel, EmailModel, TaskModel];
+const models = [UserModel, SettingsModel, UserSettingsModel, EmailSettingsModel, EmailModel, CustomerModel, TaskModel];
 
 const modelProviders = models.map((model) => {
   return {

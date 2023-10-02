@@ -1,6 +1,6 @@
 import { Knex } from "knex"
 
-const tableName = 'email_configs'
+const tableName = 'email_settings'
 
 export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, table => {
@@ -9,6 +9,7 @@ export async function up(knex: Knex) {
     table.string('host').nullable();
     table.string('username').nullable();
     table.string('password').nullable();
+    table.integer('user_id').nullable();
     
     table.timestamp('created_at').nullable()
     table.integer('created_by').nullable()
