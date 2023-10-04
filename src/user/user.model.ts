@@ -25,7 +25,7 @@ export class UserModel extends BaseModel {
       modelClass: EmailSettingsModel,
       join: {
         from: 'users.id',
-        to: 'email_configs.user_id'
+        to: 'email_settings.user_id'
       }
     }
   };
