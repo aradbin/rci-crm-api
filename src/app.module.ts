@@ -25,11 +25,11 @@ import { EmailSettingsModule } from './email-settings/email-settings.module';
     CustomerModule,
     EmailSettingsModule,
   ],
-  // providers: [
-  //   {
-  //     provide: APP_GUARD,
-  //     useClass: JwtAuthGuard,
-  //   },
-  // ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
