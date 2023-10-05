@@ -1,9 +1,18 @@
 import { Module } from '@nestjs/common';
-import { WhatsappService } from './whatsapp.service';
-import { WhatsappController } from './whatsapp.controller';
+import { WhatsappMessageService } from './whatsapp.message.service';
+import { WhatsappSettingService, WhatsappUserService } from './whatsapp.service';
+import { WhatsappMessageModel, WhatsappSettingModel, WhatsappUserModel } from './whatsapp.models';
+import { WhatsAppSettingController, WhatsappController, WhatsappUserController } from './whatsapp.controller';
 
 @Module({
-  controllers: [WhatsappController],
-  providers: [WhatsappService],
+  controllers: [WhatsAppSettingController, WhatsappUserController, WhatsappController],
+  providers: [
+    WhatsappMessageService,
+    WhatsappUserService,
+    WhatsappSettingService,
+    { provide: 'WhatsappUserModel', useValue: WhatsappUserModel },
+    { provide: 'WhatsappMessageModel', useValue: WhatsappMessageModel },
+    { provide: 'WhatsappSettingModel', useValue: WhatsappSettingModel },
+  ],
 })
 export class WhatsappModule {}
