@@ -1,10 +1,10 @@
+import { CustomerModel } from 'src/customer/customer.model';
 import { BaseModel } from 'src/database/base.model';
 import { UserModel } from 'src/user/user.model';
 
 export class WhatsappSetting extends BaseModel {
   static tableName = 'whatsapp_settings';
 
-  id: number;
   name: string;
   phone_number: string;
   phone_number_id: string;
@@ -41,6 +41,45 @@ export class WhatsappUser extends BaseModel {
       join: {
         from: 'whatsapp_users.settings_id',
         to: 'whatsapp_settings.id',
+      },
+    },
+  };
+}
+
+export class WhatsappMessage extends BaseModel {
+  static tableName = 'whatsapp_messages';
+
+  sender_id: number;
+  receiver_id: number;
+  message_id: string;
+  context_message_id: string;
+
+  message_body: string;
+
+  message_type: string;
+  is_sent: boolean;
+  is_read: boolean;
+
+  payload: any;
+  response: any;
+  attachments: any;
+
+  static relationMappings = {
+    sender: {
+      relation: this.BelongsToOneRelation,
+      modelClass: UserModel,
+      join: {
+        from: 'whatsapp_messages.sender_id',
+        to: 'users.id',
+      },
+    },
+
+    receiver: {
+      relation: this.BelongsToOneRelation,
+      modelClass: CustomerModel,
+      join: {
+        from: 'whatsapp_messages.receiver_id',
+        to: 'customers.id',
       },
     },
   };
