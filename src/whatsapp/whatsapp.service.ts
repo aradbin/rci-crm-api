@@ -1,14 +1,21 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ModelClass } from 'objection';
-import { CreateWhatsappSettingDto, CreateWhatsappUserDto, UpdateWhatsappSettingDto, UpdateWhatsappUserDto } from './dto/whatsapp.dto';
-import { WhatsappSettingModel, WhatsappUserModel } from './whatsapp.models';
+import {
+  CreateWhatsappBusinessNumberDto,
+  CreateWhatsappConversationDto,
+  CreateWhatsappUserDto,
+  UpdateWhatsappBusinessNumberDto,
+  UpdateWhatsappConversationDto,
+  UpdateWhatsappUserDto,
+} from './dto/whatsapp.dto';
+import { WhatsappBusinessNumberModel, WhatsappConversationModel, WhatsappUserModel } from './whatsapp.models';
 
 @Injectable()
-export class WhatsappSettingService {
-  constructor(@Inject('WhatsappSettingModel') private modelClass: ModelClass<WhatsappSettingModel>) {}
+export class WhatsappBusinessNumberService {
+  constructor(@Inject('WhatsappBusinessNumberModel') private modelClass: ModelClass<WhatsappBusinessNumberModel>) {}
 
-  async create(createWhatsappSettingsDto: CreateWhatsappSettingDto) {
-    return await this.modelClass.query().insert(createWhatsappSettingsDto);
+  async create(createWhatsappBusinessNumberDto: CreateWhatsappBusinessNumberDto) {
+    return await this.modelClass.query().insert(createWhatsappBusinessNumberDto);
   }
 
   async findAll(params: any = {}) {
@@ -16,27 +23,27 @@ export class WhatsappSettingService {
   }
 
   async findOne(id: number) {
-    var setting = await this.modelClass.query().findById(id).find();
-    if (setting) {
-      return setting;
+    var whatsappBusinessNumber = await this.modelClass.query().findById(id).find();
+    if (whatsappBusinessNumber) {
+      return whatsappBusinessNumber;
     }
-    throw new NotFoundException('Setting not found');
+    throw new NotFoundException('Whatsapp Business Number not found');
   }
 
-  async update(id: number, updateWhatsappSettingsDto: UpdateWhatsappSettingDto) {
-    var updateCount = await this.modelClass.query().findById(id).update(updateWhatsappSettingsDto);
+  async update(id: number, updateWhatsappBusinessNumbersDto: UpdateWhatsappBusinessNumberDto) {
+    var updateCount = await this.modelClass.query().findById(id).update(updateWhatsappBusinessNumbersDto);
     if (updateCount > 0) {
       return await this.modelClass.query().findById(id).find();
     }
-    throw new NotFoundException('Setting not found');
+    throw new NotFoundException('Whatsapp Business Number not found');
   }
 
   async remove(id: number) {
     var deleteCount = await this.modelClass.query().softDelete(id);
     if (deleteCount > 0) {
-      return { message: 'Setting deleted successfully' };
+      return { message: 'WhatsappBusinessNumber deleted successfully' };
     }
-    throw new NotFoundException('Setting not found');
+    throw new NotFoundException('Whatsapp Business Number not found');
   }
 }
 
@@ -55,13 +62,12 @@ export class WhatsappUserService {
       .sort(params)
       .paginate(params)
       .withGraphFetched('user')
-      .withGraphFetched('whatsapp_setting')
+      .withGraphFetched('whatsapp_business_number')
       .find();
   }
 
-  
   async findOne(id: number) {
-    var user = await this.modelClass.query().findById(id).withGraphFetched('user').withGraphFetched('whatsapp_setting').find();
+    var user = await this.modelClass.query().findById(id).withGraphFetched('user').withGraphFetched('whatsapp_business_number').find();
     if (user) {
       return user;
     }
@@ -82,5 +88,49 @@ export class WhatsappUserService {
       return { message: 'Whatsapp User deleted successfully' };
     }
     throw new NotFoundException('Whatsapp User not found');
+  }
+}
+
+@Injectable()
+export class WhatsappConversationService {
+  constructor(@Inject('WhatsappConversationModel') private modelClass: ModelClass<WhatsappConversationModel>) {}
+
+  async create(createWhatsappConvDto: CreateWhatsappConversationDto) {
+    return await this.modelClass.query().insert(createWhatsappConvDto);
+  }
+
+  async findAll(params: any = {}) {
+    return await this.modelClass
+      .query()
+      .filter(params)
+      .sort(params)
+      .paginate(params)
+      .withGraphFetched('customer')
+      .withGraphFetched('whatsapp_business_number')
+      .find();
+  }
+
+  async findOne(id: number) {
+    var user = await this.modelClass.query().findById(id).withGraphFetched('customer').withGraphFetched('whatsapp_business_number').find();
+    if (user) {
+      return user;
+    }
+    throw new NotFoundException('Whatsapp Conversation not found');
+  }
+
+  async update(id: number, updateWhatsappConvDto: UpdateWhatsappConversationDto) {
+    var updateCount = await this.modelClass.query().findById(id).update(updateWhatsappConvDto);
+    if (updateCount > 0) {
+      return await this.modelClass.query().findById(id).find();
+    }
+    throw new NotFoundException('Whatsapp Conversation not found');
+  }
+
+  async remove(id: number) {
+    var deleteCount = await this.modelClass.query().softDelete(id);
+    if (deleteCount > 0) {
+      return { message: 'Whatsapp Conversation deleted successfully' };
+    }
+    throw new NotFoundException('Whatsapp Conversation not found');
   }
 }

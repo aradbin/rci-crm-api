@@ -6,16 +6,14 @@ export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, (table) => {
     table.increments();
 
-    table.integer('sender_id').nullable();
-    table.integer('receiver_id').nullable();
+    table.integer('user_id').nullable();
+    table.integer('conversation_id').nullable();
+
     table.string('message_id').nullable();
-    table.string('context_message_id').nullable();
-
     table.string('message_body').nullable();
-
     table.string('message_type').nullable(); // text, template, image, video, document, audio, location, contact, sticker, etc
-    table.boolean('is_sent').defaultTo(false);
-    table.boolean('is_read').defaultTo(false);
+    table.string('message_status').nullable(); // sent, delivered, read, etc
+    table.string('context_message_id').nullable();
 
     table.jsonb('payload').nullable();
     table.jsonb('response').nullable();

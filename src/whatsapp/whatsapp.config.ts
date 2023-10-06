@@ -41,8 +41,6 @@ export interface Message {
 interface WhatsappConfig {
   BaseUrl: string;
   ProductName: string;
-  AccessToken: string;
-  PhoneNumberID: string;
   WebhookMode: string;
   WebhookVerifyKey: string;
 }
@@ -50,19 +48,12 @@ interface WhatsappConfig {
 export const WhatsappConfig: WhatsappConfig = {
   ProductName: 'whatsapp',
   BaseUrl: 'https://graph.facebook.com/v17.0',
-  PhoneNumberID: '136917759493885',
   WebhookVerifyKey: 'Happy',
   WebhookMode: 'subscribe',
-  AccessToken:
-    'EAAVMh66ruJQBOxEsldGkLxiM1T4UHoZCBlGhTecQaeRsgZAIzMjOM2iNtpR1QVMqRaEuhLzkuVDT8egZANyRuJqETDNUwX7ZAvKDPvlZCfHVJSraTxqBzedBkbmxw29fRJC0P33LOmXFQV0BRc4uQZB71E789E5CXYsNDiws1RRV2ecKt3NmUZBgFgruU8BTSXb5o78R7usyj2B3AKv',
 };
 
 export const WhatsAppClient = axios.create({
   baseURL: WhatsappConfig.BaseUrl,
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${WhatsappConfig.AccessToken}`,
-  },
   maxBodyLength: Infinity,
   maxContentLength: Infinity,
 });

@@ -2,31 +2,21 @@ import { CustomerModel } from 'src/customer/customer.model';
 import { BaseModel } from 'src/database/base.model';
 import { UserModel } from 'src/user/user.model';
 
-export class WhatsappSettingModel extends BaseModel {
-  static tableName = 'whatsapp_settings';
+export class WhatsappBusinessNumberModel extends BaseModel {
+  static tableName = 'whatsapp_business_numbers';
 
   name: string;
   phone_number: string;
   phone_number_id: string;
   access_token: string;
-
-  // static relationMappings = {
-  //   users: {
-  //     relation: this.HasManyRelation,
-  //     modelClass: UserModel,
-  //     join: {
-  //       from: 'users.id',
-  //       to: 'whatsapp_users.user_id',
-  //     },
-  //   },
-  // };
+  whatsapp_business_account_id: string;
 }
 
 export class WhatsappUserModel extends BaseModel {
   static tableName = 'whatsapp_users';
 
   user_id: number;
-  whatsapp_setting_id: number;
+  whatsapp_business_number_id: number;
 
   static relationMappings = {
     user: {
@@ -38,12 +28,39 @@ export class WhatsappUserModel extends BaseModel {
       },
     },
 
-    whatsapp_setting: {
+    whatsapp_business_number: {
       relation: this.BelongsToOneRelation,
-      modelClass: WhatsappSettingModel,
+      modelClass: WhatsappBusinessNumberModel,
       join: {
-        from: 'whatsapp_users.whatsapp_setting_id',
-        to: 'whatsapp_settings.id',
+        from: 'whatsapp_users.whatsapp_business_number_id',
+        to: 'whatsapp_business_numbers.id',
+      },
+    },
+  };
+}
+
+export class WhatsappConversationModel extends BaseModel {
+  static tableName = 'whatsapp_conversations';
+
+  customer_id: number;
+  whatsapp_business_number_id: number;
+
+  static relationMappings = {
+    customer: {
+      relation: this.BelongsToOneRelation,
+      modelClass: CustomerModel,
+      join: {
+        from: 'whatsapp_conversations.customer_id',
+        to: 'customers.id',
+      },
+    },
+
+    whatsapp_business_number: {
+      relation: this.BelongsToOneRelation,
+      modelClass: WhatsappBusinessNumberModel,
+      join: {
+        from: 'whatsapp_conversations.whatsapp_business_number_id',
+        to: 'whatsapp_business_numbers.id',
       },
     },
   };
