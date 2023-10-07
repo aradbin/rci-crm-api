@@ -3,10 +3,10 @@ import { PartialType } from '@nestjs/mapped-types';
 
 export class SendTextMessageDto {
   @IsNumber()
-  customer_id: number;
+  user_id: number;
 
   @IsNumber()
-  whatsapp_user_id: number;
+  conversation_id: number;
 
   @IsString()
   customer_number: string;

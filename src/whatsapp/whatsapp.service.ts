@@ -51,7 +51,11 @@ export class WhatsappBusinessNumberService {
 export class WhatsappUserService {
   constructor(@Inject('WhatsappUserModel') private modelClass: ModelClass<WhatsappUserModel>) {}
 
-  async create(createWhatsappUserDto: CreateWhatsappUserDto) {
+  async getOrCreate(createWhatsappUserDto: CreateWhatsappUserDto) {
+    var user = await this.modelClass.query().findOne(createWhatsappUserDto).find();
+    if (user) {
+      return user;
+    }
     return await this.modelClass.query().insert(createWhatsappUserDto);
   }
 
@@ -95,7 +99,11 @@ export class WhatsappUserService {
 export class WhatsappConversationService {
   constructor(@Inject('WhatsappConversationModel') private modelClass: ModelClass<WhatsappConversationModel>) {}
 
-  async create(createWhatsappConvDto: CreateWhatsappConversationDto) {
+  async getOrCreate(createWhatsappConvDto: CreateWhatsappConversationDto) {
+    var conversation = await this.modelClass.query().findOne(createWhatsappConvDto).find();
+    if (conversation) {
+      return conversation;
+    }
     return await this.modelClass.query().insert(createWhatsappConvDto);
   }
 

@@ -12,6 +12,7 @@ import {
   UpdateWhatsappConversationDto,
   UpdateWhatsappUserDto,
 } from './dto/whatsapp.dto';
+import { WebhookPayload } from './dto/whatsapp.webhook.dto';
 
 @Controller('whatsapp')
 export class WhatsappController {
@@ -24,9 +25,9 @@ export class WhatsappController {
   }
 
   @Post('webhook')
-  webhookPost(@Req() req: Request, @Res() res: Response) {
-    console.log('Received this message from webhook:' + JSON.stringify(req.body, null, 3));
-    res.status(200).json({ message: 'Thank you for the message' });
+  async webhookPost(@Body() payload: WebhookPayload) {
+    console.log('Received this message from webhook:' + JSON.stringify(payload, null, 3));
+    return await this.whatsappMessageService.processWebhookEvent(payload);
   }
 
   @Get('webhook')
@@ -80,7 +81,7 @@ export class WhatsappUserController {
 
   @Post()
   create(@Body() createWhatsappUserDto: CreateWhatsappUserDto) {
-    return this.whatsappUserService.create(createWhatsappUserDto);
+    return this.whatsappUserService.getOrCreate(createWhatsappUserDto);
   }
 
   @Get()
@@ -109,8 +110,8 @@ export class WhatsappConversationController {
   constructor(private readonly whatsappConvService: WhatsappConversationService) {}
 
   @Post()
-  create(@Body() createWhatsappConversationDto: CreateWhatsappConversationDto) {
-    return this.whatsappConvService.create(createWhatsappConversationDto);
+  getOrCreate(@Body() createWhatsappConversationDto: CreateWhatsappConversationDto) {
+    return this.whatsappConvService.getOrCreate(createWhatsappConversationDto);
   }
 
   @Get()

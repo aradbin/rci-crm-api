@@ -69,36 +69,43 @@ export class WhatsappConversationModel extends BaseModel {
 export class WhatsappMessageModel extends BaseModel {
   static tableName = 'whatsapp_messages';
 
-  sender_id: number;
-  receiver_id: number;
+  user_id: number;
+  conversation_id: number;
+
   message_id: string;
-  context_message_id: string;
-
   message_body: string;
-
   message_type: string;
-  is_sent: boolean;
-  is_read: boolean;
+  message_status: string;
+  context_message_id: string;
 
   payload: any;
   response: any;
   attachments: any;
 
   static relationMappings = {
-    sender: {
+    user: {
       relation: this.BelongsToOneRelation,
       modelClass: UserModel,
       join: {
-        from: 'whatsapp_messages.sender_id',
+        from: 'whatsapp_messages.user_id',
         to: 'users.id',
       },
     },
 
-    receiver: {
+    conversation: {
+      relation: this.BelongsToOneRelation,
+      modelClass: WhatsappConversationModel,
+      join: {
+        from: 'whatsapp_messages.conversation_id',
+        to: 'whatsapp_conversations.id',
+      },
+    },
+
+    customer: {
       relation: this.BelongsToOneRelation,
       modelClass: CustomerModel,
       join: {
-        from: 'whatsapp_messages.receiver_id',
+        from: 'whatsapp_messages.conversation.customer_id',
         to: 'customers.id',
       },
     },
