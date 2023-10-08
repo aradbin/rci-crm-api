@@ -1,9 +1,6 @@
 import { Model, Page, QueryBuilder } from 'objection';
 
-export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
-  M,
-  R
-> {
+export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<M, R> {
   // These are necessary for typescript
   ArrayQueryBuilderType!: CustomQueryBuilder<M, M[]>;
   SingleQueryBuilderType!: CustomQueryBuilder<M, M>;
@@ -17,10 +14,7 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
 
   softDelete(id: number) {
     const patch = {};
-    patch['deleted_at'] = new Date()
-      .toISOString()
-      .slice(0, 19)
-      .replace('T', ' ');
+    patch['deleted_at'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const request = (global as any).requestContext;
     if (request?.user?.id) {
       patch['deleted_by'] = request.user.id;
@@ -31,7 +25,7 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
 
   filter(params: any) {
     const query = this;
-    const filterParams = {...params}
+    const filterParams = { ...params };
 
     delete filterParams.page;
     delete filterParams.pageSize;
@@ -54,15 +48,15 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   sort(params: any) {
     const query = this;
 
-    if(params?.sortBy){
+    if (params?.sortBy) {
       query.orderBy(params?.sortBy, params?.orderBy || 'asc');
     }
     return query;
   }
 
   paginate(params: any) {
-    if(params?.pageSize==='all'){
-      return this
+    if (params?.pageSize === 'all') {
+      return this;
     }
     if (params?.page && params?.pageSize) {
       return this.page(params.page - 1, params.pageSize);

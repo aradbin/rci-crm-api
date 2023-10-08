@@ -64,3 +64,9 @@ CREATE TRIGGER update_activity_log_on_progress_status_trigger
 AFTER UPDATE OF progress_status ON tasks
 FOR EACH ROW
 EXECUTE FUNCTION update_activity_log_on_progress_status();
+
+# Work Schedule
+1. 4-10-23 -> 2 hrs
+2. 5-10-23 -> 2 hrs
+3. 6-10-23 -> 3 hrs
+4. 7-10-23 -> 1.5 hrs
