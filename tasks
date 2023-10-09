@@ -1,5 +1,0 @@
-1. Customer: Add optional contact on db
-2. WhatsApp: Add whatsapp_settings table with number and user_id
-3. WhatsApp: Add whatsapp_messages table to store sent and recieved messages
-4. Task: Add time_log (json) column in tasks table [{ type: string, status: string, timestamp: timestamp }]. No need to create other endpoint. we'll use task update service
-5.
