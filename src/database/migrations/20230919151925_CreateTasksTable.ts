@@ -60,34 +60,16 @@ export async function up(knex: Knex) {
     .createTable(tableName, (table) => {
       table.increments();
 
-      table
-        .integer('customer_id')
-        .unsigned()
-        .references('id')
-        .inTable('customers')
-        .onDelete('SET NULL')
-        .index();
-
-      table
-        .integer('assignee_id')
-        .unsigned()
-        .references('id')
-        .inTable('users')
-        .onDelete('SET NULL')
-        .index();
+      table.integer('customer_id').unsigned().references('id').inTable('customers').onDelete('SET NULL').index();
+      table.integer('assignee_id').unsigned().references('id').inTable('users').onDelete('SET NULL').index();
 
       table.string('title').nullable();
       table.string('description').nullable();
       table.smallint('priority').nullable();
 
-      table
-        .enum('status', [
-          TaskStatus.TODO,
-          TaskStatus.INPROGRESS,
-          TaskStatus.DONE,
-        ])
-        .defaultTo(TaskStatus.TODO);
+      table.enum('status', [TaskStatus.TODO, TaskStatus.INPROGRESS, TaskStatus.DONE]).defaultTo(TaskStatus.TODO);
 
+      table.jsonb('time_log').defaultTo('[]');
       table.jsonb('metadata').nullable();
       table.jsonb('activity_log').defaultTo('[]');
       table.jsonb('attachments').nullable();

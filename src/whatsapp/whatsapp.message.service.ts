@@ -3,33 +3,36 @@ import { Inject, Injectable, InternalServerErrorException, NotFoundException } f
 
 import { SendTextMessageDto } from './dto/whatsapp.dto';
 import { WhatsAppClient, WhatsappConfig } from './whatsapp.config';
-import { WhatsappMessageModel, WhatsappBusinessNumberModel, WhatsappUserModel, WhatsappConversationModel } from './whatsapp.models';
-import { Message, Metadata, Status, WebhookPayload } from './dto/whatsapp.webhook.dto';
-import { CustomerModel } from 'src/customer/customer.model';
+import { WhatsappMessageModel, WhatsappBusinessNumberModel } from './whatsapp.models';
+import { Message, Metadata, SendMessagePayload, Status, WebhookPayload } from './dto/whatsapp.webhook.dto';
 
 @Injectable()
 export class WhatsappMessageService {
   constructor(
-    @Inject('WhatsappUserModel') private userModelClass: ModelClass<WhatsappUserModel>,
-    @Inject('CustomerModel') private customerModelClass: ModelClass<CustomerModel>,
     @Inject('WhatsappMessageModel') private messageModelClass: ModelClass<WhatsappMessageModel>,
-    @Inject('WhatsappConversationModel') private conversationModelClass: ModelClass<WhatsappConversationModel>,
     @Inject('WhatsappBusinessNumberModel') private WbnModelClass: ModelClass<WhatsappBusinessNumberModel>,
   ) {}
 
-  async sendMessage(sendMessageDto: SendTextMessageDto) {
-    const conversation = (await this.conversationModelClass
+  async findAll(params: any = {}) {
+    var numbers = [params.number_one, params.number_two];
+    delete params.number_one;
+    delete params.number_two;
+    return await this.messageModelClass
       .query()
-      .findById(sendMessageDto.conversation_id)
-      .withGraphFetched('customer')
-      .withGraphFetched('whatsapp_business_number')
-      .find()) as any;
+      .whereIn('sender_number', numbers)
+      .whereIn('recipient_number', numbers)
+      .sort(params)
+      .paginate(params)
+      .find();
+  }
 
-    if (!conversation) {
-      throw new NotFoundException(`Conversation with id ${sendMessageDto.conversation_id} not found`);
+  async sendMessage(sendMessageDto: SendTextMessageDto) {
+    const wbn = await this.WbnModelClass.query().where({ phone_number: sendMessageDto.sender_number }).find().first();
+
+    if (!wbn) {
+      throw new NotFoundException(`Business number with ${sendMessageDto.sender_number} not found`);
     }
 
-    const wbn = conversation.whatsapp_business_number as WhatsappBusinessNumberModel;
     const url = `/${wbn.phone_number_id}/messages`;
     const headers = {
       'Content-Type': 'application/json',
@@ -43,11 +46,11 @@ export class WhatsappMessageService {
         .query()
         .insert({
           payload: payload,
-          user_id: sendMessageDto.user_id,
           response: JSON.stringify(response.data),
           message_id: response.data.messages[0].id,
           message_type: sendMessageDto.message_type,
-          conversation_id: sendMessageDto.conversation_id,
+          sender_number: sendMessageDto.sender_number,
+          recipient_number: sendMessageDto.recipient_number,
           context_message_id: sendMessageDto.context_message_id,
           message_body: sendMessageDto.msg_body || sendMessageDto.template_name,
         })
@@ -55,7 +58,9 @@ export class WhatsappMessageService {
 
       return { message: 'message sent successfully' };
     } catch (err) {
-      throw new InternalServerErrorException(`failed to send message to customer, please try again later}`);
+      console.log(err);
+      console.log(err.response?.data);
+      throw new InternalServerErrorException(`failed to send message to customer, please try again later`);
     }
   }
 
@@ -85,41 +90,23 @@ export class WhatsappMessageService {
 
   private async processMessageEvent(metadata: Metadata, messages: Message[]) {
     for (const msg of messages) {
-      const customer = await this.customerModelClass.query().find().where({ contact: msg.from }).find().first();
-      if (!customer) {
-        throw new NotFoundException(`Customer with contact ${msg.from} not found`);
-      }
-
-      const wbn = await this.WbnModelClass.query().where({ phone_number_id: metadata.phone_number_id }).find().first();
-      if (!wbn) {
-        throw new NotFoundException(`Whatsapp business number with id ${metadata.phone_number_id} not found`);
-      }
-
-      const conversation = await this.conversationModelClass
-        .query()
-        .where({ customer_id: customer.id, whatsapp_business_number_id: wbn.id })
-        .find()
-        .first();
-      if (!conversation) {
-        throw new NotFoundException(`Conversation with customer id ${customer.id} and whatsapp business number id ${wbn.id} not found`);
-      }
-
       await this.messageModelClass.query().insert({
         message_id: msg.id,
         message_type: msg.type,
+        sender_number: msg.from,
         message_status: 'received',
         message_body: msg.text.body,
         payload: JSON.stringify(msg),
-        conversation_id: conversation.id,
+        recipient_number: metadata.display_phone_number,
         context_message_id: msg.context ? msg.context.id : null,
       });
     }
   }
 
   private buildSendMessagePayload(payload: SendTextMessageDto) {
-    return JSON.stringify({
-      to: payload.customer_number,
+    return JSON.stringify(<SendMessagePayload>{
       type: payload.message_type,
+      to: payload.recipient_number,
       messaging_product: WhatsappConfig.ProductName,
       recipient_type: 'individual',
       context: {
