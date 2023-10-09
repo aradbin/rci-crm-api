@@ -15,7 +15,7 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto) {
     const createUserDto: CreateUserDto = { ...registerDto };
@@ -46,5 +46,13 @@ export class AuthService {
     throw new UnauthorizedException(
       `Credentials didn't match. Please try again or reset your password`,
     );
+  }
+
+  async profile(email: string) {
+    const user = this.userService.findByEmail(email);
+    if (user) {
+      return user
+    }
+    throw new UnauthorizedException();
   }
 }

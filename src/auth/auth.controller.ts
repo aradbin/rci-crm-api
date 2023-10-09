@@ -6,7 +6,7 @@ import { RegisterDto } from "./dto/register.dto";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Public()
   @Post("register")
@@ -22,6 +22,6 @@ export class AuthController {
 
   @Get("profile")
   getProfile(@Request() req: any) {
-    return "ok";
+    return this.authService.profile(req?.user?.email)
   }
 }
