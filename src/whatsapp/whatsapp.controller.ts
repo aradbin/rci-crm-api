@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Req, Res, Query, Param, Patch, Delete } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { WhatsappMessageService } from './whatsapp.message.service';
-import { WhatsappBusinessNumberService, WhatsappConversationService, WhatsappUserService } from './whatsapp.service';
+import { WhatsappBusinessNumberService, WhatsappUserService } from './whatsapp.service';
 
 import {
   CreateWhatsappBusinessNumberDto,
@@ -13,10 +13,17 @@ import {
   UpdateWhatsappUserDto,
 } from './dto/whatsapp.dto';
 import { WebhookPayload } from './dto/whatsapp.webhook.dto';
+import { Public } from 'src/auth/public.decorators';
 
 @Controller('whatsapp')
 export class WhatsappController {
   constructor(private readonly whatsappMessageService: WhatsappMessageService) {}
+
+  @Get()
+  findAll(@Query() query: any) {
+    return this.whatsappMessageService.findAll(query);
+  }
+
 
   @Post('send-message')
   async sendMessage(@Body() payload: SendTextMessageDto, @Res() res: Response) {
@@ -24,12 +31,14 @@ export class WhatsappController {
     res.status(200).json(message);
   }
 
+  @Public()
   @Post('webhook')
   async webhookPost(@Body() payload: WebhookPayload) {
     console.log('Received this message from webhook:' + JSON.stringify(payload, null, 3));
     return await this.whatsappMessageService.processWebhookEvent(payload);
   }
 
+  @Public()
   @Get('webhook')
   webhook(@Req() req: Request, @Res() res: Response): void {
     const mode = req.query['hub.mode'] as string;
@@ -105,32 +114,32 @@ export class WhatsappUserController {
   }
 }
 
-@Controller('whatsapp-conversations')
-export class WhatsappConversationController {
-  constructor(private readonly whatsappConvService: WhatsappConversationService) {}
+// @Controller('whatsapp-conversations')
+// export class WhatsappConversationController {
+//   constructor(private readonly whatsappConvService: WhatsappConversationService) {}
 
-  @Post()
-  getOrCreate(@Body() createWhatsappConversationDto: CreateWhatsappConversationDto) {
-    return this.whatsappConvService.getOrCreate(createWhatsappConversationDto);
-  }
+//   @Post()
+//   getOrCreate(@Body() createWhatsappConversationDto: CreateWhatsappConversationDto) {
+//     return this.whatsappConvService.getOrCreate(createWhatsappConversationDto);
+//   }
 
-  @Get()
-  findAll(@Query() query: any) {
-    return this.whatsappConvService.findAll(query);
-  }
+//   @Get()
+//   findAll(@Query() query: any) {
+//     return this.whatsappConvService.findAll(query);
+//   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.whatsappConvService.findOne(+id);
-  }
+//   @Get(':id')
+//   findOne(@Param('id') id: string) {
+//     return this.whatsappConvService.findOne(+id);
+//   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWhatsappConversationDto: UpdateWhatsappConversationDto) {
-    return this.whatsappConvService.update(+id, updateWhatsappConversationDto);
-  }
+//   @Patch(':id')
+//   update(@Param('id') id: string, @Body() updateWhatsappConversationDto: UpdateWhatsappConversationDto) {
+//     return this.whatsappConvService.update(+id, updateWhatsappConversationDto);
+//   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.whatsappConvService.remove(+id);
-  }
-}
+//   @Delete(':id')
+//   remove(@Param('id') id: string) {
+//     return this.whatsappConvService.remove(+id);
+//   }
+// }

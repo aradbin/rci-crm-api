@@ -11,17 +11,19 @@ import {
   Query,
   HttpStatus,
   ParseIntPipe,
-} from "@nestjs/common";
-import { Response } from "express";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { UserService } from "./user.service";
+} from '@nestjs/common';
+import { Response } from 'express';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from './user.service';
+import { Public } from 'src/auth/public.decorators';
 
-@Controller("users")
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @Public()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       return await this.userService.create(createUserDto);
@@ -35,31 +37,25 @@ export class UserController {
     return await this.userService.findAll(query);
   }
 
-  @Get(":id")
-  async findOne(
-    @Param("id", ParseIntPipe) id: number,
-    @Res() response: Response,
-  ) {
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
     const data = await this.userService.findOne(id);
 
-    if(data){
-      return response.status(HttpStatus.OK).send(data)
+    if (data) {
+      return response.status(HttpStatus.OK).send(data);
     }
     return response.status(HttpStatus.NOT_FOUND).send({
-      message: 'No User Found'
-    })
+      message: 'No User Found',
+    });
   }
 
-  @Patch(":id")
-  async update(
-    @Param("id", ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  @Patch(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     try {
       return await this.userService.update(id, updateUserDto);
       await this.userService.update(id, updateUserDto);
       return {
-        message: "User Updated Successfully",
+        message: 'User Updated Successfully',
         data: id,
       };
     } catch (error) {
@@ -67,8 +63,8 @@ export class UserController {
     }
   }
 
-  @Delete(":id")
-  async remove(@Param("id", ParseIntPipe) id: number) {
+  @Delete(':id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
     try {
       return await this.userService.remove(id);
     } catch (error) {

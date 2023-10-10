@@ -3,4 +3,5 @@
 reset-db:
 	docker compose down -v
 	docker compose up -d db
-	# npm run migrate
+	sleep 5
+	npm run migrate

@@ -7,19 +7,20 @@ import { UserModel } from 'src/user/user.model';
 export class TaskModel extends BaseModel {
   static tableName = 'tasks';
 
-  title?: string;
-  due_date?: Date;
-  priority?: number;
-  description?: string;
+  title: string;
+  due_date: Date;
+  priority: number;
+  description: string;
 
-  metadata?: any;
-  attachments?: any;
-  activity_log?: any;
+  metadata: any;
+  attachments: any;
+  activity_log: any;
+  time_log: any;
 
-  status?: TaskStatus;
+  status: TaskStatus;
 
-  customer_id?: number;
-  assignee_id?: number;
+  customer_id: number;
+  assignee_id: number;
 
   static relationMappings = {
     customer: {
