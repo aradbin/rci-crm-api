@@ -1,28 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import * as nodemailer from 'nodemailer';
-import { inspect } from 'util';
+import { EmailSettingsService } from 'src/email-settings/email-settings.service';
 const Imap = require('node-imap');
 const { simpleParser } = require('mailparser');
 
 @Injectable()
 export class EmailService {
-  async create(createEmailDto: CreateEmailDto) {
+  constructor(private emailSettingsService: EmailSettingsService) { }
+
+  async create(userId: number, createEmailDto: CreateEmailDto) {
+    const emailSettings = await this.emailSettingsService.findByUserId(userId);
+
+    if (!emailSettings) {
+      throw new UnprocessableEntityException("Email config not found. Please config your email");
+    }
+
+    const decryptedData = this.emailSettingsService.decryptPassword(emailSettings?.password);
+
     // Create a transporter
     const transporter = nodemailer.createTransport({
       // service: 'Gmail',
-      host: "asrexpress.com",
+      host: emailSettings?.host,
       port: 465,
       secure: true,
       auth: {
-        user: "aradbin@asrexpress.com",
-        pass: "5Z41FqeddeA$",
+        user: emailSettings?.username,
+        pass: decryptedData,
       },
     });
 
     // Define email options
     const mailOptions = {
-      from: "aradbin@asrexpress.com",
+      from: {
+        name: emailSettings?.name,
+        address: emailSettings?.username
+      },
       to: createEmailDto.toEmail,
       subject: createEmailDto.subject,
       text: createEmailDto.text,
@@ -31,13 +44,10 @@ export class EmailService {
 
     // Send the email
     try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log("Email sent:", info.response);
+      return await transporter.sendMail(mailOptions);
     } catch (error) {
-      console.error("Error sending email:", error);
+      throw new UnprocessableEntityException("Something went wrong. Please try again later")
     }
-
-    return "This action adds a new email";
   }
 
   async find() {
@@ -52,7 +62,7 @@ export class EmailService {
     let email_array = [];
 
     imap.once('ready', () => {
-      try{
+      try {
         imap.openBox('INBOX', false, (err, box) => {
           if (err) throw err;
 
@@ -110,11 +120,11 @@ export class EmailService {
           });
         })
       } catch (error) {
-        console.log("Error when request open inbox mail",error)
+        console.log("Error when request open inbox mail", error)
       }
     });
 
-    imap.once('error', function(err) {
+    imap.once('error', function (err) {
       console.log("Error when connection to IMAP", err);
     });
 

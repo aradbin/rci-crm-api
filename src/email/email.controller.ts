@@ -3,10 +3,8 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   UnprocessableEntityException,
+  Request,
 } from "@nestjs/common";
 import { EmailService } from "./email.service";
 import { CreateEmailDto } from "./dto/create-email.dto";
@@ -14,12 +12,12 @@ import { UpdateEmailDto } from "./dto/update-email.dto";
 
 @Controller("email")
 export class EmailController {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(private readonly emailService: EmailService) { }
 
   @Post()
-  async create(@Body() createEmailDto: CreateEmailDto) {
+  async create(@Request() req: any, @Body() createEmailDto: CreateEmailDto) {
     try {
-      return await this.emailService.create(createEmailDto);
+      return await this.emailService.create(req?.user?.id, createEmailDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message);
     }
