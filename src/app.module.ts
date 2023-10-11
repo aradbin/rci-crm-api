@@ -11,6 +11,7 @@ import { TaskModule } from './task/task.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { CustomerModule } from './customer/customer.module';
 import { EmailSettingsModule } from './email-settings/email-settings.module';
+import { EventsModule } from './event-gateway/events.gateway.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { EmailSettingsModule } from './email-settings/email-settings.module';
     WhatsappModule,
     CustomerModule,
     EmailSettingsModule,
+    EventsModule,
   ],
   providers: [
     {
