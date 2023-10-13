@@ -1,4 +1,4 @@
-import { IsEmail, IsInt, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsOptional()
@@ -6,7 +6,7 @@ export class CreateUserDto {
   name: string;
 
   @IsOptional()
-  @IsEmail({}, { message: "Please provide valid email address" })
+  @IsEmail({}, { message: 'Please provide valid email address' })
   email: string;
 
   @IsOptional()
@@ -28,4 +28,19 @@ export class CreateUserDto {
   @IsOptional()
   @IsInt()
   created_by: number;
+}
+
+export class SendMessageDto {
+  @IsNumber()
+  recipient_id: number;
+
+  @IsString()
+  message_body: string;
+
+  @IsString()
+  message_type: string;
+
+  @IsOptional()
+  @IsString()
+  context_message_id: string;
 }

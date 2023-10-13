@@ -17,4 +17,8 @@ export class CreateCustomerDto {
   @IsOptional()
   @IsString()
   address: string;
+
+  @IsOptional()
+  @IsString()
+  optional_contact: string;
 }

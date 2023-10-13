@@ -4,8 +4,9 @@ export class CustomerModel extends BaseModel {
   static tableName = 'customers';
 
   name: string;
-  email?: string;
-  address?: string;
-  contact?: string;
-  avatar?: string;
+  email: string;
+  address: string;
+  contact: string;
+  avatar: string;
+  optional_contact: string;
 }

@@ -2,14 +2,11 @@ import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 
 export class SendTextMessageDto {
-  @IsNumber()
-  user_id: number;
-
-  @IsNumber()
-  conversation_id: number;
+  @IsString()
+  sender_number: string;
 
   @IsString()
-  customer_number: string;
+  recipient_number: string;
 
   @IsOptional()
   @IsString()

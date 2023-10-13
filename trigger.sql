@@ -70,3 +70,4 @@ EXECUTE FUNCTION update_activity_log_on_progress_status();
 2. 5-10-23 -> 2 hrs
 3. 6-10-23 -> 3 hrs
 4. 7-10-23 -> 1.5 hrs
+5. 9-10-23 -> 2.5 hrs

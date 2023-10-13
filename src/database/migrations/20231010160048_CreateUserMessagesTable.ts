@@ -1,22 +1,17 @@
 import { Knex } from 'knex';
 
-const tableName = 'whatsapp_messages';
+const tableName = 'user_messages';
 
 export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, (table) => {
     table.increments();
+    table.integer('recipient_id').nullable();
 
-    table.string('sender_number').nullable();
-    table.string('recipient_number').nullable();
-
-    table.string('message_id').nullable();
     table.string('message_body').nullable();
-    table.string('message_type').nullable(); // text, template, image, video, document, audio, location, contact, sticker, etc
-    table.string('message_status').nullable(); // sent, delivered, read, etc
     table.string('context_message_id').nullable();
+    table.string('message_type').defaultTo('text'); // text, template, image, video, document, audio, location, contact, sticker, etc
+    table.string('message_status').defaultTo('sent'); // sent, delivered, read, etc
 
-    table.jsonb('payload').nullable();
-    table.jsonb('response').nullable();
     table.jsonb('attachments').nullable();
 
     table.timestamp('created_at').nullable();
