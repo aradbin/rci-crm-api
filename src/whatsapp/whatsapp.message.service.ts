@@ -64,10 +64,13 @@ export class WhatsappMessageService {
   }
 
   async processWebhookEvent(payload: WebhookPayload) {
-    if (payload.object !== 'whatsapp_business_account') return;
+    const FIELD_NAME = 'messages';
+    const WBA = 'whatsapp_business_account';
+
+    if (payload.object !== WBA) return;
     for (const e of payload.entry) {
       for (const change of e.changes) {
-        if (change.field !== 'messages') return;
+        if (change.field !== FIELD_NAME) return;
         if (change.value.messages) await this.processMessageEvent(change.value.metadata, change.value.messages);
         if (change.value.statuses) await this.processStatusEvent(change.value.statuses);
       }
