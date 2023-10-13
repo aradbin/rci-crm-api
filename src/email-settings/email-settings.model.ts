@@ -5,6 +5,12 @@ import { UserModel } from "src/user/user.model";
 export class EmailSettingsModel extends BaseModel {
   static tableName = 'email_settings';
 
+  id: number;
+  name: string;
+  host: string;
+  username: string;
+  password: string;
+
   static relationMappings = {
     user: {
       relation: this.BelongsToOneRelation,

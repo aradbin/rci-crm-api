@@ -1,6 +1,9 @@
 import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateEmailSettingDto {
+    @IsNotEmpty({ message: 'Name is required' })
+    name: string;
+
     @IsNotEmpty({ message: 'Host is required' })
     host: string;
 

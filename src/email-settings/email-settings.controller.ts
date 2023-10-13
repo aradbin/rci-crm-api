@@ -1,11 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UnprocessableEntityException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UnprocessableEntityException, ParseIntPipe, Res, HttpStatus } from '@nestjs/common';
 import { EmailSettingsService } from './email-settings.service';
 import { CreateEmailSettingDto } from './dto/create-email-setting.dto';
 import { UpdateEmailSettingDto } from './dto/update-email-setting.dto';
+import { Response } from 'express';
 
 @Controller('email-settings')
 export class EmailSettingsController {
-  constructor(private readonly emailSettingsService: EmailSettingsService) {}
+  constructor(private readonly emailSettingsService: EmailSettingsService) { }
 
   @Post()
   create(@Body() createEmailSettingDto: CreateEmailSettingDto) {
@@ -21,15 +22,32 @@ export class EmailSettingsController {
   //   return this.emailSettingsService.findAll();
   // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.emailSettingsService.findOne(+id);
-  // }
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
+    const data = await this.emailSettingsService.findOne(id);
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateEmailSettingDto: UpdateEmailSettingDto) {
-  //   return this.emailSettingsService.update(+id, updateEmailSettingDto);
-  // }
+    if (data) {
+      return response.status(HttpStatus.OK).send(data);
+    }
+    return response.status(HttpStatus.NOT_FOUND).send({
+      message: 'No Settings Found',
+    });
+  }
+
+  @Patch(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateEmailSettingDto: UpdateEmailSettingDto, @Res() response: Response) {
+    try {
+      const updated = await this.emailSettingsService.update(id, updateEmailSettingDto);
+      if (updated > 0) {
+        const data = await this.emailSettingsService.findOne(id);
+        if (data) {
+          return response.status(HttpStatus.OK).send(data);
+        }
+      }
+    } catch (error) {
+      throw new UnprocessableEntityException(error.message);
+    }
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

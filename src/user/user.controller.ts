@@ -16,14 +16,12 @@ import { Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { Public } from 'src/auth/public.decorators';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
-  @Public()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       return await this.userService.create(createUserDto);
@@ -53,11 +51,6 @@ export class UserController {
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     try {
       return await this.userService.update(id, updateUserDto);
-      await this.userService.update(id, updateUserDto);
-      return {
-        message: 'User Updated Successfully',
-        data: id,
-      };
     } catch (error) {
       throw new UnprocessableEntityException(error.message);
     }
