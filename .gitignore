@@ -128,3 +128,5 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+rci-crm-db.session.sql
+.vscode/launch.json
