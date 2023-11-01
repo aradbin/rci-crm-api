@@ -8,7 +8,7 @@ import { CustomerModel } from './customer.model';
 export class CustomerService {
   constructor(
     @Inject('CustomerModel') private modelClass: ModelClass<CustomerModel>,
-  ) {}
+  ) { }
 
   async create(createCustomerDto: CreateCustomerDto) {
     const customer = await this.modelClass.query().where('email', createCustomerDto.email).find().first();
