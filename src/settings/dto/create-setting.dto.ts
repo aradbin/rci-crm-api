@@ -1,13 +1,17 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
 
 export class CreateSettingDto {
     @IsNotEmpty({ message: 'Name is required' })
     @IsString()
     name: string;
-    
+
     @IsNotEmpty({ message: 'Type is required' })
     @IsString()
     type: string;
+
+    @IsOptional()
+    @IsObject()
+    metadata: any;
 
     @IsOptional()
     @IsInt()

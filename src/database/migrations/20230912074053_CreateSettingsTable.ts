@@ -8,8 +8,9 @@ export async function up(knex: Knex) {
 
     table.string('name').nullable();
     table.string('type').nullable();
+    table.jsonb('metadata').nullable();
     table.integer('parent_id').nullable();
-    
+
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
     table.timestamp('updated_at').nullable();

@@ -1,4 +1,4 @@
-import { IsEmail, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsOptional()
@@ -20,6 +20,10 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   contact: string;
+
+  @IsOptional()
+  @IsArray()
+  settings_id: number[];
 
   @IsOptional()
   @IsString()

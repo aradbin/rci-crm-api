@@ -10,7 +10,6 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
 import { TaskModule } from './task/task.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { CustomerModule } from './customer/customer.module';
-import { EmailSettingsModule } from './email-settings/email-settings.module';
 import { EventsModule } from './event-gateway/events.gateway.module';
 
 @Module({
@@ -24,7 +23,6 @@ import { EventsModule } from './event-gateway/events.gateway.module';
     TaskModule,
     WhatsappModule,
     CustomerModule,
-    EmailSettingsModule,
     EventsModule,
   ],
   providers: [
@@ -34,4 +32,4 @@ import { EventsModule } from './event-gateway/events.gateway.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

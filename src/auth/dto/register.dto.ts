@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsEmail,
   IsInt,
   IsNotEmpty,
@@ -26,6 +27,10 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   contact: string;
+
+  @IsOptional()
+  @IsArray()
+  settings_id: number[];
 
   @IsOptional()
   @IsString()

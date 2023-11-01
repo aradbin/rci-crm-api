@@ -5,6 +5,8 @@ import { UserSettingsModel } from "src/user-settings/user-settings.model";
 export class SettingsModel extends BaseModel {
   static tableName = 'settings';
 
+  metadata: any;
+
   static relationMappings = {
     parent: {
       relation: Model.BelongsToOneRelation,

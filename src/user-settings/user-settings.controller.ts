@@ -6,10 +6,10 @@ import { Response } from 'express';
 
 @Controller('user-settings')
 export class UserSettingsController {
-  constructor(private readonly userSettingsService: UserSettingsService) {}
+  constructor(private readonly userSettingsService: UserSettingsService) { }
 
   @Post()
-  async create(@Body() createUserSettingsDto: CreateUserSettingsDto) {
+  async create(@Body() createUserSettingsDto: CreateUserSettingsDto[]) {
     try {
       return await this.userSettingsService.create(createUserSettingsDto);
     } catch (error) {
@@ -25,7 +25,7 @@ export class UserSettingsController {
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
     const data = await this.userSettingsService.findOne(id);
-    if(data){
+    if (data) {
       return response.status(HttpStatus.OK).send(data)
     }
     return response.status(HttpStatus.NOT_FOUND).send({

@@ -1,31 +1,37 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import * as nodemailer from 'nodemailer';
-import { EmailSettingsService } from 'src/email-settings/email-settings.service';
+import { UserSettingsService } from 'src/user-settings/user-settings.service';
 const Imap = require('node-imap');
-const { simpleParser } = require('mailparser');
 
 @Injectable()
 export class EmailService {
-  constructor(private emailSettingsService: EmailSettingsService) { }
+  constructor(private userSettingsService: UserSettingsService) { }
 
   async create(userId: number, createEmailDto: CreateEmailDto) {
-    const emailSettings = await this.emailSettingsService.findByUserId(userId);
+    let emailSettings = null;
+    await this.userSettingsService.findAll({ user_id: userId, deleted_at: null }).then((response: any) => {
+      response?.results?.map((item: any) => {
+        if (item?.settings?.type === 'email') {
+          emailSettings = item?.settings
+        }
+      })
+    });
 
     if (!emailSettings) {
       throw new UnprocessableEntityException("Email config not found. Please config your email");
     }
 
-    const decryptedData = this.emailSettingsService.decryptPassword(emailSettings?.password);
+    const decryptedData = this.userSettingsService.decryptPassword(emailSettings?.metadata?.password);
 
     // Create a transporter
     const transporter = nodemailer.createTransport({
       // service: 'Gmail',
-      host: emailSettings?.host,
+      host: emailSettings?.metadata?.host,
       port: 465,
       secure: true,
       auth: {
-        user: emailSettings?.username,
+        user: emailSettings?.metadata?.username,
         pass: decryptedData,
       },
     });
@@ -34,7 +40,7 @@ export class EmailService {
     const mailOptions = {
       from: {
         name: emailSettings?.name,
-        address: emailSettings?.username
+        address: emailSettings?.metadata?.username
       },
       to: createEmailDto.toEmail,
       subject: createEmailDto.subject,
