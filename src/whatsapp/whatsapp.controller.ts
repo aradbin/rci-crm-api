@@ -1,23 +1,18 @@
-import { Controller, Get, Post, Body, Req, Res, Query, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req, Res, Query } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { WhatsappMessageService } from './whatsapp.message.service';
-import { WhatsappBusinessNumberService, WhatsappUserService } from './whatsapp.service';
 
 import {
-  CreateWhatsappBusinessNumberDto,
   CreateWhatsappConversationDto,
-  CreateWhatsappUserDto,
   SendTextMessageDto,
-  UpdateWhatsappBusinessNumberDto,
   UpdateWhatsappConversationDto,
-  UpdateWhatsappUserDto,
 } from './dto/whatsapp.dto';
 import { WebhookPayload } from './dto/whatsapp.webhook.dto';
 import { Public } from 'src/auth/public.decorators';
 
 @Controller('whatsapp')
 export class WhatsappController {
-  constructor(private readonly whatsappMessageService: WhatsappMessageService) {}
+  constructor(private readonly whatsappMessageService: WhatsappMessageService) { }
 
   @Get()
   findAll(@Query() query: any) {
@@ -26,8 +21,8 @@ export class WhatsappController {
 
 
   @Post('send-message')
-  async sendMessage(@Body() payload: SendTextMessageDto, @Res() res: Response) {
-    const message = await this.whatsappMessageService.sendMessage(payload);
+  async sendMessage(@Req() req: any, @Body() payload: SendTextMessageDto, @Res() res: Response) {
+    const message = await this.whatsappMessageService.sendMessage(req?.user?.id, payload);
     res.status(200).json(message);
   }
 
@@ -51,66 +46,6 @@ export class WhatsappController {
       }
       res.sendStatus(status);
     });
-  }
-}
-
-@Controller('whatsapp-business-numbers')
-export class WhatsAppSettingController {
-  constructor(private readonly whatsappSettingService: WhatsappBusinessNumberService) {}
-
-  @Post()
-  create(@Body() createWhatsappSettingDto: CreateWhatsappBusinessNumberDto) {
-    return this.whatsappSettingService.create(createWhatsappSettingDto);
-  }
-
-  @Get()
-  findAll(@Query() query: any) {
-    return this.whatsappSettingService.findAll(query);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.whatsappSettingService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWhatsappSettingDto: UpdateWhatsappBusinessNumberDto) {
-    return this.whatsappSettingService.update(+id, updateWhatsappSettingDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.whatsappSettingService.remove(+id);
-  }
-}
-
-@Controller('whatsapp-users')
-export class WhatsappUserController {
-  constructor(private readonly whatsappUserService: WhatsappUserService) {}
-
-  @Post()
-  create(@Body() createWhatsappUserDto: CreateWhatsappUserDto) {
-    return this.whatsappUserService.getOrCreate(createWhatsappUserDto);
-  }
-
-  @Get()
-  findAll(@Query() query: any) {
-    return this.whatsappUserService.findAll(query);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.whatsappUserService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWhatsappUserDto: UpdateWhatsappUserDto) {
-    return this.whatsappUserService.update(+id, updateWhatsappUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.whatsappUserService.remove(+id);
   }
 }
 

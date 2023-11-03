@@ -3,15 +3,16 @@ import { Inject, Injectable, InternalServerErrorException, NotFoundException } f
 
 import { SendTextMessageDto } from './dto/whatsapp.dto';
 import { WhatsAppClient, WhatsappConfig } from './whatsapp.config';
-import { WhatsappMessageModel, WhatsappBusinessNumberModel } from './whatsapp.models';
+import { WhatsappMessageModel } from './whatsapp.models';
 import { Message, Metadata, SendMessagePayload, Status, WebhookPayload } from './dto/whatsapp.webhook.dto';
+import { UserSettingsService } from 'src/user-settings/user-settings.service';
 
 @Injectable()
 export class WhatsappMessageService {
   constructor(
     @Inject('WhatsappMessageModel') private messageModelClass: ModelClass<WhatsappMessageModel>,
-    @Inject('WhatsappBusinessNumberModel') private WbnModelClass: ModelClass<WhatsappBusinessNumberModel>,
-  ) {}
+    private userSettingsService: UserSettingsService
+  ) { }
 
   async findAll(params: any = {}) {
     var numbers = [params.number_one, params.number_two];
@@ -26,17 +27,25 @@ export class WhatsappMessageService {
       .find();
   }
 
-  async sendMessage(sendMessageDto: SendTextMessageDto) {
-    const wbn = await this.WbnModelClass.query().where({ phone_number: sendMessageDto.sender_number }).find().first();
+  async sendMessage(userId: number, sendMessageDto: SendTextMessageDto) {
+    let wbn = null;
+
+    await this.userSettingsService.findAll({ user_id: userId, deleted_at: null }).then((response: any) => {
+      response?.results?.map((item: any) => {
+        if (item?.settings?.type === 'whatsapp') {
+          wbn = item?.settings
+        }
+      })
+    })
 
     if (!wbn) {
-      throw new NotFoundException(`Business number with ${sendMessageDto.sender_number} not found`);
+      throw new NotFoundException(`WhatsApp Business number with ${sendMessageDto.sender_number} not found`);
     }
 
-    const url = `/${wbn.phone_number_id}/messages`;
+    const url = `/${wbn?.metadata?.phone_number_id}/messages`;
     const headers = {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${wbn.access_token}`,
+      Authorization: `Bearer ${wbn?.metadata?.access_token}`,
     };
     const payload = this.buildSendMessagePayload(sendMessageDto);
 
@@ -59,8 +68,7 @@ export class WhatsappMessageService {
       return { message: 'message sent successfully' };
     } catch (err) {
       console.log(err);
-      console.log(err.response?.data);
-      throw new InternalServerErrorException(`failed to send message to customer, please try again later`);
+      throw new InternalServerErrorException(`Something went wrong. Please try again later`);
     }
   }
 
@@ -118,18 +126,18 @@ export class WhatsappMessageService {
       template:
         payload.message_type === 'template'
           ? {
-              name: payload.template_name,
-              language: {
-                code: 'en_US',
-              },
-            }
+            name: payload.template_name,
+            language: {
+              code: 'en_US',
+            },
+          }
           : null,
       text:
         payload.message_type === 'text'
           ? {
-              preview_url: true,
-              body: payload.msg_body,
-            }
+            preview_url: true,
+            body: payload.msg_body,
+          }
           : null,
     });
   }

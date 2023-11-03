@@ -1,13 +1,13 @@
 import { Knex } from 'knex';
 
-const tableName = 'whatsapp_users';
+const tableName = 'whatsapp_conversations';
 
 export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, (table) => {
     table.increments();
 
-    table.integer('user_id').nullable();
-    table.integer('whatsapp_business_number_id').nullable();
+    table.string('sender_number').nullable();
+    table.string('recipient_number').nullable();
 
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();

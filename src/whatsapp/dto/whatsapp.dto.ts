@@ -25,35 +25,6 @@ export class SendTextMessageDto {
   message_type: 'text' | 'template' = 'text';
 }
 
-export class CreateWhatsappBusinessNumberDto {
-  @IsString()
-  name: string;
-
-  @IsString()
-  phone_number: string;
-
-  @IsString()
-  phone_number_id: string;
-
-  @IsString()
-  access_token: string;
-
-  @IsString()
-  whatsapp_business_account_id: string;
-}
-
-export class UpdateWhatsappBusinessNumberDto extends PartialType(CreateWhatsappBusinessNumberDto) {}
-
-export class CreateWhatsappUserDto {
-  @IsNumber()
-  user_id: number;
-
-  @IsNumber()
-  whatsapp_business_number_id: number;
-}
-
-export class UpdateWhatsappUserDto extends PartialType(CreateWhatsappUserDto) {}
-
 export class CreateWhatsappConversationDto {
   @IsNumber()
   customer_id: number;
@@ -62,4 +33,4 @@ export class CreateWhatsappConversationDto {
   whatsapp_business_number_id: number;
 }
 
-export class UpdateWhatsappConversationDto extends PartialType(CreateWhatsappConversationDto) {}
+export class UpdateWhatsappConversationDto extends PartialType(CreateWhatsappConversationDto) { }

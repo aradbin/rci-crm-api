@@ -7,9 +7,9 @@ import { UserSettingsModel } from 'src/user-settings/user-settings.model';
 import { CustomerModel } from 'src/customer/customer.model';
 import { EmailModel } from 'src/email/email.model';
 import { TaskModel } from 'src/task/task.model';
-import { WhatsappBusinessNumberModel, WhatsappMessageModel, WhatsappUserModel } from 'src/whatsapp/whatsapp.models';
+import { WhatsappMessageModel } from 'src/whatsapp/whatsapp.models';
 
-const models = [UserModel, SettingsModel, UserSettingsModel, EmailModel, CustomerModel, TaskModel, UserMessageModel, WhatsappUserModel, WhatsappMessageModel, WhatsappBusinessNumberModel];
+const models = [UserModel, SettingsModel, UserSettingsModel, EmailModel, CustomerModel, TaskModel, UserMessageModel, WhatsappMessageModel];
 
 const modelProviders = models.map((model) => {
   return {

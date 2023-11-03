@@ -1,43 +1,6 @@
 import { BaseModel } from 'src/database/base.model';
 import { UserModel } from 'src/user/user.model';
 
-export class WhatsappBusinessNumberModel extends BaseModel {
-  static tableName = 'whatsapp_business_numbers';
-
-  name: string;
-  phone_number: string;
-  phone_number_id: string;
-  access_token: string;
-  whatsapp_business_account_id: string;
-}
-
-export class WhatsappUserModel extends BaseModel {
-  static tableName = 'whatsapp_users';
-
-  user_id: number;
-  whatsapp_business_number_id: number;
-
-  static relationMappings = {
-    user: {
-      relation: this.BelongsToOneRelation,
-      modelClass: UserModel,
-      join: {
-        from: 'whatsapp_users.user_id',
-        to: 'users.id',
-      },
-    },
-
-    whatsapp_business_number: {
-      relation: this.BelongsToOneRelation,
-      modelClass: WhatsappBusinessNumberModel,
-      join: {
-        from: 'whatsapp_users.whatsapp_business_number_id',
-        to: 'whatsapp_business_numbers.id',
-      },
-    },
-  };
-}
-
 // export class WhatsappConversationModel extends BaseModel {
 //   static tableName = 'whatsapp_conversations';
 
