@@ -1,10 +1,16 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 
-export class SendTextMessageDto {
+export class CreateWhatsappDto {
+  @IsOptional()
+  @IsNumber()
+  conversation_id: number;
+
+  @IsOptional()
   @IsString()
   sender_number: string;
 
+  @IsOptional()
   @IsString()
   recipient_number: string;
 
@@ -23,14 +29,37 @@ export class SendTextMessageDto {
   @IsOptional()
   @IsEnum(['text', 'template'])
   message_type: 'text' | 'template' = 'text';
+
+  @IsOptional()
+  @IsString()
+  created_at: string;
+
+  @IsOptional()
+  @IsInt()
+  created_by: number;
 }
 
 export class CreateWhatsappConversationDto {
-  @IsNumber()
-  customer_id: number;
+  @IsOptional()
+  @IsString()
+  sender_number: string;
 
-  @IsNumber()
-  whatsapp_business_number_id: number;
+  @IsOptional()
+  @IsString()
+  recipient_number: string;
+
+  @IsOptional()
+  @IsString()
+  created_at: string;
+
+  @IsOptional()
+  @IsInt()
+  created_by: number;
 }
 
-export class UpdateWhatsappConversationDto extends PartialType(CreateWhatsappConversationDto) { }
+export class UpdateWhatsappConversationDto extends PartialType(CreateWhatsappConversationDto) {
+  updated_at: string;
+  updated_by: number;
+  deleted_at: string;
+  deleted_by: number;
+}
