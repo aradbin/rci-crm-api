@@ -39,5 +39,13 @@ export class TaskModel extends BaseModel {
         to: 'users.id',
       },
     },
+    reporter: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: UserModel,
+      join: {
+        from: 'tasks.created_by',
+        to: 'users.id',
+      },
+    },
   };
 }

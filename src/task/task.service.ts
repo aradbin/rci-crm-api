@@ -6,18 +6,18 @@ import { TaskModel } from './task.model';
 
 @Injectable()
 export class TaskService {
-  constructor(@Inject('TaskModel') private modelClass: ModelClass<TaskModel>) {}
+  constructor(@Inject('TaskModel') private modelClass: ModelClass<TaskModel>) { }
 
   async create(createTaskDto: CreateTaskDto) {
     return await this.modelClass.query().insert(createTaskDto);
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().filter(params).sort(params).paginate(params).withGraphFetched('customer').withGraphFetched('assignee').find();
+    return await this.modelClass.query().filter(params).sort(params).paginate(params).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').find();
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().findById(id).find();
+    return await this.modelClass.query().findById(id).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').find();
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {
