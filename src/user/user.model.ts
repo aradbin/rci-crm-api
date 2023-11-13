@@ -1,3 +1,4 @@
+import { Model } from 'objection';
 import { BaseModel } from 'src/database/base.model';
 import { UserSettingsModel } from 'src/user-settings/user-settings.model';
 
@@ -11,7 +12,7 @@ export class UserModel extends BaseModel {
 
   static relationMappings = {
     userSettings: {
-      relation: this.HasManyRelation,
+      relation: Model.HasManyRelation,
       modelClass: UserSettingsModel,
       join: {
         from: 'users.id',
@@ -36,7 +37,7 @@ export class UserMessageModel extends BaseModel {
 
   static relationMappings = {
     sender: {
-      relation: this.BelongsToOneRelation,
+      relation: Model.BelongsToOneRelation,
       modelClass: UserModel,
       join: {
         from: 'user_messages.created_by',
@@ -45,7 +46,7 @@ export class UserMessageModel extends BaseModel {
     },
 
     receiver: {
-      relation: this.BelongsToOneRelation,
+      relation: Model.BelongsToOneRelation,
       modelClass: UserModel,
       join: {
         from: 'user_messages.recipient_id',

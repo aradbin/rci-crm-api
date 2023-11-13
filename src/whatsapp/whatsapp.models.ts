@@ -1,3 +1,4 @@
+import { Model } from 'objection';
 import { CustomerModel } from 'src/customer/customer.model';
 import { BaseModel } from 'src/database/base.model';
 import { UserModel } from 'src/user/user.model';
@@ -19,7 +20,7 @@ export class WhatsappMessageModel extends BaseModel {
 
   static relationMappings = {
     user: {
-      relation: this.BelongsToOneRelation,
+      relation: Model.BelongsToOneRelation,
       modelClass: UserModel,
       join: {
         from: 'whatsapp_messages.created_by',
@@ -34,7 +35,7 @@ export class WhatsappConversationModel extends BaseModel {
 
   static relationMappings = {
     customer: {
-      relation: this.BelongsToOneRelation,
+      relation: Model.BelongsToOneRelation,
       modelClass: CustomerModel,
       join: {
         from: 'whatsapp_conversations.recipient_number',
@@ -42,7 +43,7 @@ export class WhatsappConversationModel extends BaseModel {
       },
     },
     messages: {
-      relation: this.HasManyRelation,
+      relation: Model.HasManyRelation,
       modelClass: WhatsappMessageModel,
       join: {
         from: 'whatsapp_conversations.id',

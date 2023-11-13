@@ -27,7 +27,7 @@ export class SettingsModel extends BaseModel {
     },
 
     userSettings: {
-      relation: this.HasManyRelation,
+      relation: Model.HasManyRelation,
       modelClass: UserSettingsModel,
       join: {
         from: 'settings.id',
