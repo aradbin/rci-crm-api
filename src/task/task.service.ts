@@ -16,6 +16,10 @@ export class TaskService {
     return await this.modelClass.query().filter(params).sort(params).paginate(params).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').find();
   }
 
+  async count(params: any = {}) {
+    return await this.modelClass.query().filter(params).where('deleted_at', null).select('status').count('id as count').groupBy('status');
+  }
+
   async findOne(id: number) {
     return await this.modelClass.query().findById(id).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').find();
   }

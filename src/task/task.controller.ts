@@ -14,7 +14,7 @@ import { TaskService } from './task.service';
 
 @Controller('tasks')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(private readonly taskService: TaskService) { }
 
   @Post()
   create(@Body() createTaskDto: CreateTaskDto) {
@@ -22,8 +22,13 @@ export class TaskController {
   }
 
   @Get()
-  findAll(@Query() query: any ) {
+  findAll(@Query() query: any) {
     return this.taskService.findAll(query);
+  }
+
+  @Get('count')
+  count(@Query() query: any) {
+    return this.taskService.count(query);
   }
 
   @Get(':id')
