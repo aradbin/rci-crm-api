@@ -25,7 +25,7 @@ export class TaskService {
   }
 
   async update(user_id: number, id: number, updateTaskDto: UpdateTaskDto) {
-    if (Object.hasOwn(updateTaskDto, 'status') || Object.hasOwn(updateTaskDto, 'running')) {
+    if (updateTaskDto.hasOwnProperty('status') || updateTaskDto.hasOwnProperty('running')) {
       const task = await this.modelClass.query().findById(id).find();
       if (task?.status !== updateTaskDto?.status || task?.running !== updateTaskDto?.running) {
         const time_log = task?.time_log;
