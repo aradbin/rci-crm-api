@@ -51,7 +51,7 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    return await this.modelClass.query().where('email', email).withGraphFetched('userSettings.settings').first().find();
+    return await this.modelClass.query().where('email', email).withGraphFetched('userSettings.settings').withGraphFetched('runningTask').first().find();
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {

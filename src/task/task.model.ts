@@ -18,11 +18,12 @@ export class TaskModel extends BaseModel {
   time_log: any;
 
   status: TaskStatus;
+  running: boolean;
 
   customer_id: number;
   assignee_id: number;
 
-  static relationMappings = {
+  static relationMappings = () => ({
     customer: {
       relation: Model.BelongsToOneRelation,
       modelClass: CustomerModel,
@@ -47,5 +48,7 @@ export class TaskModel extends BaseModel {
         to: 'users.id',
       },
     },
-  };
+  });
 }
+
+TaskModel.relationMappings();

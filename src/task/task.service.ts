@@ -24,11 +24,37 @@ export class TaskService {
     return await this.modelClass.query().findById(id).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').find();
   }
 
-  async update(id: number, updateTaskDto: UpdateTaskDto) {
+  async update(user_id: number, id: number, updateTaskDto: UpdateTaskDto) {
+    if (Object.hasOwn(updateTaskDto, 'status') || Object.hasOwn(updateTaskDto, 'running')) {
+      const task = await this.modelClass.query().findById(id).find();
+      if (task?.status !== updateTaskDto?.status || task?.running !== updateTaskDto?.running) {
+        const time_log = task?.time_log;
+        if (updateTaskDto.status === 'inprogress' || updateTaskDto.running) {
+          await this.stopAll(user_id, task?.assignee_id, id);
+          time_log.push({ action: 'start', created_at: new Date(), created_by: user_id });
+          updateTaskDto = { ...updateTaskDto, running: true, time_log: JSON.stringify(time_log) }
+        } else {
+          time_log.push({ action: 'stop', created_at: new Date(), created_by: user_id });
+          updateTaskDto = { ...updateTaskDto, running: false, time_log: JSON.stringify(time_log) };
+        }
+      }
+    }
+
     return await this.modelClass.query().findById(id).update(updateTaskDto);
   }
 
   async remove(id: number) {
     return await this.modelClass.query().softDelete(id);
+  }
+
+  async stopAll(user_id: number, assignee_id: number, id: number) {
+    const tasks = await this.modelClass.query().where('running', true).where('assignee_id', assignee_id).where('id', '!=', id).find();
+    tasks?.map(async (item: any) => {
+      const time_log = item.time_log;
+      if (time_log.length > 0 && time_log[time_log.length - 1].action === 'start') {
+        time_log.push({ action: 'stop', created_at: new Date(), created_by: user_id });
+      }
+      await this.modelClass.query().findById(item.id).update({ running: false, time_log: JSON.stringify(time_log) });
+    });
   }
 }

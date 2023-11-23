@@ -67,10 +67,10 @@ export async function up(knex: Knex) {
       table.string('description').nullable();
       table.smallint('priority').nullable();
 
-      table.enum('status', [TaskStatus.TODO, TaskStatus.INPROGRESS, TaskStatus.DONE]).defaultTo(TaskStatus.TODO);
+      table.string('status').defaultTo(TaskStatus.TODO);
+      table.boolean('running').defaultTo(false);
 
       table.jsonb('time_log').defaultTo('[]');
-      table.jsonb('metadata').nullable();
       table.jsonb('activity_log').defaultTo('[]');
       table.jsonb('attachments').nullable();
       table.timestamp('due_date').nullable();
