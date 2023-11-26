@@ -27,12 +27,22 @@ export class TaskService {
   async update(user_id: number, id: number, updateTaskDto: UpdateTaskDto) {
     if (updateTaskDto.hasOwnProperty('status') || updateTaskDto.hasOwnProperty('running')) {
       const task = await this.modelClass.query().findById(id).find();
-      if (task?.status !== updateTaskDto?.status || task?.running !== updateTaskDto?.running) {
+      if (updateTaskDto.hasOwnProperty('status') && task?.status !== updateTaskDto?.status) {
         const time_log = task?.time_log;
-        if (updateTaskDto.status === 'inprogress' || updateTaskDto.running) {
+        if (updateTaskDto.status === 'inprogress') {
           await this.stopAll(user_id, task?.assignee_id, id);
           time_log.push({ action: 'start', created_at: new Date(), created_by: user_id });
-          updateTaskDto = { ...updateTaskDto, running: true, time_log: JSON.stringify(time_log) }
+          updateTaskDto = { ...updateTaskDto, running: true, time_log: JSON.stringify(time_log) };
+        } else {
+          time_log.push({ action: 'stop', created_at: new Date(), created_by: user_id });
+          updateTaskDto = { ...updateTaskDto, running: false, time_log: JSON.stringify(time_log) };
+        }
+      } else if (updateTaskDto.hasOwnProperty('running') && task?.running !== updateTaskDto?.running) {
+        const time_log = task?.time_log;
+        if (updateTaskDto.running) {
+          await this.stopAll(user_id, task?.assignee_id, id);
+          time_log.push({ action: 'start', created_at: new Date(), created_by: user_id });
+          updateTaskDto = { ...updateTaskDto, running: true, time_log: JSON.stringify(time_log) };
         } else {
           time_log.push({ action: 'stop', created_at: new Date(), created_by: user_id });
           updateTaskDto = { ...updateTaskDto, running: false, time_log: JSON.stringify(time_log) };
