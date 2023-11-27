@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsNumber,
@@ -37,6 +38,13 @@ export class CreateTaskDto {
   @IsOptional()
   @IsDateString()
   due_date: Date;
+
+  @IsOptional()
+  time_log: any;
+
+  @IsOptional()
+  @IsBoolean()
+  running: boolean;
 
   @IsOptional()
   @IsNumber()
