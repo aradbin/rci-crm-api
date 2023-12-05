@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -32,15 +23,20 @@ export class CustomerController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCustomerDto: UpdateCustomerDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
     return this.customerService.update(+id, updateCustomerDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.customerService.remove(+id);
+  }
+}
+
+@Controller('web/xmlrpc')
+export class RpcController {
+  @Post(':slug')
+  create(@Res() res) {
+    res.sendStatus(200);
   }
 }
