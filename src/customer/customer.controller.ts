@@ -37,9 +37,9 @@ export class CustomerController {
 @Controller('web/xmlrpc')
 export class RpcController {
   @Public()
-  @Get(':slug')
+  @Get('')
   create(@Req() Req, @Res() res) {
-    console.log(Req.route.path);
+    console.log(Req.originalUrl);
     res.sendStatus(200);
   }
 }
