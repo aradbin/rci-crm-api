@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, Req } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { Public } from 'src/auth/public.decorators';
 
 @Controller('customers')
 export class CustomerController {
@@ -35,8 +36,10 @@ export class CustomerController {
 
 @Controller('web/xmlrpc')
 export class RpcController {
-  @Post(':slug')
-  create(@Res() res) {
+  @Public()
+  @Get(':slug')
+  create(@Req() Req, @Res() res) {
+    console.log(Req.route.path);
     res.sendStatus(200);
   }
 }
