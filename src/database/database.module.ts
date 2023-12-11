@@ -7,9 +7,21 @@ import { UserSettingsModel } from 'src/user-settings/user-settings.model';
 import { CustomerModel } from 'src/customer/customer.model';
 import { EmailModel } from 'src/email/email.model';
 import { TaskModel } from 'src/task/task.model';
+import { VoipLogModel } from 'src/voip/voip.model';
 import { WhatsappConversationModel, WhatsappMessageModel } from 'src/whatsapp/whatsapp.models';
 
-const models = [UserModel, SettingsModel, UserSettingsModel, EmailModel, CustomerModel, TaskModel, WhatsappMessageModel, WhatsappConversationModel, UserMessageModel];
+const models = [
+  UserModel,
+  SettingsModel,
+  UserSettingsModel,
+  EmailModel,
+  CustomerModel,
+  TaskModel,
+  WhatsappMessageModel,
+  WhatsappConversationModel,
+  UserMessageModel,
+  VoipLogModel,
+];
 
 const modelProviders = models.map((model) => {
   return {
@@ -39,4 +51,4 @@ const providers = [
   providers: [...providers],
   exports: [...providers],
 })
-export class DatabaseModule { }
+export class DatabaseModule {}

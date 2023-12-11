@@ -33,13 +33,3 @@ export class CustomerController {
     return this.customerService.remove(+id);
   }
 }
-
-@Controller('web/xmlrpc')
-export class RpcController {
-  @Public()
-  @Get('')
-  create(@Req() Req, @Res() res) {
-    console.log(Req.originalUrl);
-    res.sendStatus(200);
-  }
-}
