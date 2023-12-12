@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { Model } from 'objection';
 import Knex from 'knex';
-import { UserMessageModel, UserModel } from '../user/user.model';
+import { UserModel } from '../user/user.model';
 import { SettingsModel } from 'src/settings/settings.model';
 import { UserSettingsModel } from 'src/user-settings/user-settings.model';
 import { CustomerModel } from 'src/customer/customer.model';
@@ -9,7 +9,7 @@ import { EmailModel } from 'src/email/email.model';
 import { TaskModel } from 'src/task/task.model';
 import { WhatsappConversationModel, WhatsappMessageModel } from 'src/whatsapp/whatsapp.models';
 
-const models = [UserModel, SettingsModel, UserSettingsModel, EmailModel, CustomerModel, TaskModel, WhatsappMessageModel, WhatsappConversationModel, UserMessageModel];
+const models = [UserModel, SettingsModel, UserSettingsModel, EmailModel, CustomerModel, TaskModel, WhatsappMessageModel, WhatsappConversationModel];
 
 const modelProviders = models.map((model) => {
   return {

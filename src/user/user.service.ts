@@ -1,8 +1,8 @@
 import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { ModelClass } from 'objection';
-import { CreateUserDto, SendMessageDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserModel, UserMessageModel } from './user.model';
+import { UserModel } from './user.model';
 import * as bcrypt from 'bcrypt';
 import { EventsGateway } from 'src/event-gateway/events.gateway';
 import { UserSettingsService } from 'src/user-settings/user-settings.service';
@@ -12,7 +12,6 @@ export class UserService {
   constructor(
     @Inject(EventsGateway) private eventsGateway: EventsGateway,
     @Inject('UserModel') private modelClass: ModelClass<UserModel>,
-    @Inject('UserMessageModel') private messageModelClass: ModelClass<UserMessageModel>,
     private userSettingsService: UserSettingsService,
   ) { }
 
@@ -101,11 +100,5 @@ export class UserService {
 
   async remove(id: number) {
     return await this.modelClass.query().softDelete(id);
-  }
-
-  async sendMessage(messageDto: SendMessageDto) {
-    const message = await this.messageModelClass.query().insert(messageDto).returning('*');
-    this.eventsGateway.server.emit(`userID-${messageDto.recipient_id}`, message);
-    return message;
   }
 }

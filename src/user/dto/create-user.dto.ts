@@ -33,18 +33,3 @@ export class CreateUserDto {
   @IsInt()
   created_by: number;
 }
-
-export class SendMessageDto {
-  @IsNumber()
-  recipient_id: number;
-
-  @IsString()
-  message_body: string;
-
-  @IsString()
-  message_type: string;
-
-  @IsOptional()
-  @IsString()
-  context_message_id: string;
-}

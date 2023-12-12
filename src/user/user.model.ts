@@ -34,36 +34,3 @@ export class UserModel extends BaseModel {
 }
 
 UserModel.relationMappings();
-
-export class UserMessageModel extends BaseModel {
-  static tableName = 'user_messages';
-
-  recipient_id: number;
-
-  message_body: string;
-  message_type: string;
-  message_status: string;
-  context_message_id: string;
-
-  attachments: any;
-
-  static relationMappings = {
-    sender: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: UserModel,
-      join: {
-        from: 'user_messages.created_by',
-        to: 'users.id',
-      },
-    },
-
-    receiver: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: UserModel,
-      join: {
-        from: 'user_messages.recipient_id',
-        to: 'users.id',
-      },
-    },
-  };
-}

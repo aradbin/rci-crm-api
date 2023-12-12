@@ -5,12 +5,10 @@ const tableName = 'user_messages';
 export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, (table) => {
     table.increments();
-    table.integer('recipient_id').nullable();
+    table.integer('user_id').nullable();
 
-    table.string('message_body').nullable();
-    table.string('context_message_id').nullable();
-    table.string('message_type').defaultTo('text'); // text, template, image, video, document, audio, location, contact, sticker, etc
-    table.string('message_status').defaultTo('sent'); // sent, delivered, read, etc
+    table.string('message').nullable();
+    table.string('status').defaultTo('sent'); // sent, delivered, read etc.
 
     table.jsonb('attachments').nullable();
 
