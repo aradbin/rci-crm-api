@@ -14,9 +14,9 @@ export class VoipService {
 
   hook(params: any) {
     console.log(params);
-    const call_id = params.call_id;
-    const local_number = params.local_number;
-    const remote_number = params.remote_number;
+    const call_id = params.id;
+    const local_number = params.localTel;
+    const remote_number = params.remoteTel;
 
     const log = this.modelClass.query().where('call_id', call_id).find().first();
     if (!log) {
@@ -31,7 +31,16 @@ export class VoipService {
   }
 
   findAll(params: any) {
-    return this.modelClass.query().where('local_number', params.local_number).where('remote_number', params.remote_number).find();
+    const { local_number, remote_number } = params;
+
+    const query = this.modelClass.query();
+    if (local_number) {
+      query.where('local_number', local_number);
+    }
+    if (remote_number) {
+      query.where('remote_number', remote_number);
+    }
+    return query.find().paginate(params);
   }
 
   findOne(id: number) {
