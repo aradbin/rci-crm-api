@@ -2,11 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, Req } fr
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { Public } from 'src/auth/public.decorators';
 
 @Controller('customers')
 export class CustomerController {
-  constructor(private readonly customerService: CustomerService) {}
+  constructor(private readonly customerService: CustomerService) { }
 
   @Post()
   create(@Body() createCustomerDto: CreateCustomerDto) {

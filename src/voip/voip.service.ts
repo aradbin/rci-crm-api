@@ -6,7 +6,7 @@ import { VoipLogModel } from './voip.model';
 
 @Injectable()
 export class VoipService {
-  constructor(@Inject('VoipLogModel') private modelClass: ModelClass<VoipLogModel>) {}
+  constructor(@Inject('VoipLogModel') private modelClass: ModelClass<VoipLogModel>) { }
 
   create(createVoipDto: CreateVoipDto) {
     return 'This action adds a new voip';
@@ -19,7 +19,7 @@ export class VoipService {
     const remote_number = params.remoteTel;
 
     const log = this.modelClass.query().where('call_id', call_id).find().first();
-    if (!log) {
+    if (log) {
       const updated = this.modelClass
         .query()
         .update({ log: JSON.stringify(params) })
