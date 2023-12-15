@@ -16,9 +16,9 @@ export class VoipService {
     const call_id = params.id;
     const local_number = params.localTel;
     const remote_number = params.remoteTel;
-    console.log(params.id);
-    console.log(call_id);
+
     const log = this.modelClass.query().where('call_id', call_id).find().first();
+    console.log('log', log);
     if (log) {
       return await this.modelClass
         .query()
