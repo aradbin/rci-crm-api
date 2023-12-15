@@ -12,13 +12,12 @@ export class VoipService {
     // url for horizon integrator
     // http://54.179.73.207:8080/voip/create?id={Call.Id}&start={Call.Start}&state={Call.State}&duration={Call.Duration}&direction={Call.Direction}&remoteTel={Call.RemoteTel}&remoteTelE164={Call.RemoteTelE164}&remoteName={Call.RemoteName}&localTel={Call.LocalTel}&localName={Call.LocalName}
 
-    // console.log(params);
     const call_id = params.id;
     const local_number = params.localTel;
     const remote_number = params.remoteTel;
 
     const log = await this.modelClass.query().where('call_id', call_id).find().first();
-    console.log('log', log);
+
     if (log) {
       return await this.modelClass
         .query()
