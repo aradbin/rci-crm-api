@@ -16,7 +16,8 @@ export class VoipService {
     const call_id = params.id;
     const local_number = params.localTel;
     const remote_number = params.remoteTel;
-
+    console.log(params.id);
+    console.log(call_id);
     const log = this.modelClass.query().where('call_id', call_id).find().first();
     if (log) {
       return await this.modelClass
@@ -24,7 +25,7 @@ export class VoipService {
         .update({ log: JSON.stringify(params) })
         .where('call_id', call_id);
     }
-    console.log(log);
+
     return await this.modelClass.query().insert({ call_id, local_number, remote_number, log: JSON.stringify(params) });
   }
 
