@@ -4,37 +4,16 @@ import { Public } from 'src/auth/public.decorators';
 
 @Controller('voip')
 export class VoipController {
-  constructor(private readonly voipService: VoipService) {}
+  constructor(private readonly voipService: VoipService) { }
 
-  // @Post()
-  // create(@Body() createVoipDto: CreateVoipDto) {
-  //   return this.voipService.create(createVoipDto);
-  // }
-
-  @Get('/log')
+  @Get('/create')
   @Public()
-  hook(@Query() params: any) {
-    return this.voipService.hook(params);
+  create(@Query() params: any) {
+    return this.voipService.create(params);
   }
 
-  @Get('/log/list')
-  @Public()
+  @Get('/list')
   findAll(@Query() params: any) {
     return this.voipService.findAll(params);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.voipService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateVoipDto: UpdateVoipDto) {
-  //   return this.voipService.update(+id, updateVoipDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.voipService.remove(+id);
-  // }
 }
