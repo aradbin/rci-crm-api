@@ -6,13 +6,13 @@ import { Public } from 'src/auth/public.decorators';
 export class VoipController {
   constructor(private readonly voipService: VoipService) { }
 
-  @Get('/create')
+  @Get('create')
   @Public()
   create(@Query() params: any) {
     return this.voipService.create(params);
   }
 
-  @Get('/list')
+  @Get('list')
   findAll(@Query() params: any) {
     return this.voipService.findAll(params);
   }
