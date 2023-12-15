@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UnprocessableEntityException } from '@nestjs/common';
 import { VoipService } from './voip.service';
 import { Public } from 'src/auth/public.decorators';
 
@@ -8,8 +8,12 @@ export class VoipController {
 
   @Get('create')
   @Public()
-  create(@Query() params: any) {
-    return this.voipService.create(params);
+  async create(@Query() params: any) {
+    try {
+      return await this.voipService.create(params);
+    } catch (error) {
+      throw new UnprocessableEntityException(error.message)
+    }
   }
 
   @Get('list')
