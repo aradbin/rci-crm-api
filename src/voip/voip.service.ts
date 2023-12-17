@@ -1,6 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateVoipDto } from './dto/create-voip.dto';
-import { UpdateVoipDto } from './dto/update-voip.dto';
 import { ModelClass } from 'objection';
 import { VoipLogModel } from './voip.model';
 

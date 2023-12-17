@@ -9,20 +9,7 @@ export class EmailService {
   constructor(private userSettingsService: UserSettingsService) { }
 
   async create(userId: number, createEmailDto: CreateEmailDto) {
-    let emailSettings = null;
-    await this.userSettingsService.findAll({ user_id: userId, deleted_at: null }).then((response: any) => {
-      response?.results?.map((item: any) => {
-        if (item?.settings?.type === 'email') {
-          emailSettings = item?.settings
-        }
-      })
-    });
-
-    if (!emailSettings) {
-      throw new UnprocessableEntityException("Email config not found. Please config your email");
-    }
-
-    const decryptedData = this.userSettingsService.decryptPassword(emailSettings?.metadata?.password);
+    const emailSettings = await this.getEmailSettings(userId);
 
     // Create a transporter
     const transporter = nodemailer.createTransport({
@@ -32,7 +19,7 @@ export class EmailService {
       secure: true,
       auth: {
         user: emailSettings?.metadata?.username,
-        pass: decryptedData,
+        pass: emailSettings?.metadata?.password,
       },
     });
 
@@ -56,11 +43,13 @@ export class EmailService {
     }
   }
 
-  async find() {
+  async find(userId: number) {
+    const emailSettings = await this.getEmailSettings(userId);
+
     const imap = new Imap({
-      user: "aradbin@asrexpress.com",
-      password: "5Z41FqeddeA$",
-      host: "asrexpress.com",
+      user: emailSettings?.metadata?.username,
+      password: emailSettings?.metadata?.password,
+      host: emailSettings?.metadata?.host,
       port: 993,
       tls: true,
     });
@@ -69,12 +58,12 @@ export class EmailService {
 
     imap.once('ready', () => {
       try {
-        imap.openBox('INBOX', false, (err, box) => {
+        imap.openBox('INBOX', false, (err: any, box: any) => {
           if (err) throw err;
 
           // Search for unseen emails
           const searchCriteria = ['UNSEEN'];
-          imap.search(searchCriteria, (searchError, results) => {
+          imap.search(searchCriteria, (searchError: any, results: any) => {
             if (searchError) throw searchError;
 
             // Fetch email bodies and headers
@@ -83,22 +72,22 @@ export class EmailService {
               struct: true
             });
 
-            fetch.on('message', (msg, seqno) => {
+            fetch.on('message', (msg: any, seqno: any) => {
               const emailData = {
-                attr: '',
-                header: '',
-                text: '',
-                html: ''
+                attr: null,
+                header: null,
+                text: null,
+                html: null
               };
 
-              msg.on('attributes', (attrs) => {
+              msg.on('attributes', (attrs: any) => {
                 // The UID can be accessed as attrs.uid
                 emailData.attr = attrs;
               });
 
-              msg.on('body', (stream, info) => {
+              msg.on('body', (stream: any, info: any) => {
                 let buffer = '';
-                stream.on('data', (chunk) => {
+                stream.on('data', (chunk: any) => {
                   buffer += chunk.toString('utf8');
                 });
 
@@ -106,9 +95,9 @@ export class EmailService {
                   if (info.which === 'HEADER.FIELDS (FROM TO SUBJECT DATE)') {
                     emailData.header = Imap.parseHeader(buffer);
                   } else if (info.which === 'TEXT') {
-                    // emailData.text = buffer;
+                    emailData.text = buffer;
                   } else if (info.which === 'HTML') {
-                    // emailData.html = buffer;
+                    emailData.html = buffer;
                   } else {
                     console.error('Invalid or unsupported section:', info.which);
                   }
@@ -116,7 +105,8 @@ export class EmailService {
               });
 
               msg.on('end', () => {
-                console.log('Email Data:', emailData);
+                console.log('Email Data:', emailData.attr.uid);
+                email_array.push(emailData);
               });
             });
 
@@ -130,12 +120,8 @@ export class EmailService {
       }
     });
 
-    imap.once('error', function (err) {
+    imap.once('error', function (err: any) {
       console.log("Error when connection to IMAP", err);
-    });
-
-    imap.once('error', (err) => {
-      console.error('IMAP error:', err);
     });
 
     imap.connect();
@@ -145,5 +131,30 @@ export class EmailService {
         resolve(email_array);
       });
     })
+  }
+
+  async getEmailSettings(userId: number) {
+    let emailSettings = null;
+    await this.userSettingsService.findAll({ user_id: userId, deleted_at: null }).then((response: any) => {
+      response?.results?.map((item: any) => {
+        if (item?.settings?.type === 'email') {
+          emailSettings = item?.settings
+        }
+      })
+    });
+
+    if (!emailSettings) {
+      throw new UnprocessableEntityException("Email config not found. Please config your email");
+    }
+
+    const decryptedData = this.userSettingsService.decryptPassword(emailSettings?.metadata?.password);
+
+    return {
+      ...emailSettings,
+      metadata: {
+        ...emailSettings.metadata,
+        password: decryptedData
+      }
+    }
   }
 }

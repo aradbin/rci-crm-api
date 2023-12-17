@@ -23,7 +23,7 @@ export class EmailController {
   }
 
   @Get()
-  async find() {
-    return await this.emailService.find();
+  async find(@Request() req: any) {
+    return await this.emailService.find(req?.user?.id);
   }
 }
