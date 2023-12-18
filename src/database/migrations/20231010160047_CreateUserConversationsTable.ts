@@ -6,8 +6,7 @@ export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, (table) => {
     table.increments();
 
-    table.string('sender_number').nullable();
-    table.string('recipient_number').nullable();
+    table.string('user_id').nullable();
 
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
