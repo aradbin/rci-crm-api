@@ -1,17 +1,13 @@
 import { Knex } from 'knex';
 
-const tableName = 'user_messages';
+const tableName = 'user_conversations';
 
 export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, (table) => {
     table.increments();
 
-    table.integer('conversation_id').nullable();
-
-    table.string('message').nullable();
-    table.string('status').defaultTo('sent'); // sent, delivered, read etc.
-
-    table.jsonb('attachments').nullable();
+    table.string('sender_number').nullable();
+    table.string('recipient_number').nullable();
 
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
