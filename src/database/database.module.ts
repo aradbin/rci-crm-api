@@ -9,6 +9,7 @@ import { EmailModel } from 'src/email/email.model';
 import { TaskModel } from 'src/task/task.model';
 import { VoipLogModel } from 'src/voip/voip.model';
 import { WhatsappConversationModel, WhatsappMessageModel } from 'src/whatsapp/whatsapp.models';
+import { MessageConversationModel, MessageModel } from 'src/message/message.models';
 
 const models = [
   UserModel,
@@ -19,6 +20,8 @@ const models = [
   TaskModel,
   WhatsappMessageModel,
   WhatsappConversationModel,
+  MessageModel,
+  MessageConversationModel,
   VoipLogModel,
 ];
 
