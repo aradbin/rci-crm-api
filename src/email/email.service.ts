@@ -2,6 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import * as nodemailer from 'nodemailer';
 import { UserSettingsService } from 'src/user-settings/user-settings.service';
+import { simpleParser } from 'mailparser';
 const Imap = require('node-imap');
 
 @Injectable()
@@ -43,7 +44,7 @@ export class EmailService {
     }
   }
 
-  async find(userId: number) {
+  async findAll(userId: number, query: any) {
     const emailSettings = await this.getEmailSettings(userId);
 
     const imap = new Imap({
@@ -54,81 +55,56 @@ export class EmailService {
       tls: true,
     });
 
+    const fetchOptions = {
+      bodies: '',
+      markSeen: false,
+      struct: true,
+    };
+
+    const pagination = (query?.page && query?.pageSize) ?
+      `${((query?.page - 1) * query?.pageSize) + 1}:${query?.page * query?.pageSize}`
+      :
+      '1:10'
+
     let email_array = [];
+    let total = 0;
 
     imap.once('ready', () => {
       try {
-        imap.openBox('INBOX', false, (err: any, box: any) => {
+        imap.openBox('INBOX', true, (err: any, box: any) => {
           if (err) throw err;
 
-          // Search for unseen emails
-          const searchCriteria = ['UNSEEN'];
-          imap.search(searchCriteria, (searchError: any, results: any) => {
-            if (searchError) throw searchError;
+          total = box.messages.total;
+          const fetch = imap.seq.fetch(pagination, fetchOptions);
 
-            // Fetch email bodies and headers
-            const fetch = imap.fetch(results, {
-              bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)', 'TEXT'],
-              struct: true
-            });
-
-            fetch.on('message', (msg: any, seqno: any) => {
-              const emailData = {
-                attr: null,
-                header: null,
-                text: null,
-                html: null
-              };
-
-              msg.on('attributes', (attrs: any) => {
-                // The UID can be accessed as attrs.uid
-                emailData.attr = attrs;
+          fetch.on('message', (msg: any) => {
+            msg.on('body', (stream: any, info: any) => {
+              simpleParser(stream, {}).then((parsed: any) => {
+                email_array.push(parsed);
+              }).catch((error: any) => {
+                console.log(error);
               });
+            })
+          })
 
-              msg.on('body', (stream: any, info: any) => {
-                let buffer = '';
-                stream.on('data', (chunk: any) => {
-                  buffer += chunk.toString('utf8');
-                });
-
-                stream.on('end', () => {
-                  if (info.which === 'HEADER.FIELDS (FROM TO SUBJECT DATE)') {
-                    emailData.header = Imap.parseHeader(buffer);
-                  } else if (info.which === 'TEXT') {
-                    emailData.text = buffer;
-                  } else if (info.which === 'HTML') {
-                    emailData.html = buffer;
-                  } else {
-                    console.error('Invalid or unsupported section:', info.which);
-                  }
-                });
-              });
-
-              msg.on('end', () => {
-                console.log('Email Data:', emailData.attr.uid);
-                email_array.push(emailData);
-              });
-            });
-
-            fetch.once('end', () => {
-              imap.end();
-            });
+          fetch.once('end', () => {
+            imap.end();
           });
-        })
+        });
       } catch (error) {
-        console.log("Error when request open inbox mail", error)
+        throw error;
       }
     });
 
-    imap.once('error', function (err: any) {
-      console.log("Error when connection to IMAP", err);
+    imap.once('error', function (error: any) {
+      throw error;
     });
 
     imap.connect();
 
     return new Promise((resolve, reject) => {
-      imap.once('close', async function () { //maybe, someone asking whether to use end or close and the author of the module says that close is always emitted so you should use that.
-        resolve(email_array);
+      imap.once('close', async function () {
+        resolve({ results: email_array, total });
       });
     })
   }

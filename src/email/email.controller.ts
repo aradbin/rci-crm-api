@@ -5,6 +5,7 @@ import {
   Body,
   UnprocessableEntityException,
   Request,
+  Query,
 } from "@nestjs/common";
 import { EmailService } from "./email.service";
 import { CreateEmailDto } from "./dto/create-email.dto";
@@ -23,7 +24,7 @@ export class EmailController {
   }
 
   @Get()
-  async find(@Request() req: any) {
-    return await this.emailService.find(req?.user?.id);
+  async findAll(@Request() req: any, @Query() query: any) {
+    return await this.emailService.findAll(req?.user?.id, query);
   }
 }
