@@ -22,6 +22,8 @@ export class TaskModel extends BaseModel {
 
   customer_id: number;
   assignee_id: number;
+  reporter_id: number;
+  type_id: any;
 
   static relationMappings = () => ({
     customer: {
@@ -44,10 +46,18 @@ export class TaskModel extends BaseModel {
       relation: Model.BelongsToOneRelation,
       modelClass: UserModel,
       join: {
-        from: 'tasks.created_by',
+        from: 'tasks.reporter_id',
         to: 'users.id',
       },
     },
+    // type: {
+    //   relation: Model.BelongsToOneRelation,
+    //   modelClass: SettingsModel,
+    //   join: {
+    //     from: 'tasks.type_id',
+    //     to: 'settings.id',
+    //   },
+    // },
   });
 }
 

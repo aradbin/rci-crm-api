@@ -40,6 +40,10 @@ export class CreateTaskDto {
   due_date: Date;
 
   @IsOptional()
+  @IsString()
+  estimation: string;
+
+  @IsOptional()
   time_log: any;
 
   @IsOptional()
@@ -53,4 +57,12 @@ export class CreateTaskDto {
   @IsOptional()
   @IsNumber()
   assignee_id: number;
+
+  @IsOptional()
+  @IsNumber()
+  reporter_id: number;
+
+  @IsOptional()
+  @IsNumber()
+  type_id: number;
 }

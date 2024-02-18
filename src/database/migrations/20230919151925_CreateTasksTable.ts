@@ -60,25 +60,31 @@ export async function up(knex: Knex) {
     .createTable(tableName, (table) => {
       table.increments();
 
-      table.integer('customer_id').unsigned().references('id').inTable('customers').onDelete('SET NULL').index();
-      table.integer('assignee_id').unsigned().references('id').inTable('users').onDelete('SET NULL').index();
+      table.integer('customer_id').nullable();
+      table.integer('assignee_id').nullable();
+      table.integer('reporter_id').nullable();
+      table.integer('type_id').nullable();
+      table.integer('parent_id').nullable();
 
       table.string('title').nullable();
       table.string('description').nullable();
       table.smallint('priority').nullable();
-
       table.string('status').defaultTo(TaskStatus.TODO);
       table.boolean('running').defaultTo(false);
+
+      table.timestamp('due_date').nullable();
+      table.string('estimation').nullable();
 
       table.jsonb('time_log').defaultTo('[]');
       table.jsonb('activity_log').defaultTo('[]');
       table.jsonb('attachments').nullable();
-      table.timestamp('due_date').nullable();
 
       table.timestamp('created_at').nullable();
       table.integer('created_by').nullable();
       table.timestamp('updated_at').nullable();
       table.integer('updated_by').nullable();
+      table.timestamp('completed_at').nullable();
+      table.integer('completed_by').nullable();
       table.timestamp('deleted_at').nullable();
       table.integer('deleted_by').nullable();
     })

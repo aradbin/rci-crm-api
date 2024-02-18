@@ -14,8 +14,8 @@ export async function up(knex: Knex) {
     table.string("avatar").nullable();
     table.boolean("verified").defaultTo(false);
     table.boolean("status").defaultTo(true);
-    
-    table.timestamp("created_at").notNullable();
+
+    table.timestamp("created_at").nullable();
     table.integer("created_by").nullable();
     table.timestamp("updated_at").nullable();
     table.integer("updated_by").nullable();

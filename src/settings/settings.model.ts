@@ -16,7 +16,6 @@ export class SettingsModel extends BaseModel {
         to: 'settings.id'
       }
     },
-
     children: {
       relation: Model.HasManyRelation,
       modelClass: SettingsModel,
@@ -25,7 +24,6 @@ export class SettingsModel extends BaseModel {
         to: 'settings.parent_id'
       }
     },
-
     userSettings: {
       relation: Model.HasManyRelation,
       modelClass: UserSettingsModel,
@@ -33,6 +31,14 @@ export class SettingsModel extends BaseModel {
         from: 'settings.id',
         to: 'user_settings.settings_id'
       }
-    }
+    },
+    // tasks: {
+    //   relation: Model.HasManyRelation,
+    //   modelClass: TaskModel,
+    //   join: {
+    //     from: 'settings.id',
+    //     to: 'tasks.type_id'
+    //   }
+    // }
   };
 }
