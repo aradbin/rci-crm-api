@@ -1,12 +1,15 @@
 {
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "editor.suggest.insertMode": "replace"
+  },
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.formatOnSave": true,
-  "cSpell.words": [
-    "asrexpress",
-    "Fqedde",
-    "Knex",
-    "knexfile",
-    "middlewares",
-    "nestjs"
-  ]
+  "cSpell.words": ["asrexpress", "Fqedde", "Knex", "knexfile", "middlewares", "Minio", "nestjs"]
 }

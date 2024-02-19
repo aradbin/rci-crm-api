@@ -13,6 +13,7 @@ import { CustomerModule } from './customer/customer.module';
 import { EventsModule } from './event-gateway/events.gateway.module';
 import { VoipModule } from './voip/voip.module';
 import { MessageModule } from './message/message.module';
+import { MinioService } from './minio/minio.service';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MessageModule } from './message/message.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    MinioService,
   ],
 })
 export class AppModule { }
