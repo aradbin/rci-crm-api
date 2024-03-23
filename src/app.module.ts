@@ -10,9 +10,9 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
 import { TaskModule } from './task/task.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { CustomerModule } from './customer/customer.module';
-import { EventsModule } from './event-gateway/events.gateway.module';
 import { VoipModule } from './voip/voip.module';
 import { MessageModule } from './message/message.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import { MessageModule } from './message/message.module';
     WhatsappModule,
     MessageModule,
     CustomerModule,
-    EventsModule,
+    SocketModule,
     VoipModule,
   ],
   providers: [

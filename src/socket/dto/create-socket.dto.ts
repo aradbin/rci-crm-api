@@ -1,24 +1,6 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class CreateMessageConversationDto {
-  @IsOptional()
-  @IsNumber()
-  user_one: number;
-
-  @IsOptional()
-  @IsNumber()
-  user_two: number;
-
-  @IsOptional()
-  @IsString()
-  created_at: string;
-
-  @IsOptional()
-  @IsNumber()
-  created_by: number;
-}
-
-export class CreateMessageDto {
+export class CreateSocketDto {
   @IsOptional()
   @IsNumber()
   conversation_id: number;

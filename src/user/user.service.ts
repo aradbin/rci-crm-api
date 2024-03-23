@@ -4,13 +4,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserModel } from './user.model';
 import * as bcrypt from 'bcrypt';
-import { EventsGateway } from 'src/event-gateway/events.gateway';
 import { UserSettingsService } from 'src/user-settings/user-settings.service';
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject(EventsGateway) private eventsGateway: EventsGateway,
     @Inject('UserModel') private modelClass: ModelClass<UserModel>,
     private userSettingsService: UserSettingsService,
   ) { }

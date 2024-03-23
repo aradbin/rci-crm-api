@@ -5,12 +5,23 @@ import { UserModel } from 'src/user/user.model';
 export class MessageConversationModel extends BaseModel {
   static tableName = 'user_conversations';
 
+  user_one: number
+  user_two: number
+
   static relationMappings = {
-    recipient: {
+    userOne: {
       relation: Model.BelongsToOneRelation,
       modelClass: UserModel,
       join: {
-        from: 'user_conversations.user_id',
+        from: 'user_conversations.user_one',
+        to: 'users.id',
+      },
+    },
+    userTwo: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: UserModel,
+      join: {
+        from: 'user_conversations.user_two',
         to: 'users.id',
       },
     }
