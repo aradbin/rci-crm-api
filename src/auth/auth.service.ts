@@ -1,37 +1,27 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from "@nestjs/common";
-import { UserService } from "src/user/user.service";
-import { JwtService } from "@nestjs/jwt";
-import * as bcrypt from "bcrypt";
-import { LoginDto } from "./dto/login.dto";
-import { CreateUserDto } from "src/user/dto/create-user.dto";
-import { RegisterDto } from "./dto/register.dto";
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { UserService } from 'src/user/user.service';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
-  ) { }
+  constructor(private userService: UserService, private jwtService: JwtService) {}
 
-  async register(registerDto: RegisterDto) {
+  async register(registerDto: RegisterDto, avatar: Express.Multer.File) {
     const createUserDto: CreateUserDto = { ...registerDto };
 
-    return await this.userService.create(createUserDto);
+    return await this.userService.create(createUserDto, avatar);
   }
 
   async login(loginDto: LoginDto) {
     const user = await this.userService.findByEmail(loginDto.email);
     if (!user) {
-      throw new NotFoundException("User is not registered. Please Register");
+      throw new NotFoundException('User is not registered. Please Register');
     }
-    const passwordValid = await bcrypt.compare(
-      loginDto.password,
-      user.password,
-    );
+    const passwordValid = await bcrypt.compare(loginDto.password, user.password);
     if (passwordValid) {
       const payload = {
         email: user.email,
@@ -40,18 +30,16 @@ export class AuthService {
       };
       return {
         accessToken: this.jwtService.sign(payload),
-        user: user
+        user: user,
       };
     }
-    throw new UnauthorizedException(
-      `Credentials didn't match. Please try again or reset your password`,
-    );
+    throw new UnauthorizedException(`Credentials didn't match. Please try again or reset your password`);
   }
 
   async profile(email: string) {
     const user = this.userService.findByEmail(email);
     if (user) {
-      return user
+      return user;
     }
     throw new UnauthorizedException();
   }

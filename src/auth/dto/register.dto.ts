@@ -1,19 +1,12 @@
-import {
-  IsArray,
-  IsEmail,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from "class-validator";
+import { IsArray, IsEmail, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class RegisterDto {
   @IsOptional()
   @IsString()
   name: string;
 
-  @IsEmail({}, { message: "Please provide valid email address" })
-  @IsNotEmpty({ message: "Email is required" })
+  @IsEmail({}, { message: 'Please provide valid email address' })
+  @IsNotEmpty({ message: 'Email is required' })
   email: string;
 
   @IsOptional()
@@ -21,7 +14,7 @@ export class RegisterDto {
   username: string;
 
   @IsString()
-  @IsNotEmpty({ message: "Password is required" })
+  @IsNotEmpty({ message: 'Password is required' })
   password: string;
 
   @IsOptional()
@@ -39,4 +32,7 @@ export class RegisterDto {
   @IsOptional()
   @IsInt()
   created_by: number;
+
+  @IsOptional()
+  avatar: string;
 }
