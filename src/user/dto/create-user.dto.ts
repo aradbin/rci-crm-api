@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsOptional()
@@ -32,4 +32,7 @@ export class CreateUserDto {
   @IsOptional()
   @IsInt()
   created_by: number;
+
+  @IsOptional()
+  avatar: string;
 }

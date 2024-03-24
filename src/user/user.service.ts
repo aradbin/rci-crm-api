@@ -1,96 +1,121 @@
 import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { ModelClass } from 'objection';
+import { MinioService } from 'src/minio/minio.service';
+import { UserSettingsService } from 'src/user-settings/user-settings.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserModel } from './user.model';
-import * as bcrypt from 'bcrypt';
-import { UserSettingsService } from 'src/user-settings/user-settings.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject('UserModel') private modelClass: ModelClass<UserModel>,
     private userSettingsService: UserSettingsService,
-  ) { }
+    private readonly minioService: MinioService,
+  ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto, avatar: Express.Multer.File) {
     const hasUser = await this.modelClass.query().where('email', createUserDto.email).first();
     if (hasUser) {
       throw new NotAcceptableException('Email already exists');
     }
 
-    const hash = bcrypt.hashSync(createUserDto.password, 10);
-    const settings_id = createUserDto.settings_id
-    delete createUserDto.settings_id
+    createUserDto.avatar = await this.minioService.uploadFile(avatar);
 
-    const user = await this.modelClass.query().insert({ ...createUserDto, password: hash })
+    const hash = bcrypt.hashSync(createUserDto.password, 10);
+    const settings_id = createUserDto.settings_id;
+    delete createUserDto.settings_id;
+
+    const user = await this.modelClass.query().insert({ ...createUserDto, password: hash });
 
     if (user?.id && settings_id?.length > 0) {
-      const userSettings = []
+      const userSettings = [];
       settings_id?.map((item) => {
         userSettings.push({
           user_id: user.id,
-          settings_id: item
-        })
-      })
-      this.userSettingsService.create(userSettings)
+          settings_id: item,
+        });
+      });
+      await this.userSettingsService.create(userSettings);
     }
 
+    user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
     return user;
   }
 
-  async findAll(params: any = {}) {
-    return await this.modelClass.query().paginate(params).filter(params).withGraphFetched('userSettings.settings').find();
+  async findAll(params = {}) {
+    const users = (await this.modelClass.query().paginate(params).filter(params).withGraphFetched('userSettings.settings').find()) as UserModel[];
+
+    await Promise.all(
+      users['results'].map(async (user: UserModel) => {
+        user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
+        console.log(user['avatar']);
+      }),
+    );
+
+    return users;
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().findById(id).withGraphFetched('userSettings.settings').first().find();
+    const user = await this.modelClass.query().findById(id).withGraphFetched('userSettings.settings').first().find();
+    user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
+    return user;
   }
 
   async findByEmail(email: string) {
-    return await this.modelClass.query().where('email', email).withGraphFetched('userSettings.settings').withGraphFetched('runningTask').first().find();
+    return await this.modelClass
+      .query()
+      .where('email', email)
+      .withGraphFetched('userSettings.settings')
+      .withGraphFetched('runningTask')
+      .first()
+      .find();
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto, avatar: Express.Multer.File) {
     const hasUser = await this.modelClass.query().where('id', '!=', id).where('email', updateUserDto.email).first().find();
     if (hasUser) {
       throw new NotAcceptableException('Email already exists');
     }
 
-    const settings_id = updateUserDto.settings_id
-    delete updateUserDto.settings_id
-    delete updateUserDto.password
+    const settingsId = updateUserDto.settings_id;
+    delete updateUserDto.settings_id;
+    delete updateUserDto.password;
 
+    if (avatar !== undefined) {
+      updateUserDto.avatar = await this.minioService.uploadFile(avatar);
+    } else {
+      delete updateUserDto.avatar;
+    }
     const user = await this.modelClass.query().findById(id).update(updateUserDto);
 
     if (user > 0) {
-      let existingUserSettings = []
-      let index = -1
-      await this.userSettingsService.findAll({ user_id: id }).then((response: any) => {
-        response?.results?.map((item: any) => {
-          if (settings_id.includes(item?.settings_id)) {
-            index = settings_id.indexOf(item?.settings_id)
-            settings_id.splice(index, 1)
-          } else {
-            existingUserSettings.push(item?.id)
-          }
-        })
-      })
-
-      if (settings_id.length > 0) {
-        const userSettings = []
-        settings_id.map((item) => {
+      const existingUserSettings = [];
+      let index = -1;
+      const response = await this.userSettingsService.findAll({ user_id: id });
+      response['results']?.map((item) => {
+        if (settingsId.includes(item?.settings_id)) {
+          index = settingsId.indexOf(item?.settings_id);
+          settingsId.splice(index, 1);
+        } else {
+          existingUserSettings.push(item?.id);
+        }
+      });
+      if (settingsId?.length > 0) {
+        const userSettings = [];
+        settingsId.map((item) => {
           userSettings.push({
             user_id: id,
-            settings_id: item
-          })
-        })
-        await this.userSettingsService.create(userSettings)
+            settings_id: item,
+          });
+        });
+        await this.userSettingsService.create(userSettings);
       }
 
-      existingUserSettings?.map(async (item: any) => {
-        await this.userSettingsService.remove(item)
-      })
+      existingUserSettings?.map(async (item) => {
+        await this.userSettingsService.remove(item);
+      });
     }
 
     return user;

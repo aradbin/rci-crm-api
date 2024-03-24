@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
+import { MinioService } from 'src/minio/minio.service';
+import { UserSettingsModule } from 'src/user-settings/user-settings.module';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { UserSettingsModule } from 'src/user-settings/user-settings.module';
 
 @Module({
   imports: [UserSettingsModule],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, MinioService],
   exports: [UserService],
 })
-export class UserModule { }
+export class UserModule {}
