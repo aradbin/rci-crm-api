@@ -32,4 +32,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     return response;
   }
+
+  async handleVoIP(log: any) {
+    this.server.emit('voip', log);
+  }
 }

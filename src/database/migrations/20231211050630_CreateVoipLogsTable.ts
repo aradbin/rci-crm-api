@@ -11,6 +11,9 @@ export async function up(knex: Knex) {
     table.string('local_number').nullable();
 
     table.jsonb('log').nullable();
+    table.text('note').nullable();
+    table.integer('received_by').nullable();
+    table.integer('customer_id').nullable();
 
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
