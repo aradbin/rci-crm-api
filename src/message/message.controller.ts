@@ -12,8 +12,8 @@ export class MessageController {
   }
 
   @Get()
-  async findAll(@Query() query: any) {
-    return await this.messageService.findAll(query);
+  async findAll(@Req() req: any, @Query() query: any) {
+    return await this.messageService.findAll(req?.user?.id, query);
   }
 
   @Get(':id')
