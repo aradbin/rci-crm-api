@@ -5,60 +5,60 @@ import { TaskStatus } from 'src/database/enums/tasks';
 import { UserModel } from 'src/user/user.model';
 
 export class TaskModel extends BaseModel {
-  static tableName = 'tasks';
+    static tableName = 'tasks';
 
-  title: string;
-  due_date: Date;
-  priority: number;
-  description: string;
+    title: string;
+    due_date: Date;
+    priority: number;
+    description: string;
 
-  metadata: any;
-  attachments: any;
-  activity_log: any;
-  time_log: any;
+    metadata: any;
+    attachments: string[];
+    activity_log: any;
+    time_log: any;
 
-  status: TaskStatus;
-  running: boolean;
+    status: TaskStatus;
+    running: boolean;
 
-  customer_id: number;
-  assignee_id: number;
-  reporter_id: number;
-  type_id: any;
+    customer_id: number;
+    assignee_id: number;
+    reporter_id: number;
+    type_id: any;
 
-  static relationMappings = () => ({
-    customer: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: CustomerModel,
-      join: {
-        from: 'tasks.customer_id',
-        to: 'customers.id',
-      },
-    },
-    assignee: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: UserModel,
-      join: {
-        from: 'tasks.assignee_id',
-        to: 'users.id',
-      },
-    },
-    reporter: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: UserModel,
-      join: {
-        from: 'tasks.reporter_id',
-        to: 'users.id',
-      },
-    },
-    // type: {
-    //   relation: Model.BelongsToOneRelation,
-    //   modelClass: SettingsModel,
-    //   join: {
-    //     from: 'tasks.type_id',
-    //     to: 'settings.id',
-    //   },
-    // },
-  });
+    static relationMappings = () => ({
+        customer: {
+            relation: Model.BelongsToOneRelation,
+            modelClass: CustomerModel,
+            join: {
+                from: 'tasks.customer_id',
+                to: 'customers.id',
+            },
+        },
+        assignee: {
+            relation: Model.BelongsToOneRelation,
+            modelClass: UserModel,
+            join: {
+                from: 'tasks.assignee_id',
+                to: 'users.id',
+            },
+        },
+        reporter: {
+            relation: Model.BelongsToOneRelation,
+            modelClass: UserModel,
+            join: {
+                from: 'tasks.reporter_id',
+                to: 'users.id',
+            },
+        },
+        // type: {
+        //   relation: Model.BelongsToOneRelation,
+        //   modelClass: SettingsModel,
+        //   join: {
+        //     from: 'tasks.type_id',
+        //     to: 'settings.id',
+        //   },
+        // },
+    });
 }
 
 TaskModel.relationMappings();
