@@ -21,4 +21,8 @@ export class CreateCustomerDto {
   @IsOptional()
   @IsString()
   optional_contact: string;
+
+  @IsOptional()
+  @IsString()
+  avatar: string;
 }
