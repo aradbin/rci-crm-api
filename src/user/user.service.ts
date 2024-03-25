@@ -21,8 +21,11 @@ export class UserService {
       throw new NotAcceptableException('Email already exists');
     }
 
-    createUserDto.avatar = await this.minioService.uploadFile(avatar);
-
+    if (avatar !== undefined) {
+      createUserDto.avatar = await this.minioService.uploadFile(avatar);
+    } else {
+      delete createUserDto.avatar;
+    }
     const hash = bcrypt.hashSync(createUserDto.password, 10);
     const settings_id = createUserDto.settings_id;
     delete createUserDto.settings_id;
@@ -40,7 +43,9 @@ export class UserService {
       await this.userSettingsService.create(userSettings);
     }
 
-    user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
+    if (user['avatar']) {
+      user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
+    }
     return user;
   }
 
@@ -49,8 +54,9 @@ export class UserService {
 
     await Promise.all(
       users['results'].map(async (user: UserModel) => {
-        user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
-        console.log(user['avatar']);
+        if (user['avatar']) {
+          user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
+        }
       }),
     );
 
@@ -59,7 +65,9 @@ export class UserService {
 
   async findOne(id: number) {
     const user = await this.modelClass.query().findById(id).withGraphFetched('userSettings.settings').first().find();
-    user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
+    if (user['avatar']) {
+      user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
+    }
     return user;
   }
 
