@@ -5,13 +5,17 @@ import { SocketGateway } from 'src/socket/socket.gateway';
 import { CustomerModel } from 'src/customer/customer.model';
 import { UpdateVoipDto } from './dto/update-voip.dto';
 import { CreateVoipDto } from './dto/create-voip.dto';
+import { TaskService } from 'src/task/task.service';
+import { CreateTaskDto } from 'src/task/dto/create-task.dto';
+import { TaskStatus } from 'src/database/enums/tasks';
 
 @Injectable()
 export class VoipService {
   constructor(
     @Inject('VoipLogModel') private modelClass: ModelClass<VoipLogModel>,
     @Inject('CustomerModel') private customerModelClass: ModelClass<CustomerModel>,
-    private readonly socketGateway: SocketGateway
+    private readonly socketGateway: SocketGateway,
+    private readonly taskService: TaskService
   ) { }
 
   async create(params: any) {
@@ -27,7 +31,23 @@ export class VoipService {
         state = "Connected";
       }
       if (params.state === 'Terminated' && log?.state === 'Missed') {
-        // Task create
+        const createTaskDto: CreateTaskDto = {
+          title: `Missed VoIP call from ${log?.remote_number}`,
+          description: "",
+          priority: 3,
+          status: TaskStatus.TODO,
+          due_date: new Date(),
+          assignee_id: null,
+          attachments: null,
+          customer_id: log?.customer_id || null,
+          estimation: "",
+          reporter_id: null,
+          running: false,
+          time_log: null,
+          type_id: null
+        };
+        await this.taskService.create(createTaskDto);
+        console.log('ok')
       }
       const updated = await this.modelClass
         .query()

@@ -29,10 +29,6 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsObject()
-  metadata: any;
-
-  @IsOptional()
-  @IsObject()
   attachments: any;
 
   @IsOptional()
