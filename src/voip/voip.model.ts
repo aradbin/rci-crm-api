@@ -9,6 +9,7 @@ export class VoipLogModel extends BaseModel {
   call_id: string;
   remote_number: string;
   local_number: string;
+  state: string;
 
   log: any;
   received_by: number;

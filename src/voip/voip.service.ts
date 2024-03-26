@@ -21,13 +21,18 @@ export class VoipService {
     const log = await this.modelClass.query().where('call_id', params?.id).withGraphFetched('received').withGraphFetched('customer').find().first();
 
     if (log) {
-      const updated = await this.modelClass
-        .query()
-        .update({ log: JSON.stringify(params) })
-        .where('call_id', params.id);
+      let state = log?.state;
       if (params.state === 'Connected') {
         await this.socketGateway.handleVoIP(log);
+        state = "Connected";
       }
+      if (params.state === 'Terminated' && log?.state === 'Missed') {
+        // Task create
+      }
+      const updated = await this.modelClass
+        .query()
+        .update({ state: state, log: JSON.stringify(params) })
+        .where('call_id', params.id);
 
       return updated;
     }
@@ -36,6 +41,7 @@ export class VoipService {
       call_id: params.id,
       local_number: params.localTel,
       remote_number: params.remoteTel,
+      state: "Missed",
       log: JSON.stringify(params),
       received_by: null,
       customer_id: null,
@@ -57,7 +63,11 @@ export class VoipService {
   }
 
   async findAll(params: any) {
-    return await this.modelClass.query().paginate(params).filter(params).find();
+    return await this.modelClass.query().withGraphFetched('received').withGraphFetched('customer').paginate(params).filter(params).find();
+  }
+
+  async findOne(id: number) {
+    return await this.modelClass.query().findById(id).withGraphFetched('received').withGraphFetched('customer').first().find();
   }
 
   async update(id: number, updateVoipDto: UpdateVoipDto) {

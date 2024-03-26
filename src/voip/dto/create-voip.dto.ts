@@ -15,6 +15,10 @@ export class CreateVoipDto {
 
     @IsOptional()
     @IsString()
+    state: string;
+
+    @IsOptional()
+    @IsString()
     log: string;
 
     @IsOptional()

@@ -9,6 +9,7 @@ export async function up(knex: Knex) {
     table.string('call_id').nullable();
     table.string('remote_number').nullable();
     table.string('local_number').nullable();
+    table.string('state').nullable();
 
     table.jsonb('log').nullable();
     table.text('note').nullable();

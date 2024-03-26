@@ -1,4 +1,5 @@
-import { Controller, Get, Patch, Param, Query, UnprocessableEntityException, ParseIntPipe, Body } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Query, UnprocessableEntityException, ParseIntPipe, Body, Res, HttpStatus } from '@nestjs/common';
+import { Response } from 'express';
 import { VoipService } from './voip.service';
 import { Public } from 'src/auth/public.decorators';
 import { UpdateVoipDto } from './dto/update-voip.dto';
@@ -20,6 +21,18 @@ export class VoipController {
   @Get('list')
   findAll(@Query() params: any) {
     return this.voipService.findAll(params);
+  }
+
+  @Get('details/:id')
+  async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
+    const data = await this.voipService.findOne(id);
+
+    if (data) {
+      return response.status(HttpStatus.OK).send(data);
+    }
+    return response.status(HttpStatus.NOT_FOUND).send({
+      message: 'No Log Found',
+    });
   }
 
   @Patch(':id')
