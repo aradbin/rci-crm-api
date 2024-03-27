@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from './database/database.module';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { EmailModule } from './email/email.module';
-import { SettingsModule } from './settings/settings.module';
-import { UserSettingsModule } from './user-settings/user-settings.module';
-import { TaskModule } from './task/task.module';
-import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { CustomerModule } from './customer/customer.module';
-import { VoipModule } from './voip/voip.module';
+import { DatabaseModule } from './database/database.module';
+import { EmailModule } from './email/email.module';
 import { MessageModule } from './message/message.module';
-import { SocketModule } from './socket/socket.module';
 import { MinioService } from './minio/minio.service';
+import { SettingsModule } from './settings/settings.module';
+import { SocketModule } from './socket/socket.module';
+import { TaskModule } from './task/task.module';
+import { UserSettingsModule } from './user-settings/user-settings.module';
+import { UserModule } from './user/user.module';
+import { VoipModule } from './voip/voip.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
+import { CustomerSettingsModule } from './customer-settings/customer-settings.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { MinioService } from './minio/minio.service';
     CustomerModule,
     SocketModule,
     VoipModule,
+    CustomerSettingsModule,
   ],
   providers: [
     {
