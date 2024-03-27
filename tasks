@@ -1,7 +1,7 @@
 Feedback:
 1. 
 2. Email: Multiple email address per user with default one
-3. Task: Sub task impliment
+3. 
 4. Task: Estimated and worked hour of task. Completed date and time log on list
 5. 
 6. Service: From, to due date for service on customer
@@ -15,3 +15,4 @@ Done:
 5. VoIP: No need to assign ip number separately
 6. Email: Different smtp/imap host per email
 7. Service: Estimated hour, fee for service
+8. Task: Sub task impliment

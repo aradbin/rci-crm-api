@@ -20,6 +20,7 @@ export class TaskModel extends BaseModel {
   status: TaskStatus;
   running: boolean;
 
+  parent_id: number;
   customer_id: number;
   assignee_id: number;
   reporter_id: number;
@@ -50,6 +51,22 @@ export class TaskModel extends BaseModel {
         to: 'users.id',
       },
     },
+    subTasks: {
+      relation: Model.HasManyRelation,
+      modelClass: TaskModel,
+      join: {
+        from: 'tasks.id',
+        to: 'tasks.parent_id',
+      },
+    },
+    parentTask: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: TaskModel,
+      join: {
+        from: 'tasks.parent_id',
+        to: 'tasks.id',
+      },
+    }
     // type: {
     //   relation: Model.BelongsToOneRelation,
     //   modelClass: SettingsModel,

@@ -48,6 +48,10 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsNumber()
+  parent_id: number;
+
+  @IsOptional()
+  @IsNumber()
   customer_id: number;
 
   @IsOptional()

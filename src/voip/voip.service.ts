@@ -40,6 +40,7 @@ export class VoipService {
           assignee_id: null,
           attachments: null,
           customer_id: log?.customer_id || null,
+          parent_id: null,
           estimation: "",
           reporter_id: null,
           running: false,

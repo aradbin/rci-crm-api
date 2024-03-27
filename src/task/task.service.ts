@@ -21,7 +21,7 @@ export class TaskService {
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().findById(id).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').find();
+    return await this.modelClass.query().findById(id).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').withGraphFetched('subTasks').withGraphFetched('parentTask').find();
   }
 
   async update(user_id: number, id: number, updateTaskDto: UpdateTaskDto) {
