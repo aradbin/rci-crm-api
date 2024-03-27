@@ -47,7 +47,6 @@ export class VoipService {
           type_id: null
         };
         await this.taskService.create(createTaskDto);
-        console.log('ok')
       }
       const updated = await this.modelClass
         .query()

@@ -1,13 +1,17 @@
 Feedback:
-1. VoIP: Task creation on ip misscall only. No need to assign ip number separately
-2. Email: Multiple email address per user with default one. Different smtp/imap host per email
+1. 
+2. Email: Multiple email address per user with default one
 3. Task: Sub task impliment
 4. Task: Estimated and worked hour of task. Completed date and time log on list
-5. Service: Estimated hour, fee for service
+5. 
 6. Service: From, to due date for service on customer
-7. VoIP: Call action to customer profile on connected call
 8. Customer: Add more details on customer
 
 Done:
 1. Task: Task type
-2. Task: Add reporter on task.
+2. Task: Add reporter on task
+3. VoIP: Call action to customer profile on connected call
+4. VoIP: Task creation on ip misscall only
+5. VoIP: No need to assign ip number separately
+6. Email: Different smtp/imap host per email
+7. Service: Estimated hour, fee for service
