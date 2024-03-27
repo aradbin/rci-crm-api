@@ -1,27 +1,29 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "always"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.quickSuggestions": {
-      "strings": true
+    "typescript.suggest.autoImports": true,
+    "editor.tabSize": 4,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "always"
     },
-    "editor.suggest.insertMode": "replace"
-  },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "editor.formatOnSave": true,
-  "cSpell.words": ["asrexpress", "Fqedde", "Knex", "knexfile", "middlewares", "Minio", "nestjs"],
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/Thumbs.db": true
-  },
-  "hide-files.files": []
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "editor.suggest.insertMode": "replace"
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.formatOnSave": true,
+    "cSpell.words": ["asrexpress", "Fqedde", "Knex", "knexfile", "middlewares", "Minio", "nestjs"],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true
+    },
+    "hide-files.files": []
 }
