@@ -15,7 +15,7 @@ export class EmailService {
     // Create a transporter
     const transporter = nodemailer.createTransport({
       // service: 'Gmail',
-      host: emailSettings?.metadata?.host,
+      host: emailSettings?.metadata?.smtp,
       port: 465,
       secure: true,
       auth: {
@@ -50,7 +50,7 @@ export class EmailService {
     const imap = new Imap({
       user: emailSettings?.metadata?.username,
       password: emailSettings?.metadata?.password,
-      host: emailSettings?.metadata?.host,
+      host: emailSettings?.metadata?.imap,
       port: 993,
       tls: true,
     });
