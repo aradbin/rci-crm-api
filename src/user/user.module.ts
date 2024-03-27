@@ -5,9 +5,9 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
 @Module({
-  imports: [UserSettingsModule],
-  controllers: [UserController],
-  providers: [UserService, MinioService],
-  exports: [UserService],
+    imports: [UserSettingsModule],
+    controllers: [UserController],
+    providers: [UserService, MinioService],
+    exports: [UserService],
 })
 export class UserModule {}
