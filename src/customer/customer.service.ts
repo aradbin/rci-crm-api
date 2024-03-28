@@ -41,9 +41,9 @@ export class CustomerService {
             await this.customerSettingsService.create(customerSettings);
         }
 
-        if (newCustomer['avatar']) {
-            newCustomer['avatar'] = await this.minioService.getFileUrl(newCustomer['avatar']);
-        }
+        // if (newCustomer['avatar']) {
+        //     newCustomer['avatar'] = await this.minioService.getFileUrl(newCustomer['avatar']);
+        // }
         return newCustomer;
     }
 
@@ -55,13 +55,13 @@ export class CustomerService {
             .withGraphFetched('customerSettings.settings')
             .find();
 
-        await Promise.all(
-            customers['results'].map(async (customer: CustomerModel) => {
-                if (customer['avatar']) {
-                    customer['avatar'] = await this.minioService.getFileUrl(customer['avatar']);
-                }
-            }),
-        );
+        // await Promise.all(
+        //     customers['results'].map(async (customer: CustomerModel) => {
+        //         if (customer['avatar']) {
+        //             customer['avatar'] = await this.minioService.getFileUrl(customer['avatar']);
+        //         }
+        //     }),
+        // );
 
         return customers;
     }
@@ -73,9 +73,9 @@ export class CustomerService {
             .withGraphFetched('customerSettings.settings')
             .first()
             .find();
-        if (customer['avatar']) {
-            customer['avatar'] = await this.minioService.getFileUrl(customer['avatar']);
-        }
+        // if (customer['avatar']) {
+        //     customer['avatar'] = await this.minioService.getFileUrl(customer['avatar']);
+        // }
         return customer;
     }
 

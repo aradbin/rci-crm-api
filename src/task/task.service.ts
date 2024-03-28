@@ -12,13 +12,13 @@ export class TaskService {
         private readonly minioService: MinioService,
     ) {}
 
-    private async getAttachmentUrls(task: TaskModel) {
-        if (task.attachments) {
-            task.attachments = await Promise.all(
-                task.attachments.map(async (filename) => await this.minioService.getFileUrl(filename)),
-            );
-        }
-    }
+    // private async getAttachmentUrls(task: TaskModel) {
+    //     if (task.attachments) {
+    //         task.attachments = await Promise.all(
+    //             task.attachments.map(async (filename) => await this.minioService.getFileUrl(filename)),
+    //         );
+    //     }
+    // }
 
     async create(createTaskDto: CreateTaskDto, attachments: Array<Express.Multer.File>) {
         if (attachments) {
@@ -30,7 +30,7 @@ export class TaskService {
         }
         const task = await this.modelClass.query().insert(createTaskDto);
         task.attachments = JSON.parse((<unknown>task.attachments) as string);
-        await this.getAttachmentUrls(task);
+        // await this.getAttachmentUrls(task);
         return task;
     }
 
@@ -45,7 +45,7 @@ export class TaskService {
             .withGraphFetched('reporter')
             .find();
 
-        await Promise.all(tasks['results'].map(async (task: TaskModel) => await this.getAttachmentUrls(task)));
+        // await Promise.all(tasks['results'].map(async (task: TaskModel) => await this.getAttachmentUrls(task)));
         return tasks;
     }
 
@@ -68,7 +68,7 @@ export class TaskService {
             .withGraphFetched('reporter')
             .find();
 
-        await this.getAttachmentUrls(task);
+        // await this.getAttachmentUrls(task);
         return task;
     }
 
