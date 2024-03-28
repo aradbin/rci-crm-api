@@ -13,7 +13,7 @@ export class TaskModel extends BaseModel {
   description: string;
 
   metadata: any;
-  attachments: any;
+  attachments: string[];
   activity_log: any;
   time_log: any;
 

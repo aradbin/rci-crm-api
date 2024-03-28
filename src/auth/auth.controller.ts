@@ -1,27 +1,29 @@
-import { Controller, Post, Request, Get, Body } from "@nestjs/common";
-import { AuthService } from "./auth.service";
-import { Public } from "./public.decorators";
-import { LoginDto } from "./dto/login.dto";
-import { RegisterDto } from "./dto/register.dto";
+import { Body, Controller, Get, Post, Request, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { Public } from './public.decorators';
 
-@Controller("auth")
+@Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @Post("register")
-  async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+  @Post('register')
+  @UseInterceptors(FileInterceptor('avatar'))
+  async register(@Body() registerDto: RegisterDto, @UploadedFile() avatar: Express.Multer.File) {
+    return this.authService.register(registerDto, avatar);
   }
 
   @Public()
-  @Post("login")
+  @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 
-  @Get("profile")
-  getProfile(@Request() req: any) {
-    return this.authService.profile(req?.user?.email)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return this.authService.profile(req?.user?.email);
   }
 }

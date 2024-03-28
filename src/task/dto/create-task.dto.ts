@@ -1,12 +1,4 @@
-import {
-  IsBoolean,
-  IsDateString,
-  IsEnum,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsDateString, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
 import { TaskStatus } from 'src/database/enums/tasks';
 
@@ -20,7 +12,7 @@ export class CreateTaskDto {
   description: string;
 
   @IsOptional()
-  @IsNumber()
+  // @IsNumber()
   priority: number;
 
   @IsOptional()

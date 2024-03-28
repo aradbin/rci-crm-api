@@ -77,7 +77,7 @@ export async function up(knex: Knex) {
 
       table.jsonb('time_log').defaultTo('[]');
       table.jsonb('activity_log').defaultTo('[]');
-      table.jsonb('attachments').nullable();
+      table.jsonb('attachments').defaultTo('[]');
 
       table.timestamp('created_at').nullable();
       table.integer('created_by').nullable();

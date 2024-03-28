@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:13-alpine
@@ -31,6 +29,18 @@ services:
       - db
     command: npm run start:dev
 
+  minio:
+    image: minio/minio
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio:/data
+    env_file:
+      - .env
+    command: server --console-address ":9001" /data
+
 volumes:
   db:
   redis:
+  minio:
