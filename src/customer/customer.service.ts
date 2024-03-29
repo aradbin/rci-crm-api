@@ -49,7 +49,6 @@ export class CustomerService {
             .query()
             .paginate(params)
             .filter(params)
-            .withGraphFetched('customerSettings.settings')
             .find();
 
         return customers;
@@ -59,7 +58,6 @@ export class CustomerService {
         const customer = await this.modelClass
             .query()
             .findById(id)
-            .withGraphFetched('customerSettings.settings')
             .first()
             .find();
             
@@ -90,7 +88,7 @@ export class CustomerService {
         if (customer > 0) {
             const existingCustomerSettings = [];
             let index = -1;
-            const response = await this.customerSettingsService.findAll({ user_id: id });
+            const response = await this.customerSettingsService.findAll({ customer_id: id, pageSize: 'all' });
 
             response['results']?.map((item) => {
                 if (settingsId.includes(item?.settings_id)) {

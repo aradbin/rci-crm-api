@@ -103,7 +103,7 @@ export class UserService {
         if (user > 0) {
             const existingUserSettings = [];
             let index = -1;
-            const response = await this.userSettingsService.findAll({ user_id: id });
+            const response = await this.userSettingsService.findAll({ user_id: id, pageSize: 'all' });
             response['results']?.map((item) => {
                 if (settingsId.includes(item?.settings_id)) {
                     index = settingsId.indexOf(item?.settings_id);

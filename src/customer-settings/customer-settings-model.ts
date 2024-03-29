@@ -7,7 +7,7 @@ export class CustomerSettingsModel extends BaseModel {
     static tableName = 'customer_settings';
 
     static relationMappings = {
-        user: {
+        customer: {
             relation: Model.BelongsToOneRelation,
             modelClass: CustomerModel,
             join: {

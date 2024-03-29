@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateCustomerSettingDto {
     @IsNotEmpty({ message: 'Customer is required' })
@@ -8,6 +8,10 @@ export class CreateCustomerSettingDto {
     @IsNotEmpty({ message: 'Settings is required' })
     @IsInt()
     settings_id: number;
+
+    @IsOptional()
+    @IsObject()
+    metadata: any;
 
     @IsOptional()
     @IsString()
