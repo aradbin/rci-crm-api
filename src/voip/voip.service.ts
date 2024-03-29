@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ModelClass } from 'objection';
-import { VoipLogModel } from './voip.model';
-import { SocketGateway } from 'src/socket/socket.gateway';
 import { CustomerModel } from 'src/customer/customer.model';
-import { UpdateVoipDto } from './dto/update-voip.dto';
-import { CreateVoipDto } from './dto/create-voip.dto';
-import { TaskService } from 'src/task/task.service';
-import { CreateTaskDto } from 'src/task/dto/create-task.dto';
 import { TaskStatus } from 'src/database/enums/tasks';
+import { SocketGateway } from 'src/socket/socket.gateway';
+import { CreateTaskDto } from 'src/task/dto/create-task.dto';
+import { TaskService } from 'src/task/task.service';
+import { CreateVoipDto } from './dto/create-voip.dto';
+import { UpdateVoipDto } from './dto/update-voip.dto';
+import { VoipLogModel } from './voip.model';
 
 @Injectable()
 export class VoipService {
@@ -47,7 +47,7 @@ export class VoipService {
           time_log: null,
           type_id: null
         };
-        await this.taskService.create(createTaskDto);
+        await this.taskService.create(createTaskDto, []);
       }
       const updated = await this.modelClass
         .query()

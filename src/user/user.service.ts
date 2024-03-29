@@ -43,9 +43,6 @@ export class UserService {
             await this.userSettingsService.create(userSettings);
         }
 
-        // if (user['avatar']) {
-        //     user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
-        // }
         return user;
     }
 
@@ -57,14 +54,6 @@ export class UserService {
             .withGraphFetched('userSettings.settings')
             .find()) as UserModel[];
 
-        // await Promise.all(
-        //     users['results'].map(async (user: UserModel) => {
-        //         if (user['avatar']) {
-        //             user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
-        //         }
-        //     }),
-        // );
-
         return users;
     }
 
@@ -75,9 +64,7 @@ export class UserService {
             .withGraphFetched('userSettings.settings')
             .first()
             .find();
-        // if (user['avatar']) {
-        //     user['avatar'] = await this.minioService.getFileUrl(user['avatar']);
-        // }
+            
         return user;
     }
 

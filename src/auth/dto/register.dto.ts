@@ -27,12 +27,13 @@ export class RegisterDto {
 
   @IsOptional()
   @IsString()
+  avatar: string;
+
+  @IsOptional()
+  @IsString()
   created_at: string;
 
   @IsOptional()
   @IsInt()
   created_by: number;
-
-  @IsOptional()
-  avatar: string;
 }

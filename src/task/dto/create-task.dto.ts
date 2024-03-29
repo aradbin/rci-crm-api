@@ -12,7 +12,7 @@ export class CreateTaskDto {
   description: string;
 
   @IsOptional()
-  // @IsNumber()
+  @IsNumber()
   priority: number;
 
   @IsOptional()

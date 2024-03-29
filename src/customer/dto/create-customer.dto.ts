@@ -6,7 +6,6 @@ export class CreateCustomerDto {
   name: string;
 
   @IsOptional()
-  @IsString()
   @IsEmail({}, { message: 'Please provide valid email address' })
   email: string;
 

@@ -13,7 +13,7 @@ export class CustomerModel extends BaseModel {
     optional_contact: string;
 
     static relationMappings = () => ({
-        userSettings: {
+        customerSettings: {
             relation: Model.HasManyRelation,
             modelClass: CustomerSettingsModel,
             join: {
