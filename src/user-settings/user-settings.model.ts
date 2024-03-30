@@ -15,7 +15,6 @@ export class UserSettingsModel extends BaseModel {
         to: 'users.id'
       }
     },
-
     settings: {
       relation: Model.BelongsToOneRelation,
       modelClass: SettingsModel,

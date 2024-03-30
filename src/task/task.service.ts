@@ -61,10 +61,13 @@ export class TaskService {
                 if (updateTaskDto.status === 'inprogress') {
                     await this.stopAll(user_id, task?.assignee_id, id);
                     time_log.push({ action: 'start', created_at: new Date(), created_by: user_id });
-                    updateTaskDto = { ...updateTaskDto, running: true, time_log: JSON.stringify(time_log) };
+                    updateTaskDto = { ...updateTaskDto, running: true, time_log: JSON.stringify(time_log), completed_at: null, completed_by: null };
                 } else {
                     time_log.push({ action: 'stop', created_at: new Date(), created_by: user_id });
-                    updateTaskDto = { ...updateTaskDto, running: false, time_log: JSON.stringify(time_log) };
+                    updateTaskDto = { ...updateTaskDto, running: false, time_log: JSON.stringify(time_log), completed_at: null, completed_by: null };
+                    if(updateTaskDto.status === 'done'){
+                        updateTaskDto = { ...updateTaskDto, completed_at: new Date(), completed_by: user_id }
+                    }
                 }
             } else if (updateTaskDto.hasOwnProperty('running') && task?.running !== updateTaskDto?.running) {
                 const time_log = task?.time_log;
