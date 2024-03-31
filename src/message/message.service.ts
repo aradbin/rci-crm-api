@@ -1,8 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ModelClass } from 'objection';
 import { CreateMessageConversationDto, CreateMessageDto } from './dto/create-message.dto';
-import { MessageConversationModel, MessageModel } from './message.models';
 import { UpdateMessageConversationDto } from './dto/update-message.dto';
+import { MessageConversationModel, MessageModel } from './message.models';
 @Injectable()
 export class MessageService {
   constructor(
@@ -40,6 +40,7 @@ export class MessageService {
     return await this.messageModelClass.query().insert({
       conversation_id: conversation?.id,
       message: createMessageDto.message,
+      sent_by: userId
     });
   }
 
@@ -55,6 +56,6 @@ export class MessageService {
   }
 
   async findOne(id: number, params: any = {}) {
-    return await this.messageModelClass.query().where('conversation_id', id).paginate(params).filter(params).where('deleted_at', null).orderBy('created_at', 'desc');
+    return await this.messageModelClass.query().where('conversation_id', id).paginate(params).filter(params).find();
   }
 }

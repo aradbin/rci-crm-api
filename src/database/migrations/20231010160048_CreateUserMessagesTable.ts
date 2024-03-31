@@ -9,6 +9,7 @@ export async function up(knex: Knex) {
     table.integer('conversation_id').nullable();
 
     table.string('message').nullable();
+    table.integer('sent_by').nullable();
     table.string('status').defaultTo('sent'); // sent, delivered, read etc.
 
     table.jsonb('attachments').nullable();

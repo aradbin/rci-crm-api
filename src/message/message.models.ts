@@ -33,4 +33,5 @@ export class MessageModel extends BaseModel {
 
   conversation_id: number;
   message: string;
+  sent_by: number;
 }
