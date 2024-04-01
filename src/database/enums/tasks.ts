@@ -4,3 +4,10 @@ export enum TaskStatus {
   INREVIEW = 'inreview',
   DONE = 'done',
 }
+
+
+export enum RepeatIntervalType {
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+}

@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import Knex from 'knex';
 import { Model } from 'objection';
+import { ChronJobModel } from 'src/chron-jobs/chron-jobs.model';
 import { CustomerSettingsModel } from 'src/customer-settings/customer-settings-model';
 import { CustomerModel } from 'src/customer/customer.model';
 import { EmailModel } from 'src/email/email.model';
@@ -17,6 +18,7 @@ const models = [
     SettingsModel,
     UserSettingsModel,
     CustomerSettingsModel,
+    ChronJobModel,
     EmailModel,
     CustomerModel,
     TaskModel,

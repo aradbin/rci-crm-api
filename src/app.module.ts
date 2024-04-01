@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ChronJobsModule } from './chron-jobs/chron-jobs.module';
+import { CustomerSettingsModule } from './customer-settings/customer-settings.module';
 import { CustomerModule } from './customer/customer.module';
 import { DatabaseModule } from './database/database.module';
 import { EmailModule } from './email/email.module';
@@ -14,7 +17,6 @@ import { UserSettingsModule } from './user-settings/user-settings.module';
 import { UserModule } from './user/user.module';
 import { VoipModule } from './voip/voip.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
-import { CustomerSettingsModule } from './customer-settings/customer-settings.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { CustomerSettingsModule } from './customer-settings/customer-settings.mo
     SocketModule,
     VoipModule,
     CustomerSettingsModule,
+    ScheduleModule.forRoot(),
+    ChronJobsModule
   ],
   providers: [
     {
