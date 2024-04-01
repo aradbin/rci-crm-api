@@ -1,8 +1,8 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { CreateEmailDto } from './dto/create-email.dto';
+import { simpleParser } from 'mailparser';
 import * as nodemailer from 'nodemailer';
 import { UserSettingsService } from 'src/user-settings/user-settings.service';
-import { simpleParser } from 'mailparser';
+import { CreateEmailDto } from './dto/create-email.dto';
 const Imap = require('node-imap');
 
 @Injectable()
