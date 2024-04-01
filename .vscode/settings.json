@@ -16,7 +16,7 @@
     },
     "typescript.tsdk": "node_modules/typescript/lib",
     "editor.formatOnSave": true,
-    "cSpell.words": ["asrexpress", "Fqedde", "Knex", "knexfile", "middlewares", "Minio", "nestjs"],
+    "cSpell.words": ["asrexpress", "Fqedde", "Knex", "knexfile", "luxon", "middlewares", "Minio", "nestjs"],
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
