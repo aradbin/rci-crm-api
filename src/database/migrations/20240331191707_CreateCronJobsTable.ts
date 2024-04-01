@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import { RepeatIntervalType } from '../enums/tasks';
 
-const tableName = 'chron_jobs';
+const tableName = 'cron_jobs';
 
 export async function up(knex: Knex) {
     return knex.schema.createTable(tableName, (table) => {

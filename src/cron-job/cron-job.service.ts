@@ -4,40 +4,40 @@ import { DateTime } from 'luxon';
 import { ModelClass, raw } from 'objection';
 import { RepeatIntervalType } from 'src/database/enums/tasks';
 import { TaskModel } from 'src/task/task.model';
-import { ChronJobModel } from './chron-jobs.model';
-import { CreateChronJobDto } from './dto/create-chron-job.dto';
-import { UpdateChronJobDto } from './dto/update-chron-job.dto';
+import { CronJobModel } from './cron-job.model';
+import { CreateCronJobDto } from './dto/create-cron-job.dto';
+import { UpdateCronJobDto } from './dto/update-cron-job.dto';
 
 @Injectable()
-export class ChronJobsService {
-    private readonly logger = new Logger(ChronJobsService.name);
+export class CronJobService {
+    private readonly logger = new Logger(CronJobService.name);
 
     constructor(
-        @Inject('ChronJobModel') private chronJobModelClass: ModelClass<ChronJobModel>,
+        @Inject('CronJobModel') private cronJobModelClass: ModelClass<CronJobModel>,
         @Inject('TaskModel') private taskModelClass: ModelClass<TaskModel>,
     ) {}
 
-    async create(createChronJobDto: CreateChronJobDto) {
-        createChronJobDto['next_run_time'] = createChronJobDto.start_date;
-        const job = await this.chronJobModelClass.query().insert(createChronJobDto);
+    async create(createCronJobDto: CreateCronJobDto) {
+        createCronJobDto['next_run_time'] = createCronJobDto.start_date;
+        const job = await this.cronJobModelClass.query().insert(createCronJobDto);
         return job;
     }
 
     async findAll(params = {}) {
-        const jobs = await this.chronJobModelClass.query().filter(params).sort(params).paginate(params).find();
+        const jobs = await this.cronJobModelClass.query().filter(params).sort(params).paginate(params).find();
         return jobs;
     }
 
     async findOne(id: number) {
-        return await this.chronJobModelClass.query().findById(id).find();
+        return await this.cronJobModelClass.query().findById(id).find();
     }
 
-    async update(id: number, updateChronJobDto: UpdateChronJobDto) {
-        return await this.chronJobModelClass.query().findById(id).update(updateChronJobDto);
+    async update(id: number, updateCronJobDto: UpdateCronJobDto) {
+        return await this.cronJobModelClass.query().findById(id).update(updateCronJobDto);
     }
 
     async remove(id: number) {
-        return await this.chronJobModelClass.query().softDelete(id);
+        return await this.cronJobModelClass.query().softDelete(id);
     }
 
     // @Cron(CronExpression.EVERY_6_HOURS, {
@@ -49,7 +49,7 @@ export class ChronJobsService {
         const today = DateTime.now().startOf('day').plus({ hours: 6 });
 
         // Get repeatTasks due for today, type, is_active,  before end_date
-        const jobs = await this.chronJobModelClass
+        const jobs = await this.cronJobModelClass
             .query()
             .where('type', 'RepeatTasks')
             .where('start_date', '<=', today.toJSDate())
@@ -66,7 +66,7 @@ export class ChronJobsService {
             await this.taskModelClass.query().insert(task);
 
             // update next_run date
-            await this.chronJobModelClass
+            await this.cronJobModelClass
                 .query()
                 .findById(job.id)
                 .update({

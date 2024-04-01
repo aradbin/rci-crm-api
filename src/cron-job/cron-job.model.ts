@@ -1,8 +1,8 @@
 import { BaseModel } from 'src/database/base.model';
 import { RepeatIntervalType } from 'src/database/enums/tasks';
 
-export class ChronJobModel extends BaseModel {
-    static tableName = 'chron_jobs';
+export class CronJobModel extends BaseModel {
+    static tableName = 'cron_jobs';
 
     type: string;
     title: string;
