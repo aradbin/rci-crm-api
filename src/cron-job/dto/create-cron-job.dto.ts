@@ -1,5 +1,4 @@
-import { IsBoolean, IsDateString, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
-import { RepeatIntervalType } from 'src/database/enums/tasks';
+import { IsBoolean, IsDateString, IsInt, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateCronJobDto {
     @IsOptional()
@@ -7,30 +6,26 @@ export class CreateCronJobDto {
     type: string;
 
     @IsOptional()
-    @IsString()
-    title: string;
+    @IsNumber()
+    type_id: number;
+
+    @IsOptional()
+    @IsDateString()
+    next_run_time: Date;
 
     @IsOptional()
     @IsObject()
     meta_data: any;
 
     @IsOptional()
-    @IsDateString()
-    start_date: Date;
-
-    @IsOptional()
-    @IsDateString()
-    end_date: Date;
-
-    @IsOptional()
     @IsBoolean()
     is_active: boolean;
 
     @IsOptional()
-    @IsNumber()
-    repeat_amount: number;
+    @IsString()
+    created_at: string;
 
     @IsOptional()
-    @IsEnum(RepeatIntervalType)
-    repeat_interval: RepeatIntervalType;
+    @IsInt()
+    created_by: number;
 }
