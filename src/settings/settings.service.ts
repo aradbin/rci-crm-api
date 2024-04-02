@@ -1,9 +1,9 @@
 import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { ModelClass } from 'objection';
 import { CreateSettingDto } from './dto/create-setting.dto';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { SettingsModel } from './settings.model';
-import * as crypto from 'crypto';
 
 @Injectable()
 export class SettingsService {
@@ -20,7 +20,7 @@ export class SettingsService {
   }
 
   async findAll(params: any = {}) {
-    return await this.modelClass.query().paginate(params).filter(params).withGraphFetched('parent').withGraphFetched('children').find()
+    return await this.modelClass.query().paginate(params).filter(params).withGraphFetched('parent').withGraphFetched('children').find();
   }
 
   async findOne(id: number) {

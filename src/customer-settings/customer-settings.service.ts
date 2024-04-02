@@ -1,16 +1,24 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { ModelClass } from 'objection';
+import { CronJobService } from 'src/cron-job/cron-job.service';
 import { CustomerSettingsModel } from './customer-settings-model';
 import { CreateCustomerSettingDto } from './dto/create-customer-setting.dto';
 import { UpdateCustomerSettingDto } from './dto/update-customer-setting.dto';
 
 @Injectable()
 export class CustomerSettingsService {
-    constructor(@Inject('CustomerSettingsModel') private modelClass: ModelClass<CustomerSettingsModel>) {}
+    constructor(
+        @Inject('CustomerSettingsModel') private modelClass: ModelClass<CustomerSettingsModel>,
+        private cronJobService: CronJobService,
+    ) {}
 
     async create(createCustomerSettingsDto: CreateCustomerSettingDto[]) {
-        return await this.modelClass.query().insert(createCustomerSettingsDto);
+        const cs = await this.modelClass.query().insert(createCustomerSettingsDto);
+        // if(cs.metadata.auto_task){
+        //     await this.cronJobService.create();
+        // }
+        return cs;
     }
 
     async findAll(params = {}) {

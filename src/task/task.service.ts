@@ -20,9 +20,7 @@ export class TaskService {
         } else {
             delete createTaskDto.attachments;
         }
-        const task = await this.modelClass.query().insert(createTaskDto);
-
-        return task;
+        return await this.modelClass.query().insert(createTaskDto);
     }
 
     async findAll(params = {}) {

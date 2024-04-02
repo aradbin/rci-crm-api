@@ -6,6 +6,8 @@ import { SettingsModel } from 'src/settings/settings.model';
 export class CustomerSettingsModel extends BaseModel {
     static tableName = 'customer_settings';
 
+    metadata: any;
+
     static relationMappings = {
         customer: {
             relation: Model.BelongsToOneRelation,
