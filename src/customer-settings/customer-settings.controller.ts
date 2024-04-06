@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { CustomerSettingsService } from './customer-settings.service';
 import { CreateCustomerSettingDto } from './dto/create-customer-setting.dto';
 import { UpdateCustomerSettingDto } from './dto/update-customer-setting.dto';
@@ -8,7 +8,7 @@ export class CustomerSettingsController {
     constructor(private readonly customerSettingsService: CustomerSettingsService) {}
 
     @Post()
-    async create(@Body() createCustomerSettingDto: CreateCustomerSettingDto[]) {
+    async create(@Body() createCustomerSettingDto: CreateCustomerSettingDto) {
         return await this.customerSettingsService.create(createCustomerSettingDto);
     }
 
@@ -18,17 +18,17 @@ export class CustomerSettingsController {
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string) {
-        return await this.customerSettingsService.findOne(+id);
+    async findOne(@Param('id', ParseIntPipe) id: number) {
+        return await this.customerSettingsService.findOne(id);
     }
 
     @Patch(':id')
-    async update(@Param('id') id: string, @Body() updateCustomerSettingDto: UpdateCustomerSettingDto) {
-        return await this.customerSettingsService.update(+id, updateCustomerSettingDto);
+    async update(@Param('id', ParseIntPipe) id: number, @Body() updateCustomerSettingDto: UpdateCustomerSettingDto) {
+        return await this.customerSettingsService.update(id, updateCustomerSettingDto);
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: string) {
-        return await this.customerSettingsService.remove(+id);
+    async remove(@Param('id', ParseIntPipe) id: number) {
+        return await this.customerSettingsService.remove(id);
     }
 }

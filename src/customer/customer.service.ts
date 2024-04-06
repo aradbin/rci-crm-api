@@ -26,22 +26,7 @@ export class CustomerService {
             delete createCustomerDto.avatar;
         }
 
-        const settings_id = createCustomerDto.settings_id;
-        delete createCustomerDto.settings_id;
-
-        const newCustomer = await this.modelClass.query().insert(createCustomerDto);
-        if (newCustomer?.id && settings_id?.length > 0) {
-            const customerSettings = [];
-            settings_id?.map((item) => {
-                customerSettings.push({
-                    customer_id: newCustomer.id,
-                    settings_id: item,
-                });
-            });
-            await this.customerSettingsService.create(customerSettings);
-        }
-
-        return newCustomer;
+        return await this.modelClass.query().insert(createCustomerDto);
     }
 
     async findAll(params = {}) {
@@ -81,41 +66,7 @@ export class CustomerService {
             delete updateCustomerDto.avatar;
         }
 
-        const settingsId = updateCustomerDto.settings_id;
-        delete updateCustomerDto.settings_id;
-
-        const customer = await this.modelClass.query().findById(id).update(updateCustomerDto);
-        if (customer > 0) {
-            const existingCustomerSettings = [];
-            let index = -1;
-            const response = await this.customerSettingsService.findAll({ customer_id: id, pageSize: 'all' });
-
-            response['results']?.map((item) => {
-                if (settingsId.includes(item?.settings_id)) {
-                    index = settingsId.indexOf(item?.settings_id);
-                    settingsId.splice(index, 1);
-                } else {
-                    existingCustomerSettings.push(item?.id);
-                }
-            });
-
-            if (settingsId?.length > 0) {
-                const customerSettings = [];
-                settingsId.map((item) => {
-                    customerSettings.push({
-                        customer_id: id,
-                        settings_id: item,
-                    });
-                });
-                await this.customerSettingsService.create(customerSettings);
-            }
-
-            existingCustomerSettings?.map(async (item) => {
-                await this.customerSettingsService.remove(item);
-            });
-        }
-
-        return customer;
+        return await this.modelClass.query().findById(id).update(updateCustomerDto);
     }
 
     async remove(id: number) {
