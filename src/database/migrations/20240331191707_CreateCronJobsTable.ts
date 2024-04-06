@@ -8,8 +8,8 @@ export async function up(knex: Knex) {
 
         table.string('type').nullable();    // ex: service
         table.integer('type_id').nullable();
-        table.timestamp('next_run_time').nullable();
-        table.jsonb('meta_data').nullable();
+        table.date('next_run_time').nullable();
+        table.jsonb('metadata').nullable();
         table.boolean('is_active').defaultTo(true);
 
         table.timestamp('created_at').nullable();

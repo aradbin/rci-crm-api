@@ -1,17 +1,19 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { DateTime } from 'luxon';
 import { ModelClass } from 'objection';
-import { TaskModel } from 'src/task/task.model';
+import { TaskStatus } from 'src/database/enums/tasks';
+import { CreateTaskDto } from 'src/task/dto/create-task.dto';
+import { TaskService } from 'src/task/task.service';
 import { CronJobModel } from './cron-job.model';
 import { CreateCronJobDto } from './dto/create-cron-job.dto';
 import { UpdateCronJobDto } from './dto/update-cron-job.dto';
 
 @Injectable()
 export class CronJobService {
-    private readonly logger = new Logger(CronJobService.name);
-
     constructor(
         @Inject('CronJobModel') private cronJobModelClass: ModelClass<CronJobModel>,
-        @Inject('TaskModel') private taskModelClass: ModelClass<TaskModel>,
+        private taskService: TaskService,
     ) {}
 
     async create(createCronJobDto: CreateCronJobDto) {
@@ -34,41 +36,64 @@ export class CronJobService {
         return await this.cronJobModelClass.query().softDelete(id);
     }
 
-    // @Cron(CronExpression.EVERY_SECOND, {
-    //     name: 'RepeatTasks',
-    //     timeZone: 'Asia/Dhaka',
-    // })
+    @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+        name: 'ServiceTask',
+        timeZone: 'Asia/Dhaka',
+    })
     async handleServiceTask() {
         const jobs = await this.cronJobModelClass.query().where('type', 'service').where('next_run_time', new Date()).where('is_active', true).find();
 
         jobs.forEach(async (job) => {
-            const task = job['meta_data'];
-            // task['due_date'] = DateTime.now().plus({ days: task['due_date'] }).toJSDate();
-            await this.taskModelClass.query().insert(task);
-
-            // update next_run date
-            await this.cronJobModelClass
-                .query()
-                .findById(job.id)
-                // .update({
-                //     next_run_time: this.calculateRepeatNext(today, job.repeat_interval, job.repeat_amount).toJSDate(),
-                // });
+            const createTaskDto: CreateTaskDto = {
+                assignee_id: null,
+                attachments: null,
+                customer_id: job?.metadata?.customer_id,
+                description: null,
+                due_date: new Date(this.nextDate(job?.metadata?.metadata?.due_date, job?.metadata?.settings?.metadata?.cycle)),
+                estimation: job?.metadata?.settings?.metadata?.estimation,
+                parent_id: null,
+                priority: 3,
+                reporter_id: null,
+                running: false,
+                status: TaskStatus.TODO,
+                time_log: null,
+                title: job?.metadata?.settings?.name,
+                type_id: null
+            }
+            console.log(job)
+            await this.taskService.create(createTaskDto, []);
+            await this.cronJobModelClass.query().findById(job?.id).update({
+                next_run_time: this.nextDate(job?.metadata?.metadata?.start_date, job?.metadata?.settings?.metadata?.cycle)
+            });
         });
-
-        console.log('repeat-tasks job ran successfully');
     }
 
-    // private calculateRepeatNext(today: DateTime, repeatType: RepeatIntervalType, amount: number) {
-    //     if (repeatType == RepeatIntervalType.DAILY) {
-    //         return today.plus({ days: amount });
-    //     }
+    private nextDate(given_date, cycle) {
+        let date = DateTime.fromJSDate(new Date(given_date));
+        const today = DateTime.now().plus({ hours: 6 });
 
-    //     if (repeatType == RepeatIntervalType.WEEKLY) {
-    //         return today.plus({ weeks: amount });
-    //     }
+        while (date <= today) {
+            switch (cycle) {
+                case 'daily':
+                    date = date.plus({ days: 1 });
+                    break;
+                case 'weekly':
+                    date = date.plus({ weeks: 1 }).set({ weekday: given_date.weekday });
+                    break;
+                case 'monthly':
+                    date = date.plus({ months: 1 }).set({ day: date.day });
+                    break;
+                case 'quarterly':
+                    date = date.plus({ months: 3 }).set({ day: date.day });
+                    break;
+                case 'yearly':
+                    date = date.plus({ years: 1 }).set({ month: date.month, day: date.day });
+                    break;
+                default:
+                    throw new Error(`Invalid cycle: ${cycle}`);
+            }
+        }
 
-    //     if (repeatType == RepeatIntervalType.MONTHLY) {
-    //         return today.plus({ months: amount });
-    //     }
-    // }
+        return date.toJSDate();
+    }
 }

@@ -8,27 +8,27 @@ export class CronJobController {
     constructor(private readonly cronJobService: CronJobService) {}
 
     @Post()
-    create(@Body() createCronJobDto: CreateCronJobDto) {
-        return this.cronJobService.create(createCronJobDto);
+    async create(@Body() createCronJobDto: CreateCronJobDto) {
+        return await this.cronJobService.create(createCronJobDto);
     }
 
     @Get()
-    findAll(@Query() query) {
-        return this.cronJobService.findAll(query);
+    async findAll(@Query() query) {
+        return await this.cronJobService.findAll(query);
     }
 
     @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.cronJobService.findOne(id);
+    async findOne(@Param('id', ParseIntPipe) id: number) {
+        return await this.cronJobService.findOne(id);
     }
 
     @Patch(':id')
-    update(@Param('id', ParseIntPipe) id: number, @Body() updateCronJobDto: UpdateCronJobDto) {
-        return this.cronJobService.update(id, updateCronJobDto);
+    async update(@Param('id', ParseIntPipe) id: number, @Body() updateCronJobDto: UpdateCronJobDto) {
+        return await this.cronJobService.update(id, updateCronJobDto);
     }
 
     @Delete(':id')
-    remove(@Param('id', ParseIntPipe) id: number) {
-        return this.cronJobService.remove(id);
+    async remove(@Param('id', ParseIntPipe) id: number) {
+        return await this.cronJobService.remove(id);
     }
 }

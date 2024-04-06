@@ -72,7 +72,7 @@ export async function up(knex: Knex) {
       table.string('status').defaultTo(TaskStatus.TODO);
       table.boolean('running').defaultTo(false);
 
-      table.timestamp('due_date').nullable();
+      table.date('due_date').nullable();
       table.string('estimation').nullable();
 
       table.jsonb('time_log').defaultTo('[]');

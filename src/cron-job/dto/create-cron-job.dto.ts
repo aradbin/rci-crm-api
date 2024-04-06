@@ -15,7 +15,7 @@ export class CreateCronJobDto {
 
     @IsOptional()
     @IsObject()
-    meta_data: any;
+    metadata: any;
 
     @IsOptional()
     @IsBoolean()
