@@ -1,13 +1,18 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { simpleParser } from 'mailparser';
 import * as nodemailer from 'nodemailer';
+import { ModelClass } from 'objection';
 import { UserSettingsService } from 'src/user-settings/user-settings.service';
 import { CreateEmailDto } from './dto/create-email.dto';
+import { EmailModel } from './email.model';
 const Imap = require('node-imap');
 
 @Injectable()
 export class EmailService {
-  constructor(private userSettingsService: UserSettingsService) { }
+  constructor(
+    @Inject('EmailModel') private modelClass: ModelClass<EmailModel>,
+    private userSettingsService: UserSettingsService
+  ) { }
 
   async create(userId: number, createEmailDto: CreateEmailDto) {
     const emailSettings = await this.getEmailSettings(userId);
@@ -38,13 +43,50 @@ export class EmailService {
 
     // Send the email
     try {
-      return await transporter.sendMail(mailOptions);
+      return await transporter.sendMail(mailOptions).then(async () => {
+        await this.modelClass.query().insert({
+          settings_id: emailSettings?.id,
+          email_id: null,
+          email_data: {
+            ...mailOptions,
+            html: createEmailDto.html || false,
+            textAsHtml: createEmailDto.text,
+            from: {
+              html: "",
+              text: `${emailSettings?.name} <${emailSettings?.metadata?.username}>`,
+              value: [{
+                name: emailSettings?.name,
+                address: emailSettings?.metadata?.username
+              }]
+            },
+            to: {
+              html: "",
+              text: createEmailDto.toEmail,
+              value: [{
+                name: "",
+                address: createEmailDto.toEmail
+              }]
+            },
+            date: new Date()
+          },
+          from: emailSettings?.metadata?.username,
+          to: createEmailDto.toEmail
+        });
+      });
     } catch (error) {
       throw new UnprocessableEntityException("Something went wrong. Please try again later")
     }
   }
 
-  async findAll(userId: number, query: any) {
+  async findAll(params: any = {}) {
+    return await this.modelClass.query().paginate(params).filter(params).find();
+  }
+
+  async findOne(id: number) {
+    return await this.modelClass.query().findById(id).find();
+  }
+
+  async sync(userId: number, query: any) {
     const emailSettings = await this.getEmailSettings(userId);
 
     const imap = new Imap({
@@ -61,53 +103,129 @@ export class EmailService {
       struct: true,
     };
 
-    const pagination = (query?.page && query?.pageSize) ?
-      `${((query?.page - 1) * query?.pageSize) + 1}:${query?.page * query?.pageSize}`
-      :
-      '1:10'
-
     let email_array = [];
     let total = 0;
 
     imap.once('ready', () => {
       try {
-        imap.openBox('INBOX', true, (err: any, box: any) => {
+        imap.openBox('INBOX', true, async (err, box) => {
           if (err) throw err;
-
+  
           total = box.messages.total;
+          // const pageSize = query?.pageSize ? parseInt(query.pageSize, 10) : 10;
+          // const page = query?.page ? parseInt(query.page, 10) : 1;
+          // const paginationStart = (page - 1) * pageSize + 1;
+          // const paginationEnd = page * pageSize;
+          // const pagination = paginationStart <= total ? `${paginationStart}:${Math.min(paginationEnd, total)}` : '1:10';
+          const pagination = `1:${total}`;
+  
           const fetch = imap.seq.fetch(pagination, fetchOptions);
-
-          fetch.on('message', (msg: any) => {
-            msg.on('body', (stream: any, info: any) => {
-              simpleParser(stream, {}).then((parsed: any) => {
+  
+          fetch.on('message', (msg) => {
+            msg.on('body', (stream) => {
+              simpleParser(stream, {}).then(async (parsed) => {
                 email_array.push(parsed);
-              }).catch((error: any) => {
-                console.log(error);
+                let emailId = "";
+                parsed?.headerLines?.map((item) => {
+                  if(item?.key === 'message-id'){
+                    emailId = item?.line
+                  }
+                });
+                const hasEmail = await this.modelClass.query().filter({ email_id: emailId }).find().first();
+                if(!hasEmail){
+                  await this.modelClass.query().insert({
+                    settings_id: emailSettings?.id,
+                    email_id: emailId,
+                    email_data: parsed,
+                    from: parsed?.from?.value[0]?.address,
+                    to: emailSettings?.metadata?.username
+                  }); 
+                }else{
+                  await this.modelClass.query().where('email_id',emailId).update({
+                    email_data: parsed
+                  });
+                }
+              }).catch((error) => {
+                console.error(error);
+                imap.end();
               });
-            })
-          })
-
+            });
+          });
+  
           fetch.once('end', () => {
             imap.end();
           });
         });
       } catch (error) {
-        throw error;
+        console.error(error);
+        imap.end();
       }
     });
-
-    imap.once('error', function (error: any) {
-      throw error;
+  
+    imap.once('error', (error) => {
+      console.error(error);
+      imap.end();
     });
-
+  
     imap.connect();
-
-    return new Promise((resolve, reject) => {
-      imap.once('close', async function () {
+  
+    return new Promise((resolve) => {
+      imap.once('close', () => {
         resolve({ results: email_array, total });
       });
-    })
+    });
   }
+
+  async getFolders(emailSettings) {
+    const imap = new Imap({
+      user: emailSettings?.username,
+      password: emailSettings?.password,
+      host: emailSettings?.imap,
+      port: 993,
+      tls: true,
+    });
+  
+    return new Promise((resolve, reject) => {
+      imap.once('ready', () => {
+        try {
+          imap.getBoxes(async (err, boxes) => {
+            if (err) {
+              imap.end();
+              reject(err);
+              return;
+            }
+  
+            const folders = await this.imapNestedFolders(boxes);
+            imap.end();
+            resolve(folders);
+          });
+        } catch (error) {
+          imap.end();
+          reject(error);
+        }
+      });
+  
+      imap.once('error', (error) => {
+        imap.end();
+        reject(error);
+      });
+  
+      imap.connect();
+    });
+  }
+  
+  async imapNestedFolders(boxes) {
+    const folders = [];
+    for (const key in boxes) {
+      if (boxes[key].attribs.indexOf('\\HasChildren') > -1) {
+        const children = await this.imapNestedFolders(boxes[key].children);
+        folders.push({ name: key, children });
+      } else {
+        folders.push({ name: key, children: null });
+      }
+    }
+    return folders;
+  }  
 
   async getEmailSettings(userId: number) {
     let emailSettings = null;

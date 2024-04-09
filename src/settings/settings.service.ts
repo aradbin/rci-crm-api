@@ -1,6 +1,7 @@
-import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
+import { Inject, Injectable, NotAcceptableException, UnprocessableEntityException } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { ModelClass } from 'objection';
+import { EmailService } from 'src/email/email.service';
 import { CreateSettingDto } from './dto/create-setting.dto';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { SettingsModel } from './settings.model';
@@ -8,11 +9,25 @@ import { SettingsModel } from './settings.model';
 @Injectable()
 export class SettingsService {
   constructor(
-    @Inject('SettingsModel') private modelClass: ModelClass<SettingsModel>
+    @Inject('SettingsModel') private modelClass: ModelClass<SettingsModel>,
+    private emailService: EmailService
   ) { }
 
   async create(createSettingDto: CreateSettingDto) {
     if (createSettingDto.type === 'email') {
+      let folders = null;
+      await this.emailService.getFolders({
+        username: createSettingDto.metadata.username,
+        password: createSettingDto.metadata.password,
+        imap: createSettingDto.metadata.imap,
+      }).then((response) => {
+        folders = response;
+      }).catch(() => {
+        throw new UnprocessableEntityException("Couldn't connect to email address");
+      });
+      if(folders?.length > 0){
+        createSettingDto.metadata.folders = folders;
+      }
       createSettingDto.metadata.password = this.encryptPassword(createSettingDto.metadata.password);
     }
 
