@@ -89,7 +89,7 @@ export class UserService {
             throw new NotAcceptableException('Email already exists');
         }
 
-        const settingsId = updateUserDto.settings_id;
+        const newSettingsIds = updateUserDto.settings_id;
         delete updateUserDto.settings_id;
         delete updateUserDto.password;
 
@@ -101,20 +101,20 @@ export class UserService {
         const user = await this.modelClass.query().findById(id).update(updateUserDto);
 
         if (user > 0) {
-            const existingUserSettings = [];
+            const removableUserSettings = [];
             let index = -1;
-            const response = await this.userSettingsService.findAll({ user_id: id, pageSize: 'all' });
+            const response = await this.userSettingsService.findAll({ user_id: id });
             response['results']?.map((item) => {
-                if (settingsId.includes(item?.settings_id)) {
-                    index = settingsId.indexOf(item?.settings_id);
-                    settingsId.splice(index, 1);
+                if (newSettingsIds.includes(item?.settings_id)) {
+                    index = newSettingsIds.indexOf(item?.settings_id);
+                    newSettingsIds.splice(index, 1);
                 } else {
-                    existingUserSettings.push(item?.id);
+                    removableUserSettings.push(item?.id);
                 }
             });
-            if (settingsId?.length > 0) {
+            if (newSettingsIds?.length > 0) {
                 const userSettings = [];
-                settingsId.map((item) => {
+                newSettingsIds.map((item) => {
                     userSettings.push({
                         user_id: id,
                         settings_id: item,
@@ -123,7 +123,7 @@ export class UserService {
                 await this.userSettingsService.create(userSettings);
             }
 
-            existingUserSettings?.map(async (item) => {
+            removableUserSettings?.map(async (item) => {
                 await this.userSettingsService.remove(item);
             });
         }
