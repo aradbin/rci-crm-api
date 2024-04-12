@@ -46,11 +46,9 @@ export class EmailService {
       return await transporter.sendMail(mailOptions).then(async () => {
         await this.modelClass.query().insert({
           settings_id: emailSettings?.id,
+          email: createEmailDto.toEmail,
           email_id: null,
           email_data: {
-            ...mailOptions,
-            html: createEmailDto.html || false,
-            textAsHtml: createEmailDto.text,
             from: {
               html: "",
               text: `${emailSettings?.name} <${emailSettings?.metadata?.username}>`,
@@ -67,10 +65,12 @@ export class EmailService {
                 address: createEmailDto.toEmail
               }]
             },
+            subject: createEmailDto.subject,
+            html: createEmailDto.html || false,
+            textAsHtml: createEmailDto.text,
+            text: createEmailDto.text,
             date: new Date()
           },
-          from: emailSettings?.metadata?.username,
-          to: createEmailDto.toEmail
         });
       });
     } catch (error) {
@@ -135,11 +135,10 @@ export class EmailService {
                 if(!hasEmail){
                   await this.modelClass.query().insert({
                     settings_id: emailSettings?.id,
+                    email: parsed?.from?.value[0]?.address,
                     email_id: emailId,
-                    email_data: parsed,
-                    from: parsed?.from?.value[0]?.address,
-                    to: emailSettings?.metadata?.username
-                  }); 
+                    email_data: parsed
+                  });
                 }else{
                   await this.modelClass.query().where('email_id',emailId).update({
                     email_data: parsed
@@ -225,7 +224,7 @@ export class EmailService {
       }
     }
     return folders;
-  }  
+  }
 
   async getEmailSettings(userId: number) {
     let emailSettings = null;

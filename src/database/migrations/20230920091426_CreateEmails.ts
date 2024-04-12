@@ -7,9 +7,8 @@ export async function up(knex: Knex) {
     table.increments();
 
     table.integer('settings_id').nullable();
+    table.string('email').nullable();
     table.string('email_id').nullable();
-    table.string('from').nullable();
-    table.string('to').nullable();
     table.jsonb('email_data').nullable();
     
     table.timestamp('created_at').nullable();
