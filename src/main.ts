@@ -1,9 +1,8 @@
-import { config } from 'dotenv';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { config } from 'dotenv';
+import { AppModule } from './app.module';
 import { RequestContextMiddleware } from './middlewares/RequestContextMiddleware';
-import { RedisIoAdapter } from './middlewares/redis.adapter';
 
 async function bootstrap() {
   // load .env file
@@ -17,7 +16,7 @@ async function bootstrap() {
   // app.useWebSocketAdapter(redisIoAdapter);
   app.use(RequestContextMiddleware);
 
-  await app.listen(8080);
+  await app.listen(8081);
 }
 
 bootstrap();
