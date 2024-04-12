@@ -103,8 +103,8 @@ export class UserService {
         if (user > 0) {
             const removableUserSettings = [];
             let index = -1;
-            const response = await this.userSettingsService.findAll({ user_id: id });
-            response['results']?.map((item) => {
+            const response: any = await this.userSettingsService.findAll({ user_id: id });
+            response?.map((item) => {
                 if (newSettingsIds.includes(item?.settings_id)) {
                     index = newSettingsIds.indexOf(item?.settings_id);
                     newSettingsIds.splice(index, 1);
@@ -122,7 +122,6 @@ export class UserService {
                 });
                 await this.userSettingsService.create(userSettings);
             }
-
             removableUserSettings?.map(async (item) => {
                 await this.userSettingsService.remove(item);
             });
