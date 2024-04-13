@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Patch, Delete, Body, Req, Res, Query, Param, UnprocessableEntityException, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { WhatsappService } from './whatsapp.service';
+import { Public } from 'src/auth/public.decorators';
 import { CreateWhatsappDto } from './dto/whatsapp.dto';
 import { WebhookPayload } from './dto/whatsapp.webhook.dto';
-import { Public } from 'src/auth/public.decorators';
+import { WhatsappService } from './whatsapp.service';
 
 @Controller('whatsapp')
 export class WhatsappController {
@@ -33,7 +33,7 @@ export class WhatsappController {
 
   @Public()
   @Get('webhook')
-  webhook(@Req() req: Request, @Res() res: Response): void {
+  webhook(@Req() req: Request, @Res() res: Response): void {console.log(req.query);
     const mode = req.query['hub.mode'] as string;
     const token = req.query['hub.verify_token'] as string;
     const challenge = req.query['hub.challenge'];
