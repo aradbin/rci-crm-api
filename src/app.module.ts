@@ -9,7 +9,6 @@ import { CustomerModule } from './customer/customer.module';
 import { DatabaseModule } from './database/database.module';
 import { EmailModule } from './email/email.module';
 import { MessageModule } from './message/message.module';
-import { MinioService } from './minio/minio.service';
 import { SettingsModule } from './settings/settings.module';
 import { SocketModule } from './socket/socket.module';
 import { TaskModule } from './task/task.module';
@@ -41,7 +40,7 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    MinioService,
+    // MinioService,
   ],
 })
 export class AppModule { }
