@@ -42,6 +42,7 @@ export class MinioService {
         // await this.minioClient.putObject(this.bucketName, fileName, file.buffer, file.size);
 
         // return `${this.getBucketUrl()}/${fileName}`;
+        return "filename";
     }
 
     async getFileUrl(fileName: string) {
