@@ -25,14 +25,14 @@ export class WhatsappController {
   }
 
   @Public()
-  @Post('webhook')
+  @Post('api/webhook')
   async webhookPost(@Body() payload: WebhookPayload) {
     console.log('Received this message from webhook:' + JSON.stringify(payload, null, 3));
     return await this.whatsappService.processWebhookEvent(payload);
   }
 
   @Public()
-  @Get('webhook')
+  @Get('api/webhook')
   webhook(@Req() req: Request, @Res() res: Response): void {console.log(req.query);
     const mode = req.query['hub.mode'] as string;
     const token = req.query['hub.verify_token'] as string;
