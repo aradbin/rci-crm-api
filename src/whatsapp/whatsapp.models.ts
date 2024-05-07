@@ -1,22 +1,15 @@
 import { Model } from 'objection';
-import { CustomerModel } from 'src/customer/customer.model';
 import { BaseModel } from 'src/database/base.model';
+import { SettingsModel } from 'src/settings/settings.model';
 import { UserModel } from 'src/user/user.model';
 
 export class WhatsappMessageModel extends BaseModel {
   static tableName = 'whatsapp_messages';
 
   conversation_id: number;
-
   message_id: string;
-  message_body: string;
-  message_type: string;
-  message_status: string;
-  context_message_id: string;
-
   payload: any;
-  response: any;
-  attachments: any;
+  status: any;
 
   static relationMappings = {
     user: {
@@ -33,23 +26,17 @@ export class WhatsappMessageModel extends BaseModel {
 export class WhatsappConversationModel extends BaseModel {
   static tableName = 'whatsapp_conversations';
 
+  settings_id: number;
+  recipient_id: string;
+
   static relationMappings = {
-    customer: {
+    settings: {
       relation: Model.BelongsToOneRelation,
-      modelClass: CustomerModel,
+      modelClass: SettingsModel,
       join: {
-        from: 'whatsapp_conversations.recipient_number',
-        to: 'customers.contact',
+        from: 'whatsapp_conversations.settings_id',
+        to: 'settings.id',
       },
     },
-    messages: {
-      relation: Model.HasManyRelation,
-      modelClass: WhatsappMessageModel,
-      join: {
-        from: 'whatsapp_conversations.id',
-        to: 'whatsapp_messages.conversation_id',
-      },
-    }
-
   };
 }

@@ -7,16 +7,9 @@ export async function up(knex: Knex) {
     table.increments();
 
     table.integer('conversation_id').nullable();
-
     table.string('message_id').nullable();
-    table.string('message_body').nullable();
-    table.string('message_type').nullable(); // text, template, image, video, document, audio, location, contact, sticker, etc
-    table.string('message_status').nullable(); // sent, delivered, read, etc
-    table.string('context_message_id').nullable();
-
     table.jsonb('payload').nullable();
-    table.jsonb('response').nullable();
-    table.jsonb('attachments').nullable();
+    table.string('status').nullable(); // sent, delivered, read, etc
 
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
