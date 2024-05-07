@@ -12,6 +12,8 @@ export async function up(knex: Knex) {
     table.string('address').nullable();
     table.string('avatar').nullable();
     table.string('optional_contact').nullable();
+    table.boolean('is_featured').defaultTo(false);
+    table.jsonb('metadata').nullable();
 
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
