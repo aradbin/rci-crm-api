@@ -1,11 +1,11 @@
 Feedback:
 
-1. Service: Fee on customer
+1.
 2. Email: Multiple email address per user with default one
 3. Service: Task customization data
-4. Customer: Tag (Priority/Regular)
+4.
 5. Log: User, Customer, task logs
-6. Customer: Service end date
+6.
 7. Customer: Add more details on customer, Business Type (IT/Restaurant)
 8. Task: Multiple assignee & reporter
 9. WhatsApp: +44 7305058744
@@ -22,3 +22,6 @@ Done:
 8. Service: From, to due date for service on customer
 9. Task: Sub task impliment
 10. Task: Estimated and worked hour of task. Completed date and time log on list
+11. Customer: Service end date
+12. Service: Fee on customer
+13. Customer: Tag (Priority/Regular)
