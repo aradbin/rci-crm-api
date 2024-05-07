@@ -30,6 +30,8 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
     WhatsappModule,
     MessageModule,
     CustomerModule,
+    // ContactModule,
+    // CustomerContactModule,
     SocketModule,
     VoipModule,
     CustomerSettingsModule,

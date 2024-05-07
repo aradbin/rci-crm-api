@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { CustomerContactService } from './customer-contact.service';
 import { CreateCustomerContactDto } from './dto/create-customer-contact.dto';
 import { UpdateCustomerContactDto } from './dto/update-customer-contact.dto';
 
