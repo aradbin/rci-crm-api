@@ -1,18 +1,13 @@
 import { Knex } from 'knex';
 
-const tableName = 'customers';
+const tableName = 'customer_contacts';
 
 export async function up(knex: Knex) {
-  return await knex.schema.createTable(tableName, (table) => {
+  return knex.schema.createTable(tableName, (table) => {
     table.increments();
 
-    table.string('name');
-    table.string('email').nullable();
-    table.string('contact').nullable();
-    table.string('address').nullable();
-    table.string('avatar').nullable();
-    table.string('optional_contact').nullable();
-    table.boolean('is_featured').defaultTo(false);
+    table.integer('customer_id').nullable();
+    table.integer('contact_id').nullable();
     table.jsonb('metadata').nullable();
 
     table.timestamp('created_at').nullable();
@@ -25,5 +20,5 @@ export async function up(knex: Knex) {
 }
 
 export async function down(knex: Knex) {
-  return await knex.schema.dropTable(tableName);
+  return knex.schema.dropTable(tableName);
 }

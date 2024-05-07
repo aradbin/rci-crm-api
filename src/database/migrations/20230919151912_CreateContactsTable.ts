@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-const tableName = 'customers';
+const tableName = 'contacts';
 
 export async function up(knex: Knex) {
   return await knex.schema.createTable(tableName, (table) => {
@@ -11,9 +11,6 @@ export async function up(knex: Knex) {
     table.string('contact').nullable();
     table.string('address').nullable();
     table.string('avatar').nullable();
-    table.string('optional_contact').nullable();
-    table.boolean('is_featured').defaultTo(false);
-    table.jsonb('metadata').nullable();
 
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();
