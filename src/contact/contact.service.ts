@@ -1,6 +1,5 @@
 import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { ModelClass } from 'objection';
-import { CustomerContactService } from 'src/customer-contact/customer-contact.service';
 import { MinioService } from 'src/minio/minio.service';
 import { ContactModel } from './contact.model';
 import { CreateContactDto } from './dto/create-contact.dto';
@@ -10,7 +9,7 @@ import { UpdateContactDto } from './dto/update-contact.dto';
 export class ContactService {
   constructor(
     @Inject('ContactModel') private modelClass: ModelClass<ContactModel>,
-    private customerContactService: CustomerContactService,
+    // private customerContactService: CustomerContactService,
     private readonly minioService: MinioService,
   ) {}
 

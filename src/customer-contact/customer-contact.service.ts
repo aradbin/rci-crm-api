@@ -1,6 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ModelClass } from 'objection';
-import { ContactService } from 'src/contact/contact.service';
 import { CustomerContactModel } from './customer-contact-model';
 import { CreateCustomerContactDto } from './dto/create-customer-contact.dto';
 import { UpdateCustomerContactDto } from './dto/update-customer-contact.dto';
@@ -9,7 +8,6 @@ import { UpdateCustomerContactDto } from './dto/update-customer-contact.dto';
 export class CustomerContactService {
   constructor(
     @Inject('CustomerContactModel') private modelClass: ModelClass<CustomerContactModel>,
-    private contactService: ContactService,
   ) {}
 
   async create(createCustomerContactDto: CreateCustomerContactDto) {
@@ -17,7 +15,7 @@ export class CustomerContactService {
   }
 
   async findAll(params = {}) {
-    return await this.modelClass.query().paginate(params).filter(params).find();
+    return await this.modelClass.query().paginate(params).filter(params).withGraphFetched('customer').withGraphFetched('contact').find();
   }
 
   async findOne(id: number) {

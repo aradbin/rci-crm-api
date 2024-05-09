@@ -1,5 +1,3 @@
-import { Model } from 'objection';
-import { CustomerContactModel } from 'src/customer-contact/customer-contact-model';
 import { BaseModel } from 'src/database/base.model';
 
 export class ContactModel extends BaseModel {
@@ -12,14 +10,14 @@ export class ContactModel extends BaseModel {
   avatar: string;
 
   static relationMappings = () => ({
-    customerContacts: {
-      relation: Model.HasManyRelation,
-      modelClass: CustomerContactModel,
-      join: {
-        from: 'contacts.id',
-        to: 'customer_contacts.contact_id',
-      },
-    },
+    // customerContacts: {
+    //   relation: Model.HasManyRelation,
+    //   modelClass: CustomerContactModel,
+    //   join: {
+    //     from: 'contacts.id',
+    //     to: 'customer_contacts.contact_id',
+    //   },
+    // },
   });
 }
 

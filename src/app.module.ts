@@ -3,7 +3,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ContactModule } from './contact/contact.module';
 import { CronJobModule } from './cron-job/cron-job.module';
+import { CustomerContactModule } from './customer-contact/customer-contact.module';
 import { CustomerSettingsModule } from './customer-settings/customer-settings.module';
 import { CustomerModule } from './customer/customer.module';
 import { DatabaseModule } from './database/database.module';
@@ -30,8 +32,8 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
     WhatsappModule,
     MessageModule,
     CustomerModule,
-    // ContactModule,
-    // CustomerContactModule,
+    ContactModule,
+    CustomerContactModule,
     SocketModule,
     VoipModule,
     CustomerSettingsModule,
