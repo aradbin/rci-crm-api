@@ -1,12 +1,12 @@
 Feedback:
 
-1. Contact: Contact details & multiple contact for customers
+1. 
 2. Service: Task customization data
 3. Task: Multiple assignee & reporter
 4. Service: Service list with on/off switch on customer profile
 5. Customer: Add more details on customer, Business Type (IT/Restaurant)
-6.
-7.
+6. 
+7. Service: Cron jon update on customer service update
 8. Search: User & customer search
 9. Log: User, Customer, task logs
 10. Email: Multiple email address per user with default one
@@ -28,3 +28,4 @@ Done:
 12. Service: Fee, estimated hour on customer
 13. Customer: Tag (Priority/Regular)
 14. Service: One time cycle
+15. Contact: Contact details & multiple contact for customers

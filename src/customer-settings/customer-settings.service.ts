@@ -20,16 +20,18 @@ export class CustomerSettingsService {
         const cs = await this.modelClass.query().insert(createCustomerSettingsDto);
         if(createCustomerSettingsDto.metadata.auto_task){
             const settings = await this.settingsService.findOne(createCustomerSettingsDto.settings_id);
-            const payload: CreateCronJobDto = {
-                type: 'service',
-                type_id: cs.id,
-                next_run_time: this.nextRunTime(createCustomerSettingsDto.metadata.start_date, settings.metadata.cycle),
-                metadata: {...cs, settings: settings},
-                is_active: true,
-                created_at: null,
-                created_by: null
+            if(settings?.metadata?.cycle !== 'onetime'){
+                const payload: CreateCronJobDto = {
+                    type: 'service',
+                    type_id: cs.id,
+                    next_run_time: this.nextRunTime(createCustomerSettingsDto.metadata.start_date, settings.metadata.cycle),
+                    metadata: {...cs, settings: settings},
+                    is_active: true,
+                    created_at: null,
+                    created_by: null
+                }
+                await this.cronJobService.create(payload);
             }
-            await this.cronJobService.create(payload);
         }
 
         return cs;
