@@ -35,11 +35,11 @@ export class TaskService {
             .find();
             
         return tasks;
-      }
+    }
 
-  async findOne(id: number) {
-    return await this.modelClass.query().findById(id).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').withGraphFetched('subTasks').withGraphFetched('parentTask').find();
-  }
+    async findOne(id: number) {
+        return await this.modelClass.query().findById(id).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').withGraphFetched('subTasks').withGraphFetched('parentTask').find();
+    }
 
     async count(params = {}) {
         return await this.modelClass

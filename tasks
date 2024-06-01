@@ -1,16 +1,18 @@
 Feedback:
 
 1. 
-2. Service: Task customization data
+2. Task: Billable task with amount
 3. Task: Multiple assignee & reporter
-4. 
-5. Customer: Add more details on customer, Business Type (IT/Restaurant)
-6. 
-7. Service: Cron jon update on customer service update
+4. Task: Created on, Completed on, Created By
+5. Customer: Add more details on customer, Address, Timeline, Notes/Comments, ⁠AML checklist, ⁠KYC documents, Risk Assessment, Business Type (IT/Restaurant), Client type (Company, Sole Trader, Partnership, Individual, Trust, Charity, LLP)
+6. Task: Service on task and filter
+7. User/Customer: Active status, Export & Import in Excel & PDF
 8. Search: User & customer search
 9. Log: User, Customer, task logs
 10. Email: Multiple email address per user with default one
 11. WhatsApp: +44 7305058744
+12. Customer: Total count
+13. Customer: import from excel
 
 Done:
 
@@ -29,3 +31,6 @@ Done:
 13. Customer: Tag (Priority/Regular)
 14. Service: One time cycle
 15. Contact: Contact details & multiple contact for customers
+16. Service: Cron jon update on customer service update
+17. Service: Task customization data
+18: Task: Tasks count on tasks page
