@@ -1,11 +1,13 @@
 import { Model } from 'objection';
 import { CustomerModel } from 'src/customer/customer.model';
 import { BaseModel } from 'src/database/base.model';
-import { SettingsModel } from 'src/settings/settings.model';
 
 export class CustomerSettingsModel extends BaseModel {
     static tableName = 'customer_settings';
 
+    customer_id: number;
+    settings_id: number;
+    is_active: boolean;
     metadata: any;
 
     static relationMappings = {
@@ -16,15 +18,6 @@ export class CustomerSettingsModel extends BaseModel {
                 from: 'customer_settings.customer_id',
                 to: 'customers.id',
             },
-        },
-
-        settings: {
-            relation: Model.BelongsToOneRelation,
-            modelClass: SettingsModel,
-            join: {
-                from: 'customer_settings.settings_id',
-                to: 'settings.id',
-            },
-        },
+        }
     };
 }

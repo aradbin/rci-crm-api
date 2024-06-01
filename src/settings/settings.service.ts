@@ -38,6 +38,17 @@ export class SettingsService {
     return await this.modelClass.query().paginate(params).filter(params).withGraphFetched('parent').withGraphFetched('children').find();
   }
 
+  async findAllForCustomerService(customerId: number) {
+    return await this.modelClass.query()
+      .filter({ type: 'service' })
+      .paginate({ page: 1, pageSize: 999999999 })
+      .withGraphFetched('customerSettingsSingle')
+      .modifyGraph('customerSettingsSingle', (builder) => {
+        builder.where('customer_settings.customer_id', customerId);
+      })
+      .find();
+  }
+
   async findOne(id: number) {
     return await this.modelClass.query().findById(id).withGraphFetched('parent').withGraphFetched('children').find()
   }

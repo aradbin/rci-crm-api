@@ -3,8 +3,9 @@ import { DateTime } from 'luxon';
 import { ModelClass } from 'objection';
 import { CronJobService } from 'src/cron-job/cron-job.service';
 import { CreateCronJobDto } from 'src/cron-job/dto/create-cron-job.dto';
+import { UpdateCronJobDto } from 'src/cron-job/dto/update-cron-job.dto';
 import { SettingsService } from 'src/settings/settings.service';
-import { CustomerSettingsModel } from './customer-settings-model';
+import { CustomerSettingsModel } from './customer-settings.model';
 import { CreateCustomerSettingDto } from './dto/create-customer-setting.dto';
 import { UpdateCustomerSettingDto } from './dto/update-customer-setting.dto';
 
@@ -17,6 +18,11 @@ export class CustomerSettingsService {
     ) {}
 
     async create(createCustomerSettingsDto: CreateCustomerSettingDto) {
+        const existing = await this.modelClass.query().filter({ customer_id: createCustomerSettingsDto.customer_id, settings_id: createCustomerSettingsDto.settings_id }).first().find();
+        if(existing){
+            return this.update(existing.id, {...createCustomerSettingsDto, updated_at: null, updated_by: null, deleted_at: null, deleted_by: null});
+        }
+
         const cs = await this.modelClass.query().insert(createCustomerSettingsDto);
         if(createCustomerSettingsDto.metadata.auto_task){
             const settings = await this.settingsService.findOne(createCustomerSettingsDto.settings_id);
@@ -37,8 +43,13 @@ export class CustomerSettingsService {
         return cs;
     }
 
-    async findAll(params = {}) {
-        return await this.modelClass.query().paginate(params).filter(params).withGraphFetched('settings').find();
+    async findAll(params: any = {}) {
+        const result = await this.settingsService.findAllForCustomerService(parseInt(params?.customer_id));
+
+        return {
+            ...result,
+            customer_id: params?.customer_id
+        }
     }
 
     async findOne(id: number) {
@@ -49,7 +60,38 @@ export class CustomerSettingsService {
     }
 
     async update(id: number, updateCustomerSettingsDto: UpdateCustomerSettingDto) {
-        return await this.modelClass.query().findById(id).update(updateCustomerSettingsDto);
+        await this.modelClass.query().findById(id).update(updateCustomerSettingsDto);
+        const cs = await this.modelClass.query().findById(id).find();
+        const cron = await this.cronJobService.findAll({ type: 'service', type_id: id });
+        const exist = JSON.parse(JSON.stringify(cron))[0]
+
+        if(exist){
+            const settings = await this.settingsService.findOne(cs.settings_id);
+            const payload: UpdateCronJobDto = {
+                next_run_time: cs.metadata.auto_task ? this.nextRunTime(cs.metadata.start_date, settings.metadata.cycle) : null,
+                metadata: {...cs, settings: settings},
+                is_active: cs.is_active ? cs.metadata.auto_task : false
+            }
+            await this.cronJobService.update(exist.id, payload);
+        }else{
+            if(cs.metadata.auto_task){
+                const settings = await this.settingsService.findOne(cs.settings_id);
+                if(settings?.metadata?.cycle !== 'onetime'){
+                    const payload: CreateCronJobDto = {
+                        type: 'service',
+                        type_id: id,
+                        next_run_time: this.nextRunTime(cs.metadata.start_date, settings.metadata.cycle),
+                        metadata: {...cs, settings: settings},
+                        is_active: true,
+                        created_at: null,
+                        created_by: null
+                    }
+                    await this.cronJobService.create(payload);
+                }
+            }
+        }
+
+        return cs;
     }
 
     async remove(id: number) {

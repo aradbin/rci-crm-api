@@ -3,7 +3,7 @@ Feedback:
 1. 
 2. Service: Task customization data
 3. Task: Multiple assignee & reporter
-4. Service: Service list with on/off switch on customer profile
+4. 
 5. Customer: Add more details on customer, Business Type (IT/Restaurant)
 6. 
 7. Service: Cron jon update on customer service update
@@ -20,8 +20,8 @@ Done:
 4. VoIP: Task creation on ip misscall only
 5. VoIP: No need to assign ip number separately
 6. Email: Different smtp/imap host per email
-7. Service: Estimated hour, fee for service
-8. Service: From, to due date for service on customer
+7. Service: Estimated hour, fee for service, From, to due date for service on customer
+8. Service: Service list with on/off switch on customer profile
 9. Task: Sub task impliment
 10. Task: Estimated and worked hour of task. Completed date and time log on list
 11. Customer: Service end date

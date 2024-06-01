@@ -9,6 +9,7 @@ export async function up(knex: Knex) {
         table.integer('customer_id').nullable();
         table.integer('settings_id').nullable();
         table.jsonb('metadata').nullable();
+        table.boolean('is_active').defaultTo(true);
 
         table.timestamp('created_at').nullable();
         table.integer('created_by').nullable();

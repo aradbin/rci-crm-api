@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ModelClass } from 'objection';
-import { CustomerContactModel } from './customer-contact-model';
+import { CustomerContactModel } from './customer-contact.model';
 import { CreateCustomerContactDto } from './dto/create-customer-contact.dto';
 import { UpdateCustomerContactDto } from './dto/update-customer-contact.dto';
 

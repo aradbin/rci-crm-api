@@ -1,5 +1,5 @@
 import { Model } from 'objection';
-import { CustomerSettingsModel } from 'src/customer-settings/customer-settings-model';
+import { CustomerSettingsModel } from 'src/customer-settings/customer-settings.model';
 import { BaseModel } from 'src/database/base.model';
 
 export class CustomerModel extends BaseModel {
