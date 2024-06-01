@@ -2,6 +2,7 @@ import { Model } from 'objection';
 import { CustomerModel } from 'src/customer/customer.model';
 import { BaseModel } from 'src/database/base.model';
 import { TaskStatus } from 'src/database/enums/tasks';
+import { SettingsModel } from 'src/settings/settings.model';
 import { UserModel } from 'src/user/user.model';
 
 export class TaskModel extends BaseModel {
@@ -24,7 +25,11 @@ export class TaskModel extends BaseModel {
   customer_id: number;
   assignee_id: number;
   reporter_id: number;
-  type_id: any;
+  type_id: number;
+  settings_id: number;
+
+  billable: boolean;
+  bill_amount: number;
 
   static relationMappings = () => ({
     customer: {
@@ -49,6 +54,22 @@ export class TaskModel extends BaseModel {
       join: {
         from: 'tasks.reporter_id',
         to: 'users.id',
+      },
+    },
+    creator: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: UserModel,
+      join: {
+        from: 'tasks.created_by',
+        to: 'users.id',
+      },
+    },
+    settings: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: SettingsModel,
+      join: {
+        from: 'tasks.settings_id',
+        to: 'settings.id',
       },
     },
     subTasks: {

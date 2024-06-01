@@ -45,7 +45,10 @@ export class VoipService {
           reporter_id: null,
           running: false,
           time_log: null,
-          type_id: null
+          type_id: null,
+          settings_id: null,
+          billable: false,
+          bill_amount: 0
         };
         await this.taskService.create(createTaskDto, []);
       }

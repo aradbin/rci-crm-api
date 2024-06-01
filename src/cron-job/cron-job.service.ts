@@ -58,7 +58,10 @@ export class CronJobService {
                 status: TaskStatus.TODO,
                 time_log: null,
                 title: job?.metadata?.settings?.name,
-                type_id: null
+                type_id: null,
+                settings_id: null,
+                billable: false,
+                bill_amount: 0
             }
             console.log(job)
             await this.taskService.create(createTaskDto, []);

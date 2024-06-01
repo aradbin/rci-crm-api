@@ -32,13 +32,23 @@ export class TaskService {
             .withGraphFetched('customer')
             .withGraphFetched('assignee')
             .withGraphFetched('reporter')
+            .withGraphFetched('settings')
             .find();
             
         return tasks;
     }
 
     async findOne(id: number) {
-        return await this.modelClass.query().findById(id).withGraphFetched('customer').withGraphFetched('assignee').withGraphFetched('reporter').withGraphFetched('subTasks').withGraphFetched('parentTask').find();
+        return await this.modelClass.query()
+            .findById(id)
+            .withGraphFetched('customer')
+            .withGraphFetched('assignee')
+            .withGraphFetched('reporter')
+            .withGraphFetched('creator')
+            .withGraphFetched('settings')
+            .withGraphFetched('subTasks')
+            .withGraphFetched('parentTask')
+            .find();
     }
 
     async count(params = {}) {

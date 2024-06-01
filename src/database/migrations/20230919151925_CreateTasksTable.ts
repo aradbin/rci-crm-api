@@ -63,6 +63,7 @@ export async function up(knex: Knex) {
       table.integer('customer_id').nullable();
       table.integer('assignee_id').nullable();
       table.integer('reporter_id').nullable();
+      table.integer('settings_id').nullable();
       table.integer('type_id').nullable();
       table.integer('parent_id').nullable();
 
@@ -74,6 +75,8 @@ export async function up(knex: Knex) {
 
       table.date('due_date').nullable();
       table.string('estimation').nullable();
+      table.boolean('billable').defaultTo(false);
+      table.float('bill_amount').defaultTo(0);
 
       table.jsonb('time_log').defaultTo('[]');
       table.jsonb('activity_log').defaultTo('[]');

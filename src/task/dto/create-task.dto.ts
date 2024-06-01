@@ -56,5 +56,17 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsNumber()
+  settings_id: number;
+
+  @IsOptional()
+  @IsNumber()
   type_id: number;
+
+  @IsOptional()
+  @IsBoolean()
+  billable: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  bill_amount: number;
 }
