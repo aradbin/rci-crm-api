@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class CreateCallDto {
+export class CreatePhoneDto {
   @IsOptional()
   @IsNumber()
   settings_id: number;
@@ -12,6 +12,10 @@ export class CreateCallDto {
   @IsOptional()
   @IsString()
   number: string;
+
+  @IsOptional()
+  @IsString()
+  type: string;
 
   @IsOptional()
   @IsString()

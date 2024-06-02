@@ -1,7 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import Knex from 'knex';
 import { Model } from 'objection';
-import { CallLogModel } from 'src/call/call.model';
 import { ContactModel } from 'src/contact/contact.model';
 import { CronJobModel } from 'src/cron-job/cron-job.model';
 import { CustomerContactModel } from 'src/customer-contact/customer-contact.model';
@@ -9,6 +8,7 @@ import { CustomerSettingsModel } from 'src/customer-settings/customer-settings.m
 import { CustomerModel } from 'src/customer/customer.model';
 import { EmailModel } from 'src/email/email.model';
 import { MessageConversationModel, MessageModel } from 'src/message/message.models';
+import { PhoneLogModel } from 'src/phone/phone.model';
 import { SettingsModel } from 'src/settings/settings.model';
 import { TaskModel } from 'src/task/task.model';
 import { UserSettingsModel } from 'src/user-settings/user-settings.model';
@@ -32,7 +32,7 @@ const models = [
   MessageModel,
   MessageConversationModel,
   VoipLogModel,
-  CallLogModel,
+  PhoneLogModel,
 ];
 
 const modelProviders = models.map((model) => {

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { SocketModule } from 'src/socket/socket.module';
 import { TaskModule } from 'src/task/task.module';
-import { CallController } from './call.controller';
-import { CallService } from './call.service';
+import { PhoneController } from './phone.controller';
+import { PhoneService } from './phone.service';
 
 @Module({
   imports: [SocketModule, TaskModule],
-  controllers: [CallController],
-  providers: [CallService],
+  controllers: [PhoneController],
+  providers: [PhoneService],
 })
-export class CallModule {}
+export class PhoneModule {}

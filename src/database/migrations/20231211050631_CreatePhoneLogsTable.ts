@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-const tableName = 'call_logs';
+const tableName = 'phone_logs';
 
 export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, (table) => {
@@ -9,6 +9,7 @@ export async function up(knex: Knex) {
     table.integer('settings_id').nullable();
     table.integer('customer_id').nullable();
     table.string('number').nullable();
+    table.string('type').nullable(); // call/sms
 
     table.jsonb('log').nullable();
     table.text('note').nullable();

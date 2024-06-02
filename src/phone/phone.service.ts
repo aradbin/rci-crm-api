@@ -3,35 +3,35 @@ import { ModelClass } from 'objection';
 import { CustomerModel } from 'src/customer/customer.model';
 import { SocketGateway } from 'src/socket/socket.gateway';
 import { TaskService } from 'src/task/task.service';
-import { CallLogModel } from './call.model';
-import { CreateCallDto } from './dto/create-call.dto';
-import { UpdateCallDto } from './dto/update-call.dto';
+import { CreatePhoneDto } from './dto/create-phone.dto';
+import { UpdatePhoneDto } from './dto/update-phone.dto';
+import { PhoneLogModel } from './phone.model';
 
 @Injectable()
-export class CallService {
+export class PhoneService {
   constructor(
-    @Inject('CallLogModel') private modelClass: ModelClass<CallLogModel>,
+    @Inject('PhoneLogModel') private modelClass: ModelClass<PhoneLogModel>,
     @Inject('CustomerModel') private customerModelClass: ModelClass<CustomerModel>,
     private readonly socketGateway: SocketGateway,
     private readonly taskService: TaskService,
   ) {}
 
-  async create(createCallDto: CreateCallDto) {
+  async create(createPhoneDto: CreatePhoneDto) {
     const customer = await this.customerModelClass
       .query()
       .where((whereQuery) =>
         whereQuery
-          .whereLike('contact', `%${createCallDto.number}%`)
-          .orWhereLike('optional_contact', `%${createCallDto.number}%`),
+          .whereLike('contact', `%${createPhoneDto.number}%`)
+          .orWhereLike('optional_contact', `%${createPhoneDto.number}%`),
       )
       .where('deleted_at', null)
       .first();
 
     if (customer) {
-      createCallDto.customer_id = customer.id;
+      createPhoneDto.customer_id = customer.id;
     }
 
-    return await this.modelClass.query().insert(createCallDto);
+    return await this.modelClass.query().insert(createPhoneDto);
   }
 
   async findAll(params: any) {
@@ -42,7 +42,7 @@ export class CallService {
     return await this.modelClass.query().findById(id).first().find();
   }
 
-  async update(id: number, updateCallDto: UpdateCallDto) {
-    return await this.modelClass.query().findById(id).update(updateCallDto);
+  async update(id: number, updatePhoneDto: UpdatePhoneDto) {
+    return await this.modelClass.query().findById(id).update(updatePhoneDto);
   }
 }

@@ -3,12 +3,13 @@ import { CustomerModel } from 'src/customer/customer.model';
 import { BaseModel } from 'src/database/base.model';
 import { SettingsModel } from 'src/settings/settings.model';
 
-export class CallLogModel extends BaseModel {
-  static tableName = 'call_logs';
+export class PhoneLogModel extends BaseModel {
+  static tableName = 'phone_logs';
 
   settings_id: number;
   customer_id: number;
   number: string;
+  type: string;
   log: any;
   note: string;
 
@@ -17,7 +18,7 @@ export class CallLogModel extends BaseModel {
       relation: Model.BelongsToOneRelation,
       modelClass: SettingsModel,
       join: {
-        from: 'call_logs.settings_id',
+        from: 'phone_logs.settings_id',
         to: 'settings.id',
       },
     },
@@ -25,7 +26,7 @@ export class CallLogModel extends BaseModel {
       relation: Model.BelongsToOneRelation,
       modelClass: CustomerModel,
       join: {
-        from: 'call_logs.customer_id',
+        from: 'phone_logs.customer_id',
         to: 'customers.id',
       },
     },

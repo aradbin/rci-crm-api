@@ -12,18 +12,18 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { CallService } from './call.service';
-import { CreateCallDto } from './dto/create-call.dto';
-import { UpdateCallDto } from './dto/update-call.dto';
+import { CreatePhoneDto } from './dto/create-phone.dto';
+import { UpdatePhoneDto } from './dto/update-phone.dto';
+import { PhoneService } from './phone.service';
 
-@Controller('calls')
-export class CallController {
-  constructor(private readonly callService: CallService) {}
+@Controller('phone')
+export class PhoneController {
+  constructor(private readonly phoneService: PhoneService) {}
 
   @Post()
-  async create(@Body() createCallDto: CreateCallDto) {
+  async create(@Body() createPhoneDto: CreatePhoneDto) {
     try {
-      return await this.callService.create(createCallDto);
+      return await this.phoneService.create(createPhoneDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message);
     }
@@ -31,12 +31,12 @@ export class CallController {
 
   @Get()
   async findAll(@Query() params: any) {
-    return await this.callService.findAll(params);
+    return await this.phoneService.findAll(params);
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
-    const data = await this.callService.findOne(id);
+    const data = await this.phoneService.findOne(id);
 
     if (data) {
       return response.status(HttpStatus.OK).send(data);
@@ -47,9 +47,9 @@ export class CallController {
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateCallDto: UpdateCallDto) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updatePhoneDto: UpdatePhoneDto) {
     try {
-      return await this.callService.update(id, updateCallDto);
+      return await this.phoneService.update(id, updatePhoneDto);
     } catch (error) {
       throw new UnprocessableEntityException(error.message);
     }

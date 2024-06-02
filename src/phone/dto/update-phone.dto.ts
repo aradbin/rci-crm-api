@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateCallDto } from './create-call.dto';
+import { CreatePhoneDto } from './create-phone.dto';
 
-export class UpdateCallDto extends PartialType(CreateCallDto) {
+export class UpdatePhoneDto extends PartialType(CreatePhoneDto) {
   updated_at: string;
   updated_by: number;
   deleted_at: string;
