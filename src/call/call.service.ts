@@ -35,7 +35,7 @@ export class CallService {
   }
 
   async findAll(params: any) {
-    return await this.modelClass.query().paginate(params).filter(params).find();
+    return await this.modelClass.query().withGraphFetched('customer').paginate(params).filter(params).find();
   }
 
   async findOne(id: number) {

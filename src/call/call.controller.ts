@@ -6,22 +6,21 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   Query,
   Res,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { Public } from 'src/auth/public.decorators';
 import { CallService } from './call.service';
 import { CreateCallDto } from './dto/create-call.dto';
 import { UpdateCallDto } from './dto/update-call.dto';
 
-@Controller('call')
+@Controller('calls')
 export class CallController {
   constructor(private readonly callService: CallService) {}
 
-  @Get('create')
-  @Public()
+  @Post()
   async create(@Body() createCallDto: CreateCallDto) {
     try {
       return await this.callService.create(createCallDto);
@@ -30,12 +29,12 @@ export class CallController {
     }
   }
 
-  @Get('list')
-  findAll(@Query() params: any) {
-    return this.callService.findAll(params);
+  @Get()
+  async findAll(@Query() params: any) {
+    return await this.callService.findAll(params);
   }
 
-  @Get('details/:id')
+  @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
     const data = await this.callService.findOne(id);
 

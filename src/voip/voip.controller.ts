@@ -1,8 +1,8 @@
-import { Controller, Get, Patch, Param, Query, UnprocessableEntityException, ParseIntPipe, Body, Res, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Patch, Query, Res, UnprocessableEntityException } from '@nestjs/common';
 import { Response } from 'express';
-import { VoipService } from './voip.service';
 import { Public } from 'src/auth/public.decorators';
 import { UpdateVoipDto } from './dto/update-voip.dto';
+import { VoipService } from './voip.service';
 
 @Controller('voip')
 export class VoipController {
@@ -19,8 +19,8 @@ export class VoipController {
   }
 
   @Get('list')
-  findAll(@Query() params: any) {
-    return this.voipService.findAll(params);
+  async findAll(@Query() params: any) {
+    return await this.voipService.findAll(params);
   }
 
   @Get('details/:id')
