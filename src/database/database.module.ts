@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import Knex from 'knex';
 import { Model } from 'objection';
+import { CallLogModel } from 'src/call/call.model';
 import { ContactModel } from 'src/contact/contact.model';
 import { CronJobModel } from 'src/cron-job/cron-job.model';
 import { CustomerContactModel } from 'src/customer-contact/customer-contact.model';
@@ -16,49 +17,50 @@ import { WhatsappConversationModel, WhatsappMessageModel } from 'src/whatsapp/wh
 import { UserModel } from '../user/user.model';
 
 const models = [
-    UserModel,
-    SettingsModel,
-    UserSettingsModel,
-    CustomerSettingsModel,
-    CronJobModel,
-    EmailModel,
-    CustomerModel,
-    ContactModel,
-    CustomerContactModel,
-    TaskModel,
-    WhatsappMessageModel,
-    WhatsappConversationModel,
-    MessageModel,
-    MessageConversationModel,
-    VoipLogModel,
+  UserModel,
+  SettingsModel,
+  UserSettingsModel,
+  CustomerSettingsModel,
+  CronJobModel,
+  EmailModel,
+  CustomerModel,
+  ContactModel,
+  CustomerContactModel,
+  TaskModel,
+  WhatsappMessageModel,
+  WhatsappConversationModel,
+  MessageModel,
+  MessageConversationModel,
+  VoipLogModel,
+  CallLogModel,
 ];
 
 const modelProviders = models.map((model) => {
-    return {
-        provide: model.name,
-        useValue: model,
-    };
+  return {
+    provide: model.name,
+    useValue: model,
+  };
 });
 
 const providers = [
-    ...modelProviders,
-    {
-        provide: 'KnexConnection',
-        useFactory: async () => {
-            const knex = Knex({
-                client: 'pg',
-                connection: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`,
-            });
+  ...modelProviders,
+  {
+    provide: 'KnexConnection',
+    useFactory: async () => {
+      const knex = Knex({
+        client: 'pg',
+        connection: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`,
+      });
 
-            Model.knex(knex);
-            return knex;
-        },
+      Model.knex(knex);
+      return knex;
     },
+  },
 ];
 
 @Global()
 @Module({
-    providers: [...providers],
-    exports: [...providers],
+  providers: [...providers],
+  exports: [...providers],
 })
 export class DatabaseModule {}

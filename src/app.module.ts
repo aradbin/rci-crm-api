@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { CallModule } from './call/call.module';
 import { ContactModule } from './contact/contact.module';
 import { CronJobModule } from './cron-job/cron-job.module';
 import { CustomerContactModule } from './customer-contact/customer-contact.module';
@@ -36,9 +37,10 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
     CustomerContactModule,
     SocketModule,
     VoipModule,
+    CallModule,
     CustomerSettingsModule,
     ScheduleModule.forRoot(),
-    CronJobModule
+    CronJobModule,
   ],
   providers: [
     {
@@ -48,4 +50,4 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
     MinioService,
   ],
 })
-export class AppModule { }
+export class AppModule {}
