@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
+import * as crypto from 'crypto';
+import { ModelClass } from 'objection';
 import { CreateUserSettingsDto } from './dto/create-user-settings.dto';
 import { UpdateUserSettingsDto } from './dto/update-user-settings.dto';
-import { ModelClass } from 'objection';
 import { UserSettingsModel } from './user-settings.model';
-import * as crypto from 'crypto';
 
 @Injectable()
 export class UserSettingsService {

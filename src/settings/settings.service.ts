@@ -2,6 +2,7 @@ import { Inject, Injectable, NotAcceptableException, UnprocessableEntityExceptio
 import * as crypto from 'crypto';
 import { ModelClass } from 'objection';
 import { EmailService } from 'src/email/email.service';
+import { UserSettingsService } from 'src/user-settings/user-settings.service';
 import { CreateSettingDto } from './dto/create-setting.dto';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { SettingsModel } from './settings.model';
@@ -10,7 +11,8 @@ import { SettingsModel } from './settings.model';
 export class SettingsService {
   constructor(
     @Inject('SettingsModel') private modelClass: ModelClass<SettingsModel>,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private userSettingsService: UserSettingsService
   ) { }
 
   async create(createSettingDto: CreateSettingDto) {
@@ -20,6 +22,7 @@ export class SettingsService {
         username: createSettingDto.metadata.username,
         password: createSettingDto.metadata.password,
         imap: createSettingDto.metadata.imap,
+        imap_port: createSettingDto.metadata.imap_port,
       }).then((response) => {
         folders = response;
       }).catch(() => {
@@ -61,6 +64,20 @@ export class SettingsService {
       }
       if (updateSettingDto?.metadata?.password !== emailSettings?.metadata?.password) {
         updateSettingDto.metadata.password = this.encryptPassword(updateSettingDto.metadata.password)
+      }
+      let folders = null;
+      await this.emailService.getFolders({
+        username: updateSettingDto.metadata.username,
+        password: this.userSettingsService.decryptPassword(updateSettingDto?.metadata?.password),
+        imap: updateSettingDto.metadata.imap,
+        imap_port: updateSettingDto.metadata.imap_port,
+      }).then((response) => {
+        folders = response;
+      }).catch(() => {
+        throw new UnprocessableEntityException("Couldn't connect to email address");
+      });
+      if(folders?.length > 0){
+        updateSettingDto.metadata.folders = folders;
       }
     }
 

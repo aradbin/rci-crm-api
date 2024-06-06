@@ -21,7 +21,7 @@ export class EmailService {
     const transporter = nodemailer.createTransport({
       // service: 'Gmail',
       host: emailSettings?.metadata?.smtp,
-      port: 465,
+      port: emailSettings?.metadata?.smtp_port,
       secure: true,
       auth: {
         user: emailSettings?.metadata?.username,
@@ -93,7 +93,7 @@ export class EmailService {
       user: emailSettings?.metadata?.username,
       password: emailSettings?.metadata?.password,
       host: emailSettings?.metadata?.imap,
-      port: 993,
+      port: emailSettings?.metadata?.imap_port,
       tls: true,
     });
 
@@ -180,7 +180,7 @@ export class EmailService {
       user: emailSettings?.username,
       password: emailSettings?.password,
       host: emailSettings?.imap,
-      port: 993,
+      port: emailSettings?.imap_port,
       tls: true,
     });
   
@@ -229,7 +229,7 @@ export class EmailService {
   async getEmailSettings(userId: number) {
     let emailSettings = null;
     await this.userSettingsService.findAll({ user_id: userId, deleted_at: null }).then((response: any) => {
-      response?.results?.map((item: any) => {
+      response?.map((item: any) => {
         if (item?.settings?.type === 'email') {
           emailSettings = item?.settings
         }
