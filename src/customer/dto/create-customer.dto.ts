@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateCustomerDto {
   @IsOptional()
@@ -22,8 +22,8 @@ export class CreateCustomerDto {
   optional_contact: string;
 
   @IsOptional()
-  @IsBoolean()
-  is_featured: boolean;
+  @IsNumber()
+  priority: number;
 
   @IsOptional()
   @IsString()

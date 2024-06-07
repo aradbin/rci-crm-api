@@ -1,9 +1,9 @@
 Feedback:
 
-1. Customer priority: Normal, Medium, High
-2. Customer Service: Estimation & fee non mendatory
+1. 
+2. 
 3. Task: Multiple assignee & reporter
-4. Email: Seperate port for host
+4. 
 5. Customer: Add more details on customer, Address, Timeline, Notes/Comments, ⁠AML checklist, ⁠KYC documents, Risk Assessment, Business Type (IT/Restaurant), Customer type (Company, Sole Trader, Partnership, Individual, Trust, Charity, LLP, Onboard date)
 6. Voip: log doesn't open from customer profile
 7. User/Customer: Active status, Export & Import in Excel & PDF
@@ -39,3 +39,6 @@ Done:
 20. Customer: Total count
 21. Task: Billable task with amount
 22. Task: Service on task and filter
+23. Email: Seperate port for host
+24. Customer Service: Estimation & fee non mendatory
+25. Customer priority: Normal, Medium, High
