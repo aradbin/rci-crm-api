@@ -14,6 +14,7 @@ export class VoipLogModel extends BaseModel {
   log: any;
   received_by: number;
   customer_id: number;
+  customer: any;
 
   static relationMappings = () => ({
     received: {

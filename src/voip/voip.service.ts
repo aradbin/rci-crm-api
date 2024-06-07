@@ -32,7 +32,7 @@ export class VoipService {
       }
       if (params.state === 'Terminated' && log?.state === 'Missed') {
         const createTaskDto: CreateTaskDto = {
-          title: `Missed VoIP call from ${log?.remote_number}`,
+          title: `Missed VoIP call from ${log?.customer?.name || log?.remote_number}`,
           description: "",
           priority: 3,
           status: TaskStatus.TODO,
