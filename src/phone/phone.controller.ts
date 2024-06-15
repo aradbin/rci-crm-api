@@ -12,7 +12,6 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { CreatePhoneDto } from './dto/create-phone.dto';
 import { UpdatePhoneDto } from './dto/update-phone.dto';
 import { PhoneService } from './phone.service';
 
@@ -21,7 +20,8 @@ export class PhoneController {
   constructor(private readonly phoneService: PhoneService) {}
 
   @Post()
-  async create(@Body() createPhoneDto: CreatePhoneDto) {
+  async create(@Body() createPhoneDto: any) {
+    console.log(createPhoneDto)
     try {
       return await this.phoneService.create(createPhoneDto);
     } catch (error) {
