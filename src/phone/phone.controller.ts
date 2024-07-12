@@ -22,11 +22,11 @@ export class PhoneController {
   @Post()
   async create(@Body() createPhoneDto: any) {
     console.log(createPhoneDto)
-    try {
-      return await this.phoneService.create(createPhoneDto);
-    } catch (error) {
-      throw new UnprocessableEntityException(error.message);
-    }
+    // try {
+    //   return await this.phoneService.create(createPhoneDto);
+    // } catch (error) {
+    //   throw new UnprocessableEntityException(error.message);
+    // }
   }
 
   @Get()
