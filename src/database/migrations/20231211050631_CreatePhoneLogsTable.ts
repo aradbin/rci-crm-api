@@ -10,7 +10,7 @@ export async function up(knex: Knex) {
     table.integer('customer_id').nullable();
     table.string('number').nullable();
     table.string('type').nullable(); // call/sms
-
+    table.string('log_id').nullable();
     table.jsonb('log').nullable();
     table.text('note').nullable();
 
