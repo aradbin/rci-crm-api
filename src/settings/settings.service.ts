@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotAcceptableException, UnprocessableEntityException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { ModelClass } from 'objection';
 import { EmailService } from 'src/email/email.service';
@@ -16,23 +16,23 @@ export class SettingsService {
   ) { }
 
   async create(createSettingDto: CreateSettingDto) {
-    if (createSettingDto.type === 'email') {
-      let folders = null;
-      await this.emailService.getFolders({
-        username: createSettingDto.metadata.username,
-        password: createSettingDto.metadata.password,
-        imap: createSettingDto.metadata.imap,
-        imap_port: createSettingDto.metadata.imap_port,
-      }).then((response) => {
-        folders = response;
-      }).catch(() => {
-        throw new UnprocessableEntityException("Couldn't connect to email address");
-      });
-      if(folders?.length > 0){
-        createSettingDto.metadata.folders = folders;
-      }
-      createSettingDto.metadata.password = this.encryptPassword(createSettingDto.metadata.password);
-    }
+    // if (createSettingDto.type === 'email') {
+    //   let folders = null;
+    //   await this.emailService.getFolders({
+    //     username: createSettingDto.metadata.username,
+    //     password: createSettingDto.metadata.password,
+    //     imap: createSettingDto.metadata.imap,
+    //     imap_port: createSettingDto.metadata.imap_port,
+    //   }).then((response) => {
+    //     folders = response;
+    //   }).catch(() => {
+    //     throw new UnprocessableEntityException("Couldn't connect to email address");
+    //   });
+    //   if(folders?.length > 0){
+    //     createSettingDto.metadata.folders = folders;
+    //   }
+    //   createSettingDto.metadata.password = this.encryptPassword(createSettingDto.metadata.password);
+    // }
 
     return await this.modelClass.query().insert(createSettingDto);
   }
@@ -57,29 +57,29 @@ export class SettingsService {
   }
 
   async update(id: number, updateSettingDto: UpdateSettingDto) {
-    if (updateSettingDto.type === 'email') {
-      const emailSettings = await this.findOne(id);
-      if (!emailSettings) {
-        throw new NotAcceptableException("Email settings not found");
-      }
-      if (updateSettingDto?.metadata?.password !== emailSettings?.metadata?.password) {
-        updateSettingDto.metadata.password = this.encryptPassword(updateSettingDto.metadata.password)
-      }
-      let folders = null;
-      await this.emailService.getFolders({
-        username: updateSettingDto.metadata.username,
-        password: this.userSettingsService.decryptPassword(updateSettingDto?.metadata?.password),
-        imap: updateSettingDto.metadata.imap,
-        imap_port: updateSettingDto.metadata.imap_port,
-      }).then((response) => {
-        folders = response;
-      }).catch(() => {
-        throw new UnprocessableEntityException("Couldn't connect to email address");
-      });
-      if(folders?.length > 0){
-        updateSettingDto.metadata.folders = folders;
-      }
-    }
+    // if (updateSettingDto.type === 'email') {
+    //   const emailSettings = await this.findOne(id);
+    //   if (!emailSettings) {
+    //     throw new NotAcceptableException("Email settings not found");
+    //   }
+    //   if (updateSettingDto?.metadata?.password !== emailSettings?.metadata?.password) {
+    //     updateSettingDto.metadata.password = this.encryptPassword(updateSettingDto.metadata.password)
+    //   }
+    //   let folders = null;
+    //   await this.emailService.getFolders({
+    //     username: updateSettingDto.metadata.username,
+    //     password: this.userSettingsService.decryptPassword(updateSettingDto?.metadata?.password),
+    //     imap: updateSettingDto.metadata.imap,
+    //     imap_port: updateSettingDto.metadata.imap_port,
+    //   }).then((response) => {
+    //     folders = response;
+    //   }).catch(() => {
+    //     throw new UnprocessableEntityException("Couldn't connect to email address");
+    //   });
+    //   if(folders?.length > 0){
+    //     updateSettingDto.metadata.folders = folders;
+    //   }
+    // }
 
     return await this.modelClass.query().findById(id).update(updateSettingDto)
   }
