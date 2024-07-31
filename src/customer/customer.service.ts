@@ -29,6 +29,20 @@ export class CustomerService {
         return await this.modelClass.query().insert(createCustomerDto);
     }
 
+    async import(createCustomerDtos: CreateCustomerDto[]) {
+        const existingEmails = await this.modelClass.query().select('email').whereIn('email', createCustomerDtos.map(dto => dto.email));
+
+        const customersToCreate = createCustomerDtos.filter(dto => !existingEmails.some(email => email.email === dto.email));
+
+        let response = []
+
+        if(customersToCreate?.length > 0){
+            response = await this.modelClass.query().insert(customersToCreate);
+        }
+
+        return response;
+    }
+
     async findAll(params = {}) {
         const customers = await this.modelClass
             .query()

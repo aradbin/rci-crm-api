@@ -32,6 +32,11 @@ export class UserController {
     return this.userService.create(createUserDto, avatar);
   }
 
+  @Post('import')
+  async import(@Body() createUserDtos: CreateUserDto[]) {
+    return this.userService.import(createUserDtos);
+  }
+
   @Get()
   async findAll(@Query() query) {
     return await this.userService.findAll(query);

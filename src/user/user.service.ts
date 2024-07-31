@@ -46,6 +46,25 @@ export class UserService {
         return user;
     }
 
+    async import(createUserDtos: CreateUserDto[]) {
+        const existingEmails = await this.modelClass.query().select('email').whereIn('email', createUserDtos.map(dto => dto.email));
+
+        const usersToCreate = createUserDtos.filter(dto => !existingEmails.some(email => email.email === dto.email));
+
+        const hashedUsers = usersToCreate.map(dto => ({
+            ...dto,
+            password: bcrypt.hashSync(`${dto.password}`, 10)
+        }));
+
+        let response = []
+
+        if(hashedUsers?.length > 0){
+            response = await this.modelClass.query().insert(hashedUsers);
+        }
+
+        return response;
+    }
+
     async findAll(params = {}) {
         const users = (await this.modelClass
             .query()

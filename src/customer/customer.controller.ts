@@ -25,6 +25,11 @@ export class CustomerController {
         return this.customerService.create(createCustomerDto, avatar);
     }
 
+    @Post('import')
+    import(@Body() createCustomerDtos: CreateCustomerDto[]) {
+        return this.customerService.import(createCustomerDtos);
+    }
+
     @Get()
     findAll(@Query() query) {
         return this.customerService.findAll(query);
