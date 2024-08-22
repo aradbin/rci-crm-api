@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AccountService } from 'src/account/account.service';
 import { RequestService } from 'src/request/request.service';
 import { UpdateEmailDto } from './dto/update-email.dto';
@@ -11,13 +11,13 @@ export class EmailService {
   ) {}
   async create(createEmailDto: any) {
     if(!createEmailDto?.account){
-      throw new UnprocessableEntityException('Account not found');
+      return {}
     }
 
     const accounts = await this.accountService.findAll();
     const email = accounts?.items?.find((account: any) => (account?.name === createEmailDto?.account));
     if(!email) {
-      throw new UnprocessableEntityException('Account not found');;
+      return {};
     }
 
     const formData = {
@@ -47,13 +47,13 @@ export class EmailService {
 
   async findAll(query: any) {
     if(!query?.account){
-      throw new UnprocessableEntityException('Account not found');
+      return {}
     }
 
     const accounts = await this.accountService.findAll();
     const email = accounts?.items?.find((account: any) => (account?.name === query?.account));
     if(!email) {
-      throw new UnprocessableEntityException('Account not found');;
+      return {};
     }
 
     const payload = {
