@@ -2,10 +2,14 @@ import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage
 import { Server, Socket } from 'socket.io';
 import { CreateMessageDto } from 'src/message/dto/create-message.dto';
 import { MessageService } from 'src/message/message.service';
+import { WhatsappService } from 'src/whatsapp/whatsapp.service';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private messageService: MessageService) { }
+  constructor(
+    private messageService: MessageService,
+    private whatsappService: WhatsappService
+  ) { }
 
   @WebSocketServer() server: Server;
   private connectedUsers: { [userId: number]: Socket } = {};
@@ -31,6 +35,17 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     return response;
+  }
+
+  @SubscribeMessage('whatsapp')
+  async sendWhatsApp(@MessageBody() data: any) {
+    const response = await this.whatsappService.create(data);
+
+    return response;
+  }
+
+  async receive(type: string, payload: any) {
+    this.server.emit(type, payload);
   }
 
   async handleVoIP(log: any) {

@@ -1,31 +1,15 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Post,
-  Query,
-  Request,
-  Res,
-  UnprocessableEntityException,
-} from "@nestjs/common";
-import { Response } from 'express';
-import { CreateEmailDto } from "./dto/create-email.dto";
-import { EmailService } from "./email.service";
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { EmailService } from './email.service';
+import { CreateEmailDto } from './dto/create-email.dto';
+import { UpdateEmailDto } from './dto/update-email.dto';
 
-@Controller("email")
+@Controller('email')
 export class EmailController {
-  constructor(private readonly emailService: EmailService) { }
+  constructor(private readonly emailService: EmailService) {}
 
   @Post()
-  async create(@Request() req: any, @Body() createEmailDto: CreateEmailDto) {
-    try {
-      return await this.emailService.create(req?.user?.id, createEmailDto);
-    } catch (error) {
-      throw new UnprocessableEntityException(error.message);
-    }
+  async create(@Body() createEmailDto: any) {
+    return await this.emailService.create(createEmailDto);
   }
 
   @Get()
@@ -33,19 +17,23 @@ export class EmailController {
     return await this.emailService.findAll(query);
   }
 
-  @Get('sync')
-  async sync(@Request() req: any, @Query() query: any) {
-    return await this.emailService.sync(req?.user?.id, query);
+  @Get('/folders')
+  async folders(@Query() query: any) {
+    return await this.emailService.folders(query);
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
-    const data = await this.emailService.findOne(id);
-    if(data){
-      return response.status(HttpStatus.OK).send(data)
-    }
-    return response.status(HttpStatus.NOT_FOUND).send({
-      message: 'No Email Found'
-    })
+  async findOne(@Param('id') id: string) {
+    return await this.emailService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateEmailDto: UpdateEmailDto) {
+    return this.emailService.update(+id, updateEmailDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.emailService.remove(+id);
   }
 }

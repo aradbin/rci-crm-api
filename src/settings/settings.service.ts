@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { ModelClass } from 'objection';
-import { EmailService } from 'src/email/email.service';
-import { UserSettingsService } from 'src/user-settings/user-settings.service';
 import { CreateSettingDto } from './dto/create-setting.dto';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { SettingsModel } from './settings.model';
@@ -11,8 +9,6 @@ import { SettingsModel } from './settings.model';
 export class SettingsService {
   constructor(
     @Inject('SettingsModel') private modelClass: ModelClass<SettingsModel>,
-    private emailService: EmailService,
-    private userSettingsService: UserSettingsService
   ) { }
 
   async create(createSettingDto: CreateSettingDto) {
