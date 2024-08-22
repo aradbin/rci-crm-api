@@ -16,7 +16,7 @@ async function bootstrap() {
   // app.useWebSocketAdapter(redisIoAdapter);
   app.use(RequestContextMiddleware);
 
-  await app.listen(8080);
+  await app.listen(8000);
 }
 
 bootstrap();
