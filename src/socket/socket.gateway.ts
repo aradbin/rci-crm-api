@@ -45,6 +45,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async receive(type: string, payload: any) {
+    console.log('socket',payload);
     this.server.emit(type, payload);
   }
 

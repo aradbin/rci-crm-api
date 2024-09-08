@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateWebhookDto } from './dto/create-webhook.dto';
-import { UpdateWebhookDto } from './dto/update-webhook.dto';
 import { SocketGateway } from 'src/socket/socket.gateway';
 
 @Injectable()
@@ -10,6 +8,7 @@ export class WebhookService {
   ) {}
   
   async webhook(type: string, payload: any) {
+    console.log('webhook.service',payload);
     await this.socketGateway.receive(type, payload);
     return true;
   }

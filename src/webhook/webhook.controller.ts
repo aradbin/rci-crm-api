@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { WebhookService } from './webhook.service';
 
 @Controller('webhook')
@@ -7,6 +7,7 @@ export class WebhookController {
 
   @Post('whatsapp')
   async whatsapp(@Body() payload: any) {
+    console.log('webhook.controller',payload);
     return await this.webhookService.webhook('whatsapp', payload);
   }
 
