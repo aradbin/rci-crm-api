@@ -1,4 +1,4 @@
-import { IsEmail, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateCustomerDto {
   @IsOptional()
@@ -18,14 +18,34 @@ export class CreateCustomerDto {
   address: string;
 
   @IsOptional()
-  @IsString()
-  optional_contact: string;
-
-  @IsOptional()
   @IsNumber()
   priority: number;
 
   @IsOptional()
   @IsString()
+  optional_contact: string;
+
+  @IsOptional()
+  @IsString()
+  business_type: string;
+
+  @IsOptional()
+  @IsString()
+  customer_type: string;
+
+  @IsOptional()
+  @IsBoolean()
+  status: boolean;
+
+  @IsOptional()
+  @IsString()
   avatar: string;
+
+  @IsOptional()
+  @IsString()
+  documents: string;
+
+  @IsOptional()
+  @IsObject()
+  metadata: any;
 }
