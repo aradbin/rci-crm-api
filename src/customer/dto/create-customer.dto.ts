@@ -26,12 +26,12 @@ export class CreateCustomerDto {
   optional_contact: string;
 
   @IsOptional()
-  @IsString()
-  business_type: string;
+  @IsNumber()
+  business_type: number;
 
   @IsOptional()
-  @IsString()
-  customer_type: string;
+  @IsNumber()
+  customer_type: number;
 
   @IsOptional()
   @IsBoolean()
