@@ -14,8 +14,8 @@ export async function up(knex: Knex) {
     table.string('documents').nullable();
     table.string('optional_contact').nullable();
     table.smallint('priority').nullable(); // regular, medium, high
-    table.string('business_type').nullable(); // IT, Restaurent
-    table.string('customer_type').nullable(); // Company, partnership, individual
+    table.integer('business_type').nullable(); // IT, Restaurent
+    table.integer('customer_type').nullable(); // Company, partnership, individual
     table.boolean('status').defaultTo(true);
     table.jsonb('metadata').nullable();
 

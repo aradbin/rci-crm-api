@@ -25,6 +25,11 @@ export class ContactController {
     return this.contactService.create(createContactDto, avatar);
   }
 
+  @Post('import')
+  import(@Body() createContactDtos: CreateContactDto[]) {
+    return this.contactService.import(createContactDtos);
+  }
+
   @Get()
   findAll(@Query() query) {
     return this.contactService.findAll(query);

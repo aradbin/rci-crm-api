@@ -28,6 +28,28 @@ export class ContactService {
     return await this.modelClass.query().insert(createContactDto);
   }
 
+  async import(createContactDtos: CreateContactDto[]) {
+    const existingEmails = await this.modelClass
+      .query()
+      .select('email')
+      .whereIn(
+        'email',
+        createContactDtos.map((dto) => dto.email),
+      );
+
+    const contactsToCreate = createContactDtos.filter(
+      (dto) => !existingEmails.some((email) => email.email === dto.email),
+    );
+
+    let response = [];
+
+    if (contactsToCreate?.length > 0) {
+      response = await this.modelClass.query().insert(contactsToCreate);
+    }
+
+    return response;
+  }
+
   async findAll(params = {}) {
     const contacts = await this.modelClass.query().paginate(params).filter(params).find();
 
