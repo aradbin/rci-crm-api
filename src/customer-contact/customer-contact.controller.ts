@@ -12,6 +12,11 @@ export class CustomerContactController {
     return await this.customerContactService.create(createCustomerContactDto);
   }
 
+  @Post('import')
+  import(@Body() createCustomerContactDtos: CreateCustomerContactDto[]) {
+    return this.customerContactService.import(createCustomerContactDtos);
+  }
+
   @Get()
   async findAll(@Query() query) {
     return await this.customerContactService.findAll(query);

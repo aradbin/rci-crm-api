@@ -56,84 +56,82 @@ DROP TRIGGER update_activity_log_on_${column}_trigger;
 `;
 
 export async function up(knex: Knex) {
-  return await knex.schema
-    .createTable(tableName, (table) => {
-      table.increments();
+  return await knex.schema.createTable(tableName, (table) => {
+    table.increments();
 
-      table.integer('customer_id').nullable();
-      table.integer('assignee_id').nullable();
-      table.integer('reporter_id').nullable();
-      table.integer('settings_id').nullable();
-      table.integer('type_id').nullable();
-      table.integer('parent_id').nullable();
+    table.integer('customer_id').nullable();
+    table.integer('assignee_id').nullable();
+    table.integer('reporter_id').nullable();
+    table.integer('settings_id').nullable();
+    table.integer('type_id').nullable();
+    table.integer('parent_id').nullable();
 
-      table.string('title').nullable();
-      table.string('description').nullable();
-      table.smallint('priority').nullable();
-      table.string('status').defaultTo(TaskStatus.TODO);
-      table.boolean('running').defaultTo(false);
+    table.string('title').nullable();
+    table.string('description').nullable();
+    table.smallint('priority').nullable();
+    table.string('status').defaultTo(TaskStatus.TODO);
+    table.boolean('running').defaultTo(false);
 
-      table.date('due_date').nullable();
-      table.string('estimation').nullable();
-      table.boolean('billable').defaultTo(false);
-      table.float('bill_amount').defaultTo(0);
+    table.date('due_date').nullable();
+    table.string('estimation').nullable();
+    table.boolean('billable').defaultTo(false);
+    table.float('bill_amount').defaultTo(0);
 
-      table.jsonb('time_log').defaultTo('[]');
-      table.jsonb('activity_log').defaultTo('[]');
-      table.jsonb('attachments').defaultTo('[]');
+    table.jsonb('time_log').defaultTo('[]');
+    table.jsonb('activity_log').defaultTo('[]');
+    table.jsonb('attachments').defaultTo('[]');
 
-      table.timestamp('created_at').nullable();
-      table.integer('created_by').nullable();
-      table.timestamp('updated_at').nullable();
-      table.integer('updated_by').nullable();
-      table.timestamp('completed_at').nullable();
-      table.integer('completed_by').nullable();
-      table.timestamp('deleted_at').nullable();
-      table.integer('deleted_by').nullable();
-    })
-    .then(
-      () => knex.raw(CREATE_LOG_TYPE()),
-      (err) => console.log(err),
-    )
-    .then(
-      () => knex.raw(UPDATE_ACTIVITY_LOG_FUNCTION('status')),
-      (err) => console.log(err),
-    )
-    .then(
-      () => knex.raw(UPDATE_ACTIVITY_LOG_FUNCTION('assignee_id')),
-      (err) => console.log(err),
-    )
-    .then(
-      () => knex.raw(UPDATE_ACTIVITY_LOG_TRIGGER('status')),
-      (err) => console.log(err),
-    )
-    .then(
-      () => knex.raw(UPDATE_ACTIVITY_LOG_TRIGGER('assignee_id')),
-      (err) => console.log(err),
-    );
+    table.timestamp('created_at').nullable();
+    table.integer('created_by').nullable();
+    table.timestamp('updated_at').nullable();
+    table.integer('updated_by').nullable();
+    table.timestamp('completed_at').nullable();
+    table.integer('completed_by').nullable();
+    table.timestamp('deleted_at').nullable();
+    table.integer('deleted_by').nullable();
+  });
+  // .then(
+  //   () => knex.raw(CREATE_LOG_TYPE()),
+  //   (err) => console.log(err),
+  // )
+  // .then(
+  //   () => knex.raw(UPDATE_ACTIVITY_LOG_FUNCTION('status')),
+  //   (err) => console.log(err),
+  // )
+  // .then(
+  //   () => knex.raw(UPDATE_ACTIVITY_LOG_FUNCTION('assignee_id')),
+  //   (err) => console.log(err),
+  // )
+  // .then(
+  //   () => knex.raw(UPDATE_ACTIVITY_LOG_TRIGGER('status')),
+  //   (err) => console.log(err),
+  // )
+  // .then(
+  //   () => knex.raw(UPDATE_ACTIVITY_LOG_TRIGGER('assignee_id')),
+  //   (err) => console.log(err),
+  // );
 }
 
 export async function down(knex: Knex) {
-  return await knex.schema
-    .dropTable(tableName)
-    .then(
-      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_TRIGGER('status')),
-      (err) => console.log(err),
-    )
-    .then(
-      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_TRIGGER('assignee_id')),
-      (err) => console.log(err),
-    )
-    .then(
-      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_FUNCTION('status')),
-      (err) => console.log(err),
-    )
-    .then(
-      () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_FUNCTION('assignee_id')),
-      (err) => console.log(err),
-    )
-    .then(
-      () => knex.raw(DROP_LOG_TYPE()),
-      (err) => console.log(err),
-    );
+  return await knex.schema.dropTable(tableName);
+  // .then(
+  //   () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_TRIGGER('status')),
+  //   (err) => console.log(err),
+  // )
+  // .then(
+  //   () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_TRIGGER('assignee_id')),
+  //   (err) => console.log(err),
+  // )
+  // .then(
+  //   () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_FUNCTION('status')),
+  //   (err) => console.log(err),
+  // )
+  // .then(
+  //   () => knex.raw(DROP_UPDATE_ACTIVITY_LOG_FUNCTION('assignee_id')),
+  //   (err) => console.log(err),
+  // )
+  // .then(
+  //   () => knex.raw(DROP_LOG_TYPE()),
+  //   (err) => console.log(err),
+  // );
 }

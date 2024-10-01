@@ -6,16 +6,24 @@ import { UpdateCustomerContactDto } from './dto/update-customer-contact.dto';
 
 @Injectable()
 export class CustomerContactService {
-  constructor(
-    @Inject('CustomerContactModel') private modelClass: ModelClass<CustomerContactModel>,
-  ) {}
+  constructor(@Inject('CustomerContactModel') private modelClass: ModelClass<CustomerContactModel>) {}
 
   async create(createCustomerContactDto: CreateCustomerContactDto) {
     return await this.modelClass.query().insert(createCustomerContactDto);
   }
 
+  async import(createCustomerContactDtos: CreateCustomerContactDto[]) {
+    return await this.modelClass.query().insert(createCustomerContactDtos);
+  }
+
   async findAll(params = {}) {
-    return await this.modelClass.query().paginate(params).filter(params).withGraphFetched('customer').withGraphFetched('contact').find();
+    return await this.modelClass
+      .query()
+      .paginate(params)
+      .filter(params)
+      .withGraphFetched('customer')
+      .withGraphFetched('contact')
+      .find();
   }
 
   async findOne(id: number) {
