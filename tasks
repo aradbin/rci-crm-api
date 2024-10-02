@@ -1,18 +1,18 @@
 Feedback:
 
-1. 
-2. 
+1.
+2.
 3. Task: Multiple assignee & reporter
-4. 
-5. Customer: Add more details on customer, Address, Timeline, Notes/Comments, ⁠AML checklist, ⁠KYC documents, Risk Assessment, Business Type (IT/Restaurant), Customer type (Company, Sole Trader, Partnership, Individual, Trust, Charity, LLP, Onboard date)
-6. 
+4.
+5. Customer: Add more details on customer, Timeline, Notes/Comments, ⁠AML checklist, ⁠KYC documents, Risk Assessment, Onboard date
+6.
 7. User/Customer: Active status, Export & Import in Excel & PDF
-8. 
+8.
 9. Log: User, Customer, task logs
-10. Email: Multiple email address per user with default one
-11. WhatsApp: +44 7305058744, multiple whatsapp
-12. 
-13. Customer: import from excel
+10.
+11.
+12.
+13.
 14. Customer: Store manual contact number to customer from voip, phone
 
 Done:
@@ -45,3 +45,7 @@ Done:
 26. Voip: log doesn't open from customer profile
 27. Task: Show customer name on misscall task title
 28. Search: User & customer search
+29. Customer: Add more details on customer, Address, Business Type (IT/Restaurant), Customer type (Company, Sole Trader, Partnership, Individual, Trust, Charity, LLP)
+30. Email: Multiple email address per user
+31. WhatsApp: Multiple whatsapp per user. +44 7305058744
+32. Customer: import from excel
