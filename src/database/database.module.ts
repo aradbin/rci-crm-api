@@ -10,6 +10,7 @@ import { EmailModel } from 'src/email/email.model';
 import { MessageConversationModel, MessageModel } from 'src/message/message.models';
 import { PhoneLogModel } from 'src/phone/phone.model';
 import { SettingsModel } from 'src/settings/settings.model';
+import { TaskUserModel } from 'src/task/task-user.model';
 import { TaskModel } from 'src/task/task.model';
 import { UserSettingsModel } from 'src/user-settings/user-settings.model';
 import { VoipLogModel } from 'src/voip/voip.model';
@@ -27,6 +28,7 @@ const models = [
   ContactModel,
   CustomerContactModel,
   TaskModel,
+  TaskUserModel,
   WhatsappMessageModel,
   WhatsappConversationModel,
   MessageModel,

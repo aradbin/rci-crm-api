@@ -3,12 +3,14 @@ import { ModelClass } from 'objection';
 import { MinioService } from 'src/minio/minio.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskUserModel } from './task-user.model';
 import { TaskModel } from './task.model';
 
 @Injectable()
 export class TaskService {
   constructor(
     @Inject('TaskModel') private modelClass: ModelClass<TaskModel>,
+    @Inject('TaskUserModel') private modelClassTaskUser: ModelClass<TaskUserModel>,
     private readonly minioService: MinioService,
   ) {}
 
@@ -75,8 +77,11 @@ export class TaskService {
   }
 
   async update(user_id: number, id: number, updateTaskDto: UpdateTaskDto) {
+    const task = await this.modelClass.query().findById(id).withGraphFetched('taskUsers').find();
+    await this.updateUsers(task, updateTaskDto);
+    delete updateTaskDto.assignee_id;
+    delete updateTaskDto.reporter_id;
     if (updateTaskDto.hasOwnProperty('status') || updateTaskDto.hasOwnProperty('running')) {
-      const task = await this.modelClass.query().findById(id).find();
       if (updateTaskDto.hasOwnProperty('status') && task?.status !== updateTaskDto?.status) {
         const time_log = task?.time_log;
         if (updateTaskDto.status === 'inprogress') {
@@ -120,6 +125,38 @@ export class TaskService {
 
   async remove(id: number) {
     return await this.modelClass.query().softDelete(id);
+  }
+
+  async updateUsers(task: any, data: any) {
+    const currentAssigneeIds = task?.taskUsers
+      ?.filter((item: any) => item.type === 'assignee')
+      ?.map((item: any) => item.user_id);
+    const currentReporterIds = task?.taskUsers
+      ?.filter((item: any) => item.type === 'reporter')
+      ?.map((item: any) => item.user_id);
+
+    const idsToRemove = [
+      ...currentAssigneeIds.filter((id: any) => !data?.assignee_id?.includes(id)),
+      ...currentReporterIds.filter((id: any) => !data?.reporter_id?.includes(id)),
+    ];
+
+    const newAssigneeIds = data?.assignee_id?.filter((id: any) => !currentAssigneeIds.includes(id));
+    const newReporterIds = data?.reporter_id?.filter((id: any) => !currentReporterIds.includes(id));
+    const idsToCreate = [
+      ...newAssigneeIds?.map((id: any) => ({ user_id: id, type: 'assignee', task_id: task.id })),
+      ...newReporterIds?.map((id: any) => ({ user_id: id, type: 'reporter', task_id: task.id })),
+    ];
+
+    if (idsToRemove.length > 0) {
+      await this.modelClassTaskUser
+        .query()
+        .where('id', 'in', idsToRemove)
+        .patch({ deleted_at: new Date().toISOString().slice(0, 19).replace('T', ' ') });
+    }
+
+    if (idsToCreate.length > 0) {
+      await this.modelClassTaskUser.query().insert(idsToCreate);
+    }
   }
 
   async stopAll(user_id: number, assignee_id: number, id: number) {
