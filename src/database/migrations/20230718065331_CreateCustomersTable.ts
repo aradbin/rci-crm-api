@@ -7,15 +7,14 @@ export async function up(knex: Knex) {
     table.increments();
 
     table.string('name');
-    table.string('email').nullable();
+    table.string('email').unique();
     table.string('contact').nullable();
     table.string('address').nullable();
-    table.string('avatar').nullable();
-    table.string('documents').nullable();
-    table.string('optional_contact').nullable();
     table.smallint('priority').nullable(); // regular, medium, high
     table.integer('business_type_id').nullable(); // IT, Restaurent
     table.integer('customer_type_id').nullable(); // Company, partnership, individual
+    table.string('avatar').nullable();
+    table.string('documents').nullable();
     table.boolean('status').defaultTo(true);
     table.jsonb('metadata').nullable();
 

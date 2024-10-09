@@ -1,5 +1,4 @@
 import { Knex } from 'knex';
-import { TaskStatus } from '../enums/tasks';
 
 const tableName = 'tasks';
 
@@ -60,16 +59,13 @@ export async function up(knex: Knex) {
     table.increments();
 
     table.integer('customer_id').nullable();
-    table.integer('assignee_id').nullable();
-    table.integer('reporter_id').nullable();
     table.integer('settings_id').nullable();
-    table.integer('type_id').nullable();
     table.integer('parent_id').nullable();
 
     table.string('title').nullable();
     table.string('description').nullable();
     table.smallint('priority').nullable();
-    table.string('status').defaultTo(TaskStatus.TODO);
+    table.string('status').defaultTo('todo');
     table.boolean('running').defaultTo(false);
 
     table.date('due_date').nullable();

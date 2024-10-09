@@ -1,19 +1,17 @@
 import { Knex } from 'knex';
 
-const tableName = 'users';
+const tableName = 'contacts';
 
 export async function up(knex: Knex) {
-  return knex.schema.createTable(tableName, (table) => {
+  return await knex.schema.createTable(tableName, (table) => {
     table.increments();
 
     table.string('name');
-    table.string('email').unique();
-    table.string('username').nullable().unique();
-    table.string('password').nullable();
+    table.string('email').nullable();
     table.string('contact').nullable();
     table.string('address').nullable();
     table.string('avatar').nullable();
-    table.boolean('verified').defaultTo(false);
+    table.string('documents').nullable();
     table.boolean('status').defaultTo(true);
     table.jsonb('metadata').nullable();
 
@@ -27,5 +25,5 @@ export async function up(knex: Knex) {
 }
 
 export async function down(knex: Knex) {
-  return knex.schema.dropTable(tableName);
+  return await knex.schema.dropTable(tableName);
 }

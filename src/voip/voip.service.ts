@@ -15,25 +15,31 @@ export class VoipService {
     @Inject('VoipLogModel') private modelClass: ModelClass<VoipLogModel>,
     @Inject('CustomerModel') private customerModelClass: ModelClass<CustomerModel>,
     private readonly socketGateway: SocketGateway,
-    private readonly taskService: TaskService
-  ) { }
+    private readonly taskService: TaskService,
+  ) {}
 
   async create(params: any) {
     // url for horizon integrator
     // http://54.179.73.207:8080/voip/create?id={Call.Id}&start={Call.Start}&state={Call.State}&duration={Call.Duration}&direction={Call.Direction}&remoteTel={Call.RemoteTel}&remoteTelE164={Call.RemoteTelE164}&remoteName={Call.RemoteName}&localTel={Call.LocalTel}&localName={Call.LocalName}
 
-    const log = await this.modelClass.query().where('call_id', params?.id).withGraphFetched('received').withGraphFetched('customer').find().first();
+    const log = await this.modelClass
+      .query()
+      .where('call_id', params?.id)
+      .withGraphFetched('received')
+      .withGraphFetched('customer')
+      .find()
+      .first();
 
     if (log) {
       let state = log?.state;
       if (params.state === 'Connected') {
         await this.socketGateway.handleVoIP(log);
-        state = "Connected";
+        state = 'Connected';
       }
       if (params.state === 'Terminated' && log?.state === 'Missed') {
         const createTaskDto: CreateTaskDto = {
           title: `Missed VoIP call from ${log?.customer?.name || log?.remote_number}`,
-          description: "",
+          description: '',
           priority: 3,
           status: TaskStatus.TODO,
           due_date: new Date(),
@@ -41,14 +47,13 @@ export class VoipService {
           attachments: null,
           customer_id: log?.customer_id || null,
           parent_id: null,
-          estimation: "",
+          estimation: '',
           reporter_id: null,
           running: false,
           time_log: null,
-          type_id: null,
           settings_id: null,
           billable: false,
-          bill_amount: 0
+          bill_amount: 0,
         };
         await this.taskService.create(createTaskDto, []);
       }
@@ -64,33 +69,48 @@ export class VoipService {
       call_id: params.id,
       local_number: params.localTel,
       remote_number: params.remoteTel,
-      state: "Missed",
+      state: 'Missed',
       log: JSON.stringify(params),
       received_by: null,
       customer_id: null,
-      note: null
-    }
+      note: null,
+    };
 
-    const customer = await this.customerModelClass.query()
-      .where(whereQuery => whereQuery
-        .whereLike('contact', `%${params.remoteTel}%`)
-        .orWhereLike('optional_contact', `%${params.remoteTel}%`)
-      ).where('deleted_at', null)
+    const customer = await this.customerModelClass
+      .query()
+      .where((whereQuery) =>
+        whereQuery
+          .whereLike('contact', `%${params.remoteTel}%`)
+          .orWhereLike('optional_contact', `%${params.remoteTel}%`),
+      )
+      .where('deleted_at', null)
       .first();
 
     if (customer) {
-      createVoipDto.customer_id = customer.id
+      createVoipDto.customer_id = customer.id;
     }
 
     return await this.modelClass.query().insert(createVoipDto);
   }
 
   async findAll(params: any) {
-    return await this.modelClass.query().withGraphFetched('received').withGraphFetched('customer').paginate(params).filter(params).find();
+    return await this.modelClass
+      .query()
+      .withGraphFetched('received')
+      .withGraphFetched('customer')
+      .paginate(params)
+      .filter(params)
+      .find();
   }
 
   async findOne(id: number) {
-    return await this.modelClass.query().findById(id).withGraphFetched('received').withGraphFetched('customer').first().find();
+    return await this.modelClass
+      .query()
+      .findById(id)
+      .withGraphFetched('received')
+      .withGraphFetched('customer')
+      .first()
+      .find();
   }
 
   async update(id: number, updateVoipDto: UpdateVoipDto) {

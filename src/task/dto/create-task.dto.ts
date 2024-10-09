@@ -1,4 +1,4 @@
-import { IsBoolean, IsDateString, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsDateString, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
 import { TaskStatus } from 'src/database/enums/tasks';
 
@@ -47,20 +47,16 @@ export class CreateTaskDto {
   customer_id: number;
 
   @IsOptional()
-  @IsNumber()
-  assignee_id: number;
+  @IsArray()
+  assignee_id: number[];
 
   @IsOptional()
-  @IsNumber()
-  reporter_id: number;
+  @IsArray()
+  reporter_id: number[];
 
   @IsOptional()
   @IsNumber()
   settings_id: number;
-
-  @IsOptional()
-  @IsNumber()
-  type_id: number;
 
   @IsOptional()
   @IsBoolean()

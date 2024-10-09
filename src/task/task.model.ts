@@ -4,6 +4,7 @@ import { BaseModel } from 'src/database/base.model';
 import { TaskStatus } from 'src/database/enums/tasks';
 import { SettingsModel } from 'src/settings/settings.model';
 import { UserModel } from 'src/user/user.model';
+import { TaskUserModel } from './task-user.model';
 
 export class TaskModel extends BaseModel {
   static tableName = 'tasks';
@@ -23,9 +24,6 @@ export class TaskModel extends BaseModel {
 
   parent_id: number;
   customer_id: number;
-  assignee_id: number;
-  reporter_id: number;
-  type_id: number;
   settings_id: number;
 
   billable: boolean;
@@ -40,20 +38,12 @@ export class TaskModel extends BaseModel {
         to: 'customers.id',
       },
     },
-    assignee: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: UserModel,
+    taskUsers: {
+      relation: Model.HasManyRelation,
+      modelClass: TaskUserModel,
       join: {
-        from: 'tasks.assignee_id',
-        to: 'users.id',
-      },
-    },
-    reporter: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: UserModel,
-      join: {
-        from: 'tasks.reporter_id',
-        to: 'users.id',
+        from: 'tasks.id',
+        to: 'task_users.task_id',
       },
     },
     creator: {
@@ -87,15 +77,7 @@ export class TaskModel extends BaseModel {
         from: 'tasks.parent_id',
         to: 'tasks.id',
       },
-    }
-    // type: {
-    //   relation: Model.BelongsToOneRelation,
-    //   modelClass: SettingsModel,
-    //   join: {
-    //     from: 'tasks.type_id',
-    //     to: 'settings.id',
-    //   },
-    // },
+    },
   });
 }
 

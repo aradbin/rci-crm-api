@@ -1,20 +1,14 @@
 import { Knex } from 'knex';
 
-const tableName = 'users';
+const tableName = 'task_users';
 
 export async function up(knex: Knex) {
   return knex.schema.createTable(tableName, (table) => {
     table.increments();
 
-    table.string('name');
-    table.string('email').unique();
-    table.string('username').nullable().unique();
-    table.string('password').nullable();
-    table.string('contact').nullable();
-    table.string('address').nullable();
-    table.string('avatar').nullable();
-    table.boolean('verified').defaultTo(false);
-    table.boolean('status').defaultTo(true);
+    table.integer('task_id').nullable();
+    table.integer('user_id').nullable();
+    table.string('type').nullable(); // assignee, reporter
     table.jsonb('metadata').nullable();
 
     table.timestamp('created_at').nullable();
