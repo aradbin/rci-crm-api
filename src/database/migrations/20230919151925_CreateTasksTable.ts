@@ -73,9 +73,9 @@ export async function up(knex: Knex) {
     table.boolean('billable').defaultTo(false);
     table.float('bill_amount').defaultTo(0);
 
-    table.jsonb('time_log').defaultTo('[]');
-    table.jsonb('activity_log').defaultTo('[]');
-    table.jsonb('attachments').defaultTo('[]');
+    table.jsonb('time_log').nullable();
+    table.jsonb('activity_log').nullable();
+    table.jsonb('attachments').nullable();
 
     table.timestamp('created_at').nullable();
     table.integer('created_by').nullable();

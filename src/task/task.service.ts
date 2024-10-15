@@ -39,16 +39,23 @@ export class TaskService {
     }
   }
 
-  async findAll(params = {}) {
-    const tasks = await this.modelClass
-      .query()
+  async findAll(params: any = {}) {
+    const query = this.modelClass.query();
+
+    if (params.hasOwnProperty('assignee_id')) {
+      query.leftJoin('task_users', 'tasks.id', 'task_users.task_id').where('task_users.user_id', params.assignee_id);
+      delete params.assignee_id;
+    }
+
+    const tasks = await query
       .filter(params)
       .sort(params)
       .paginate(params)
       .withGraphFetched('customer')
       .withGraphFetched('taskUsers.user')
+      .modifyGraph('taskUsers', (qb) => qb.where('deleted_at', null))
       .withGraphFetched('settings')
-      .find();
+      .where('tasks.deleted_at', null);
 
     return tasks;
   }
@@ -59,6 +66,7 @@ export class TaskService {
       .findById(id)
       .withGraphFetched('customer')
       .withGraphFetched('taskUsers.user')
+      .modifyGraph('taskUsers', (qb) => qb.where('deleted_at', null))
       .withGraphFetched('creator')
       .withGraphFetched('settings')
       .withGraphFetched('subTasks')
@@ -77,47 +85,21 @@ export class TaskService {
   }
 
   async update(user_id: number, id: number, updateTaskDto: UpdateTaskDto) {
-    const task = await this.modelClass.query().findById(id).withGraphFetched('taskUsers').find();
-    await this.updateUsers(task, updateTaskDto);
-    delete updateTaskDto.assignee_id;
-    delete updateTaskDto.reporter_id;
+    const task = await this.modelClass
+      .query()
+      .findById(id)
+      .withGraphFetched('taskUsers')
+      .modifyGraph('taskUsers', (qb) => qb.where('deleted_at', null))
+      .find();
+
+    if (updateTaskDto.hasOwnProperty('assignee_id') || updateTaskDto.hasOwnProperty('reporter_id')) {
+      await this.updateUsers(task, updateTaskDto);
+      delete updateTaskDto.assignee_id;
+      delete updateTaskDto.reporter_id;
+    }
+
     if (updateTaskDto.hasOwnProperty('status') || updateTaskDto.hasOwnProperty('running')) {
-      if (updateTaskDto.hasOwnProperty('status') && task?.status !== updateTaskDto?.status) {
-        const time_log = task?.time_log;
-        if (updateTaskDto.status === 'inprogress') {
-          // await this.stopAll(user_id, task?.assignee_id, id);
-          time_log.push({ action: 'start', created_at: new Date(), created_by: user_id });
-          updateTaskDto = {
-            ...updateTaskDto,
-            running: true,
-            time_log: JSON.stringify(time_log),
-            completed_at: null,
-            completed_by: null,
-          };
-        } else {
-          time_log.push({ action: 'stop', created_at: new Date(), created_by: user_id });
-          updateTaskDto = {
-            ...updateTaskDto,
-            running: false,
-            time_log: JSON.stringify(time_log),
-            completed_at: null,
-            completed_by: null,
-          };
-          if (updateTaskDto.status === 'done') {
-            updateTaskDto = { ...updateTaskDto, completed_at: new Date(), completed_by: user_id };
-          }
-        }
-      } else if (updateTaskDto.hasOwnProperty('running') && task?.running !== updateTaskDto?.running) {
-        const time_log = task?.time_log;
-        if (updateTaskDto.running) {
-          // await this.stopAll(user_id, task?.assignee_id, id);
-          time_log.push({ action: 'start', created_at: new Date(), created_by: user_id });
-          updateTaskDto = { ...updateTaskDto, running: true, time_log: JSON.stringify(time_log) };
-        } else {
-          time_log.push({ action: 'stop', created_at: new Date(), created_by: user_id });
-          updateTaskDto = { ...updateTaskDto, running: false, time_log: JSON.stringify(time_log) };
-        }
-      }
+      updateTaskDto = await this.updateTimeLog(task, updateTaskDto, user_id);
     }
 
     return await this.modelClass.query().findById(id).update(updateTaskDto);
@@ -127,21 +109,25 @@ export class TaskService {
     return await this.modelClass.query().softDelete(id);
   }
 
-  async updateUsers(task: any, data: any) {
-    const currentAssigneeIds = task?.taskUsers
-      ?.filter((item: any) => item.type === 'assignee')
-      ?.map((item: any) => item.user_id);
-    const currentReporterIds = task?.taskUsers
-      ?.filter((item: any) => item.type === 'reporter')
-      ?.map((item: any) => item.user_id);
+  async updateUsers(task: any, dto: any) {
+    const currentAssigneeIds = task?.taskUsers?.filter((item: any) => item.type === 'assignee');
+    const currentReporterIds = task?.taskUsers?.filter((item: any) => item.type === 'reporter');
 
     const idsToRemove = [
-      ...currentAssigneeIds.filter((id: any) => !data?.assignee_id?.includes(id)),
-      ...currentReporterIds.filter((id: any) => !data?.reporter_id?.includes(id)),
+      ...currentAssigneeIds
+        .filter((item: any) => !dto?.assignee_id?.includes(item.user_id))
+        .map((item: any) => item.id),
+      ...currentReporterIds
+        .filter((item: any) => !dto?.reporter_id?.includes(item.user_id))
+        .map((item: any) => item.id),
     ];
 
-    const newAssigneeIds = data?.assignee_id?.filter((id: any) => !currentAssigneeIds.includes(id));
-    const newReporterIds = data?.reporter_id?.filter((id: any) => !currentReporterIds.includes(id));
+    const newAssigneeIds = dto?.assignee_id?.filter(
+      (id: any) => !currentAssigneeIds.map((item: any) => item.user_id).includes(id),
+    );
+    const newReporterIds = dto?.reporter_id?.filter(
+      (id: any) => !currentReporterIds.map((item: any) => item.user_id).includes(id),
+    );
     const idsToCreate = [
       ...newAssigneeIds?.map((id: any) => ({ user_id: id, type: 'assignee', task_id: task.id })),
       ...newReporterIds?.map((id: any) => ({ user_id: id, type: 'reporter', task_id: task.id })),
@@ -159,22 +145,42 @@ export class TaskService {
     }
   }
 
-  async stopAll(user_id: number, assignee_id: number, id: number) {
-    const tasks = await this.modelClass
-      .query()
-      .where('running', true)
-      .where('assignee_id', assignee_id)
-      .where('id', '!=', id)
-      .find();
-    tasks?.map(async (item: any) => {
-      const time_log = item.time_log;
-      if (time_log.length > 0 && time_log[time_log.length - 1].action === 'start') {
+  async updateTimeLog(task: any, dto: any, user_id: number) {
+    const time_log = task?.time_log;
+
+    if (dto.hasOwnProperty('status') && task?.status !== dto?.status) {
+      if (dto.status === 'inprogress') {
+        time_log.push({ action: 'start', created_at: new Date(), created_by: user_id });
+        dto = {
+          ...dto,
+          running: true,
+          time_log: JSON.stringify(time_log),
+          completed_at: null,
+          completed_by: null,
+        };
+      } else {
         time_log.push({ action: 'stop', created_at: new Date(), created_by: user_id });
+        dto = {
+          ...dto,
+          running: false,
+          time_log: JSON.stringify(time_log),
+          completed_at: null,
+          completed_by: null,
+        };
+        if (dto.status === 'done') {
+          dto = { ...dto, completed_at: new Date(), completed_by: user_id };
+        }
       }
-      await this.modelClass
-        .query()
-        .findById(item.id)
-        .update({ running: false, time_log: JSON.stringify(time_log) });
-    });
+    } else if (dto.hasOwnProperty('running') && task?.running !== dto?.running) {
+      if (dto.running) {
+        time_log.push({ action: 'start', created_at: new Date(), created_by: user_id });
+        dto = { ...dto, running: true, time_log: JSON.stringify(time_log) };
+      } else {
+        time_log.push({ action: 'stop', created_at: new Date(), created_by: user_id });
+        dto = { ...dto, running: false, time_log: JSON.stringify(time_log) };
+      }
+    }
+
+    return dto;
   }
 }
