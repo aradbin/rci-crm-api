@@ -41,23 +41,16 @@ export class TaskService {
 
   async findAll(params: any = {}) {
     const query = this.modelClass.query();
+    const { filterParams, queryBuilder } = this.filter(params, query);
 
-    if (params.hasOwnProperty('assignee_id')) {
-      query.leftJoin('task_users', 'tasks.id', 'task_users.task_id').where('task_users.user_id', params.assignee_id);
-      delete params.assignee_id;
-    }
-
-    const tasks = await query
-      .filter(params)
-      .sort(params)
-      .paginate(params)
+    return await queryBuilder
+      .filter(filterParams)
+      .sort(filterParams)
+      .paginate(filterParams)
       .withGraphFetched('customer')
       .withGraphFetched('taskUsers.user')
-      .modifyGraph('taskUsers', (qb) => qb.where('deleted_at', null))
-      .withGraphFetched('settings')
-      .where('tasks.deleted_at', null);
-
-    return tasks;
+      .select('tasks.*')
+      .find();
   }
 
   async findOne(id: number) {
@@ -66,31 +59,44 @@ export class TaskService {
       .findById(id)
       .withGraphFetched('customer')
       .withGraphFetched('taskUsers.user')
-      .modifyGraph('taskUsers', (qb) => qb.where('deleted_at', null))
       .withGraphFetched('creator')
       .withGraphFetched('settings')
-      .withGraphFetched('subTasks')
+      .withGraphFetched('subTasks.taskUsers.user')
       .withGraphFetched('parentTask')
       .find();
   }
 
-  async count(params = {}) {
-    return await this.modelClass
-      .query()
-      .filter(params)
-      .where('deleted_at', null)
-      .select('status')
-      .count('id as count')
-      .groupBy('status');
+  async count(params: any = {}) {
+    const tasks = await this.findAll(params);
+    const count = {
+      todo: 0,
+      inprogress: 0,
+      inreview: 0,
+      done: 0,
+    };
+    tasks.forEach((task: any) => {
+      count[task.status]++;
+    });
+
+    return [
+      { status: 'todo', count: count.todo },
+      { status: 'inprogress', count: count.inprogress },
+      { status: 'inreview', count: count.inreview },
+      { status: 'done', count: count.done },
+    ];
+
+    const query = this.modelClass.query();
+    const { filterParams, queryBuilder } = this.filter(params, query);
+
+    return await queryBuilder
+      .filter(filterParams)
+      .where('tasks.deleted_at', null)
+      .count('tasks.id as count')
+      .groupBy('tasks.status');
   }
 
   async update(user_id: number, id: number, updateTaskDto: UpdateTaskDto) {
-    const task = await this.modelClass
-      .query()
-      .findById(id)
-      .withGraphFetched('taskUsers')
-      .modifyGraph('taskUsers', (qb) => qb.where('deleted_at', null))
-      .find();
+    const task = await this.modelClass.query().findById(id).withGraphFetched('taskUsers').find();
 
     if (updateTaskDto.hasOwnProperty('assignee_id') || updateTaskDto.hasOwnProperty('reporter_id')) {
       await this.updateUsers(task, updateTaskDto);
@@ -107,6 +113,19 @@ export class TaskService {
 
   async remove(id: number) {
     return await this.modelClass.query().softDelete(id);
+  }
+
+  filter(filterParams: any, queryBuilder: any) {
+    if (filterParams.hasOwnProperty('user_id')) {
+      queryBuilder
+        .leftJoin('task_users', 'tasks.id', '=', 'task_users.task_id')
+        .where('task_users.user_id', filterParams.user_id)
+        .distinct('tasks.id');
+
+      delete filterParams.user_id;
+    }
+
+    return { filterParams, queryBuilder };
   }
 
   async updateUsers(task: any, dto: any) {
@@ -134,10 +153,7 @@ export class TaskService {
     ];
 
     if (idsToRemove.length > 0) {
-      await this.modelClassTaskUser
-        .query()
-        .where('id', 'in', idsToRemove)
-        .patch({ deleted_at: new Date().toISOString().slice(0, 19).replace('T', ' ') });
+      await this.modelClassTaskUser.query().where('id', 'in', idsToRemove).del();
     }
 
     if (idsToCreate.length > 0) {
