@@ -35,8 +35,12 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<M
     delete filterParams.sortBy;
     delete filterParams.orderBy;
 
+    if (filterParams.hasOwnProperty('is_active')) {
+      filterParams.is_active = filterParams.is_active === 'true' ? true : false;
+    }
+
     Object.keys(filterParams).forEach((key) => {
-      if ((key as string).endsWith('id')) {
+      if ((key as string).endsWith('id') || typeof filterParams[key] === 'boolean') {
         query.where(`${this.modelClass().tableName}.${key}`, filterParams[key]);
         return;
       }

@@ -8,6 +8,7 @@ export class ContactModel extends BaseModel {
   address: string;
   contact: string;
   avatar: string;
+  is_active: boolean;
 
   static relationMappings = () => ({
     // customerContacts: {

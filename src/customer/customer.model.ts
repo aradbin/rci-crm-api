@@ -3,25 +3,25 @@ import { CustomerSettingsModel } from 'src/customer-settings/customer-settings.m
 import { BaseModel } from 'src/database/base.model';
 
 export class CustomerModel extends BaseModel {
-    static tableName = 'customers';
+  static tableName = 'customers';
 
-    name: string;
-    email: string;
-    address: string;
-    contact: string;
-    avatar: string;
-    optional_contact: string;
+  name: string;
+  email: string;
+  address: string;
+  contact: string;
+  avatar: string;
+  metadata: any;
 
-    static relationMappings = () => ({
-        customerSettings: {
-            relation: Model.HasManyRelation,
-            modelClass: CustomerSettingsModel,
-            join: {
-                from: 'customers.id',
-                to: 'customer_settings.customer_id',
-            },
-        },
-    });
+  static relationMappings = () => ({
+    customerSettings: {
+      relation: Model.HasManyRelation,
+      modelClass: CustomerSettingsModel,
+      join: {
+        from: 'customers.id',
+        to: 'customer_settings.customer_id',
+      },
+    },
+  });
 }
 
 CustomerModel.relationMappings();

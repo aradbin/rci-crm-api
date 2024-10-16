@@ -21,6 +21,9 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('User is not registered. Please Register');
     }
+    if (!user.is_active) {
+      throw new UnauthorizedException('User is Inactive. Please contact your admin');
+    }
     const passwordValid = await bcrypt.compare(loginDto.password, user.password);
     if (passwordValid) {
       const payload = {
@@ -37,8 +40,8 @@ export class AuthService {
   }
 
   async profile(email: string) {
-    const user = this.userService.findByEmail(email);
-    if (user) {
+    const user = await this.userService.findByEmail(email);
+    if (user && user.is_active) {
       return user;
     }
     throw new UnauthorizedException();

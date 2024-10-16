@@ -7,12 +7,12 @@ export async function up(knex: Knex) {
     table.increments();
 
     table.string('name');
-    table.string('email').nullable();
+    table.string('email').unique();
     table.string('contact').nullable();
     table.string('address').nullable();
     table.string('avatar').nullable();
     table.string('documents').nullable();
-    table.boolean('status').defaultTo(true);
+    table.boolean('is_active').defaultTo(true);
     table.jsonb('metadata').nullable();
 
     table.timestamp('created_at').nullable();

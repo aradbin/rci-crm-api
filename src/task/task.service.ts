@@ -23,10 +23,15 @@ export class TaskService {
 
       const task = await this.modelClass.query(trx).insert(createTaskDto);
 
-      const taskUsers = [
-        ...assignee_id.map((id) => ({ user_id: id, type: 'assignee' })),
-        ...reporter_id.map((id) => ({ user_id: id, type: 'reporter' })),
-      ];
+      const taskUsers = [];
+
+      if (assignee_id?.length > 0) {
+        taskUsers.push(...assignee_id.map((id) => ({ user_id: id, type: 'assignee' })));
+      }
+
+      if (reporter_id?.length > 0) {
+        taskUsers.push(...reporter_id.map((id) => ({ user_id: id, type: 'reporter' })));
+      }
 
       if (taskUsers?.length > 0) {
         await task.$relatedQuery('taskUsers').insert(taskUsers);

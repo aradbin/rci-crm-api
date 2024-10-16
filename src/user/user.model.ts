@@ -10,6 +10,7 @@ export class UserModel extends BaseModel {
   email: string;
   username: string;
   password: string;
+  is_active: boolean;
 
   static relationMappings = () => ({
     userSettings: {

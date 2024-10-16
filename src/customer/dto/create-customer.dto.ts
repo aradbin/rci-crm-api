@@ -35,7 +35,7 @@ export class CreateCustomerDto {
 
   @IsOptional()
   @IsBoolean()
-  status: boolean;
+  is_active: boolean;
 
   @IsOptional()
   @IsString()

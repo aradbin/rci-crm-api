@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsEmail, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class RegisterDto {
   @IsOptional()
@@ -24,6 +24,10 @@ export class RegisterDto {
   @IsOptional()
   @IsArray()
   settings_id: number[];
+
+  @IsOptional()
+  @IsBoolean()
+  is_active: boolean;
 
   @IsOptional()
   @IsString()

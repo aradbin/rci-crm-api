@@ -15,7 +15,7 @@ export async function up(knex: Knex) {
     table.integer('customer_type_id').nullable(); // Company, partnership, individual
     table.string('avatar').nullable();
     table.string('documents').nullable();
-    table.boolean('status').defaultTo(true);
+    table.boolean('is_active').defaultTo(true);
     table.jsonb('metadata').nullable();
 
     table.timestamp('created_at').nullable();

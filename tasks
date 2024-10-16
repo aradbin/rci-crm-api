@@ -1,12 +1,12 @@
 Feedback:
 
-1. Task: Fix running task timer & task filter
+1. Task: Fix running task timer
 2.
-3. Task: Multiple assignee & reporter
+3.
 4.
 5. Customer: Add more details on customer, Timeline, Notes/Comments, ⁠AML checklist, ⁠KYC documents, Risk Assessment, Onboard date
 6.
-7. User/Customer: Active status, Export & Import in Excel & PDF
+7. User/Customer: Export & Import in Excel & PDF
 8.
 9. Log: User, Customer, task logs
 10.
@@ -49,3 +49,6 @@ Done:
 30. Email: Multiple email address per user
 31. WhatsApp: Multiple whatsapp per user. +44 7305058744
 32. Customer: import from excel
+33. Task: Multiple assignee & reporter
+34. Task: Fix task filter
+35. User/Customer: Active status

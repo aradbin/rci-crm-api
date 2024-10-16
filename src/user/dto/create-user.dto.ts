@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsOptional()
@@ -24,6 +24,10 @@ export class CreateUserDto {
   @IsOptional()
   @IsArray()
   settings_id: number[];
+
+  @IsOptional()
+  @IsBoolean()
+  is_active: boolean;
 
   @IsOptional()
   @IsString()
