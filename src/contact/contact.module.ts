@@ -6,5 +6,6 @@ import { ContactService } from './contact.service';
 @Module({
   controllers: [ContactController],
   providers: [ContactService, MinioService],
+  exports: [ContactService],
 })
 export class ContactModule {}

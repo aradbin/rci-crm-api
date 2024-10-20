@@ -13,13 +13,13 @@ export class ContactService {
     private readonly minioService: MinioService,
   ) {}
 
-  async create(createContactDto: CreateContactDto, avatar: Express.Multer.File) {
+  async create(createContactDto: CreateContactDto, avatar: Express.Multer.File | null) {
     const contact = await this.modelClass.query().where('email', createContactDto.email).find().first();
     if (contact) {
       throw new NotAcceptableException('Email already exists');
     }
 
-    if (avatar !== undefined) {
+    if (avatar && avatar !== undefined) {
       createContactDto.avatar = await this.minioService.uploadFile(avatar);
     } else {
       delete createContactDto.avatar;
@@ -51,15 +51,15 @@ export class ContactService {
   }
 
   async findAll(params = {}) {
-    const contacts = await this.modelClass.query().paginate(params).filter(params).find();
-
-    return contacts;
+    return await this.modelClass.query().paginate(params).filter(params).find();
   }
 
   async findOne(id: number) {
-    const Contact = await this.modelClass.query().findById(id).first().find();
+    return await this.modelClass.query().findById(id).first().find();
+  }
 
-    return Contact;
+  async findByEmail(email: string) {
+    return await this.modelClass.query().where('email', email).first().find();
   }
 
   async update(id: number, updateContactDto: UpdateContactDto, avatar: Express.Multer.File) {

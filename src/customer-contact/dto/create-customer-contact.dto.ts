@@ -5,7 +5,7 @@ export class CreateCustomerContactDto {
   @IsInt()
   customer_id: number;
 
-  @IsNotEmpty({ message: 'Contact is required' })
+  @IsOptional()
   @IsInt()
   contact_id: number;
 
