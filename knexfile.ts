@@ -5,7 +5,7 @@ config();
 
 module.exports = {
   client: 'pg',
-  connection: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}?sslmode=disable`,
+  connection: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}?sslmode=require`,
   migrations: {
     directory: './src/database/migrations',
     stub: './src/database/migration.stub',
