@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
+import { Inject, Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { ModelClass } from 'objection';
 import { MinioService } from 'src/minio/minio.service';
 import { ContactModel } from './contact.model';
@@ -41,13 +41,11 @@ export class ContactService {
       (dto) => !existingEmails.some((email) => email.email === dto.email),
     );
 
-    let response = [];
-
-    if (contactsToCreate?.length > 0) {
-      response = await this.modelClass.query().insert(contactsToCreate);
+    if (contactsToCreate?.length === 0) {
+      throw new NotFoundException('No new data to import');
     }
 
-    return response;
+    return await this.modelClass.query().insert(contactsToCreate);
   }
 
   async findAll(params = {}) {
