@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotAcceptableException } from '@nestjs/common';
+import { Inject, Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { ModelClass } from 'objection';
 import { CustomerSettingsService } from 'src/customer-settings/customer-settings.service';
 import { MinioService } from 'src/minio/minio.service';
@@ -30,7 +30,28 @@ export class CustomerService {
   }
 
   async import(createCustomerDtos: CreateCustomerDto[]) {
-    return await this.modelClass.query().insert(createCustomerDtos).onConflict('email').merge();
+    const customers = await this.modelClass
+      .query()
+      .select('email')
+      .whereIn(
+        'email',
+        createCustomerDtos.map((dto) => dto.email),
+      );
+
+    let customersToCreate = [];
+    createCustomerDtos.forEach((dto) => {
+      const exist = customers.find((customer) => customer.email === dto.email);
+      const duplicate = customersToCreate.find((item: any) => item.email === dto.email);
+      if (!exist && !duplicate) {
+        customersToCreate.push(dto);
+      }
+    });
+
+    if (customersToCreate?.length === 0) {
+      throw new NotFoundException('No new data to import');
+    }
+
+    return await this.modelClass.query().insert(customersToCreate).onConflict('email').merge();
   }
 
   async findAll(params = {}) {

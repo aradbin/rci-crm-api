@@ -9,29 +9,32 @@ import { UpdateCustomerContactDto } from './dto/update-customer-contact.dto';
 export class CustomerContactService {
   constructor(
     @Inject('CustomerContactModel') private modelClass: ModelClass<CustomerContactModel>,
-    private contactService: ContactService
+    private contactService: ContactService,
   ) {}
 
   async create(createCustomerContactDto: CreateCustomerContactDto) {
-    if(!createCustomerContactDto.contact_id){
+    if (!createCustomerContactDto.contact_id) {
       let contact = await this.contactService.findByEmail(createCustomerContactDto.metadata.email);
-      if(contact){
+      if (contact) {
         createCustomerContactDto.contact_id = contact?.id;
-      }else{
-        contact = await this.contactService.create({
-          name: createCustomerContactDto.metadata.name,
-          email: createCustomerContactDto.metadata.email,
-          contact: createCustomerContactDto.metadata.contact,
-          address: createCustomerContactDto.metadata.address,
-          is_active: true,
-          avatar: null
-        }, null);
+      } else {
+        contact = await this.contactService.create(
+          {
+            name: createCustomerContactDto.metadata.name,
+            email: createCustomerContactDto.metadata.email,
+            contact: createCustomerContactDto.metadata.contact,
+            address: createCustomerContactDto.metadata.address,
+            is_active: true,
+            avatar: null,
+          },
+          null,
+        );
         createCustomerContactDto.contact_id = contact?.id;
       }
     }
 
     const exist: any = await this.findAll(createCustomerContactDto);
-    if (exist?.length > 0){
+    if (exist?.length > 0) {
       throw new NotFoundException('Customer Contact Already Exists');
     }
 
@@ -39,6 +42,10 @@ export class CustomerContactService {
   }
 
   async import(createCustomerContactDtos: CreateCustomerContactDto[]) {
+    if (createCustomerContactDtos.length === 0) {
+      throw new NotFoundException('No new data to import');
+    }
+
     return await this.modelClass.query().insert(createCustomerContactDtos);
   }
 
