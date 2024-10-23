@@ -51,7 +51,7 @@ const providers = [
     useFactory: async () => {
       const knex = Knex({
         client: 'pg',
-        connection: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}?sslmode=require`,
+        connection: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}?${process.env.POSTGRES_SSL}`,
       });
 
       Model.knex(knex);
