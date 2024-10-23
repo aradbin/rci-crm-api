@@ -1,19 +1,26 @@
-FROM node:18-alpine as builder
+# Base image
+FROM node:19
 
-WORKDIR /app/erp-api
+# Create app directory
+WORKDIR /usr/src/app
 
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
 
+# Install app dependencies
 RUN npm install
 
+# Bundle app source
 COPY . .
 
+# Copy the .env and .env.development files
+COPY .env .env.development ./
+
+# Creates a "dist" folder with the production build
 RUN npm run build
 
-FROM node:18-alpine
+# Expose the port on which the app will run
+EXPOSE 8080
 
-WORKDIR /app/erp-api
-
-COPY --from=builder /app/erp-api/dist ./
-
-CMD ["npm", "start"]
+# Start the server using the production build
+CMD ["npm", "run", "start:prod"]
