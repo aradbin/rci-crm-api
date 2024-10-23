@@ -1,14 +1,18 @@
-# Use the official Node.js 14 image as the base image
-FROM node:18
+FROM node:18-alpine as builder
 
-# Set the working directory to /app
+# Install dependencies
 WORKDIR /app
-
-# Copy the package.json and package-lock.json files to the container
 COPY package*.json ./
-
-# Install the dependencies
 RUN npm install
 
-# Copy the rest of the application code to the container
+# Build the app
 COPY . .
+RUN npm run build
+
+# Production image
+FROM node:18-alpine
+COPY --from=builder /app/dist /usr/src/app
+
+WORKDIR /usr/src/app
+
+CMD ["npm", "start"]
