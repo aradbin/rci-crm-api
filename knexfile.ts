@@ -2,11 +2,11 @@ import { config } from 'dotenv';
 import { Knex } from 'knex';
 
 config();
-
+console.log(`${process.env.DATABASE_URL}?sslmode=require`);
 module.exports = {
   client: 'pg',
   connection: {
-    connectionString: process.env.DATABASE_URL,
+    connectionString: `${process.env.DATABASE_URL}?sslmode=require`,
   },
   pool: {
     min: 0,
