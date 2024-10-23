@@ -1,6 +1,6 @@
 FROM node:18-alpine as builder
 
-WORKDIR /app
+WORKDIR /app/erp-api
 
 COPY package*.json ./
 
@@ -12,8 +12,8 @@ RUN npm run build
 
 FROM node:18-alpine
 
-WORKDIR /app
+WORKDIR /app/erp-api
 
-COPY --from=builder /app/dist ./
+COPY --from=builder /app/erp-api/dist ./
 
 CMD ["npm", "start"]
