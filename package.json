@@ -1,10 +1,13 @@
 {
-  "name": "finance",
+  "name": "erp",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Arad",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "19.x"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -36,6 +39,8 @@
     "@nestjs/websockets": "^10.3.3",
     "@socket.io/redis-adapter": "^8.2.1",
     "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.17",
+    "@types/multer": "^1.4.11",
     "axios": "^0.24.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
@@ -62,12 +67,10 @@
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/bcrypt": "^5.0.0",
-    "@types/express": "^4.17.17",
     "@types/jest": "^29.5.2",
     "@types/luxon": "^3.4.2",
     "@types/mailparser": "^3.4.0",
     "@types/minio": "^7.1.1",
-    "@types/multer": "^1.4.11",
     "@types/node": "^20.3.1",
     "@types/nodemailer": "^6.4.10",
     "@types/passport": "^1.0.12",
