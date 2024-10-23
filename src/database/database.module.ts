@@ -52,7 +52,7 @@ const providers = [
       const knex = Knex({
         client: 'pg',
         connection: {
-          connectionString: `${process.env.DATABASE_URL}?sslmode=require`,
+          connectionString: `${process.env.DATABASE_URL}`,
         },
       });
 
