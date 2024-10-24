@@ -51,7 +51,13 @@ const providers = [
     useFactory: async () => {
       const knex = Knex({
         client: 'pg',
-        connection: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`,
+        connection: {
+          host: process.env.POSTGRES_HOST,
+          port: parseInt(process.env.POSTGRES_PORT),
+          user: process.env.POSTGRES_USER,
+          password: process.env.POSTGRES_PASSWORD,
+          database: process.env.POSTGRES_DB,
+        },
         pool: {
           min: 0,
           max: 10,
