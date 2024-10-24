@@ -5,7 +5,7 @@ config();
 console.log(process.env.DATABASE_URL);
 module.exports = {
   client: 'pg',
-  connection: process.env.DATABASE_URL,
+  connection: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}?sslmode=require`,
   pool: {
     min: 0,
     max: 10,
