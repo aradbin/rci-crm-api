@@ -51,8 +51,12 @@ const providers = [
     useFactory: async () => {
       const knex = Knex({
         client: 'pg',
-        connection: {
-          connectionString: `${process.env.DATABASE_URL}`,
+        connection: process.env.DATABASE_URL,
+        pool: {
+          min: 0,
+          max: 10,
+          idleTimeoutMillis: 30000,
+          acquireTimeoutMillis: 60000,
         },
       });
 

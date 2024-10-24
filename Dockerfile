@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:20
+FROM node:18
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
@@ -15,6 +15,7 @@ COPY . .
 
 # Build the NestJS application
 RUN npm run build
+RUN npm run migrate
 
 # Expose the application port
 EXPOSE 8080

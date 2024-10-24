@@ -2,17 +2,15 @@ import { config } from 'dotenv';
 import { Knex } from 'knex';
 
 config();
-console.log(`${process.env.DATABASE_URL}`);
+console.log(process.env.DATABASE_URL);
 module.exports = {
   client: 'pg',
-  connection: {
-    connectionString: `${process.env.DATABASE_URL}`,
-  },
+  connection: process.env.DATABASE_URL,
   pool: {
     min: 0,
     max: 10,
     idleTimeoutMillis: 30000,
-    acquireTimeoutMillis: 60000
+    acquireTimeoutMillis: 60000,
   },
   migrations: {
     directory: './src/database/migrations',
